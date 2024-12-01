@@ -1,4 +1,4 @@
-from utils.utils import gpu_euclidean_distance
+from utils.utils import gpu_distance
 from numba import cuda, types
 import numpy as np
 import sys
@@ -23,7 +23,7 @@ def _closest_centroid(sample, centroids):
     closest_i = 0
     closest_dist = float("inf")
     for i, centroid in enumerate(centroids):
-        distance = gpu_euclidean_distance(sample, centroid)
+        distance = gpu_distance(sample, centroid)
         if distance < closest_dist:
             closest_i = i
             closest_dist = distance

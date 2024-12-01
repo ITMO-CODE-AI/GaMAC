@@ -2,7 +2,7 @@ import numpy as np
 import sys
 
 sys.path.append('../')
-from utils.utils import euclidean_distance
+from utils.utils import cpu_distance
 
 
 class KMeans:
@@ -38,7 +38,7 @@ class KMeans:
         closest_i = 0
         closest_dist = float("inf")
         for i, centroid in enumerate(centroids):
-            distance = euclidean_distance(sample, centroid)
+            distance = cpu_distance(sample, centroid)
             if distance < closest_dist:
                 closest_i = i
                 closest_dist = distance

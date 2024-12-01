@@ -1,6 +1,8 @@
 import numpy as np
-from mlfromscratch.utils import euclidean_distance, normalize
+import sys
 
+sys.path.append('../')
+from utils.utils import cpu_distance
 
 class DBSCAN:
     def __init__(self, eps=1, min_samples=5):
@@ -11,7 +13,7 @@ class DBSCAN:
         neighbors = []
         idxs = np.arange(len(self.X))
         for i, _sample in enumerate(self.X[idxs != sample_i]):
-            distance = euclidean_distance(self.X[sample_i], _sample)
+            distance = cpu_distance(self.X[sample_i], _sample)
             if distance < self.eps:
                 neighbors.append(i)
         return np.array(neighbors)

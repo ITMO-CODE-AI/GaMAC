@@ -55,7 +55,7 @@ def _get_cluster_labels(X, clusters):
     return labels
 
 
-class DBSCAN:
+class DBSCANonGPU:
     def __init__(self, eps=1, min_samples=5):
         self.eps = eps
         self.min_samples = min_samples
