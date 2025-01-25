@@ -1,5 +1,5 @@
 import math
-from numba import cuda
+from cupyx.scipy.spatial.distance import euclidean
 import numpy as np
 
 
@@ -11,17 +11,13 @@ def normalize(X, axis=-1, order=2):
 
 
 def cpu_distance(x1, x2):
-    """Calculates the l2 distance between two vectors"""
+    """Calculates the l2 distance between two vectors on CPU"""
     distance = 0
     # Squared distance between each coordinate
     for i in range(len(x1)):
         distance += pow((x1[i] - x2[i]), 2)
     return math.sqrt(distance)
-@cuda.jit(device=True)
+
 def gpu_distance(x1, x2):
-    """Calculates the l2 distance between two vectors"""
-    distance = 0
-    # Squared distance between each coordinate
-    for i in range(len(x1)):
-        distance += pow((x1[i] - x2[i]), 2)
-    return math.sqrt(distance)
+    """Calculates the l2 distance between two vectors on GPU"""
+    return euclidean(x1, x2)
