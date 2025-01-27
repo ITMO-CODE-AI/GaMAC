@@ -38,6 +38,9 @@ def get_clip_embeddings(
             images=img_inputs[i : i + batch],
             return_tensors="pt",
         )
+        model.to(device)
+        inputs = inputs.to(device)
+
         outputs = model(**inputs)
 
         # Проверка на len в img_inputs/txt_inputs

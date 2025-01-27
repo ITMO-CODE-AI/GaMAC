@@ -46,26 +46,23 @@ def load_dataframe(input_path: str) -> pd.DataFrame:
 
 
 def table_preprocessing(
-    input_dataframe: pd.DataFrame,
-    numeric_columns: List[str] = [],
-    categorical_columns: List[str] = [],
-    target_columns: List[str] = [],
-    ignore_columns: List[str] = [],
+    df: pd.DataFrame,
+    numeric_columns: List[str] = None,
+    categorical_columns: List[str] = None,
+    target_columns: List[str] = None,
+    ignore_columns: List[str] = None,
     unknown_column_action: str = "infer",
     numeric_threshold: float = 0.05,
     numeric_scaling: str = "standard",
     categorical_encoding: str = "one-hot",
     nan_action: str = "infer",
     nan_threshold: float = 0.5,
-    verbose: bool = True,
+    verbose: bool = False,
 ) -> pd.DataFrame:
     """Кодирование табличных данных"""
 
     if verbose:
         print("Предобработка")
-
-    # Загрузка датафрейма
-    df = load_dataframe(input_dataframe, verbose=verbose)
 
     print(df.shape, df.dtypes)
 

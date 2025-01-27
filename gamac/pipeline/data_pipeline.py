@@ -1,5 +1,6 @@
-from typing import List
-
+"""Основной скрипт этапа предобработки данных"""
+import torch
+import numpy as np
 from numpy import ndarray
 from pandas import DataFrame
 from PIL import Image
@@ -22,6 +23,10 @@ class DataHandler:
         Args:
             device (str, optional): Defaults to "cuda".
         """
+        self.device = device
+
+        torch.set_default_device(self.device)
+
         # Проверка на len в img_inputs/txt_inputs
         self.modal_model = CLIPModel.from_pretrained(
             "openai/clip-vit-base-patch32", device_map=device
@@ -29,7 +34,6 @@ class DataHandler:
         self.modal_processor = CLIPProcessor.from_pretrained(
             "openai/clip-vit-base-patch32", device_map=device
         )
-        self.device = device
 
     def table_preprocess(self, table: DataFrame) -> ndarray:
         """
@@ -40,34 +44,47 @@ class DataHandler:
         Returns:
             ndarray
         """
-        return table_preprocessing(input_dataframe=table)
+        return table_preprocessing(df=table)
 
-    def text_image_preprocess(self, text: List[str], image: List[Image]) -> ndarray:
+    def text_image_preprocess(self, text: list[str], image: list[Image]) -> ndarray:
         """
         Предобработка текста и изображения
 
         Args:
-            text (List[str]): Список текстовых данных
-            image (List[Image]): Список изображений
+            text (list[str]): Список текстовых данных
+            image (list[Image]): Список изображений
         Returns:
             ndarray
         """
         return get_clip_embeddings(
-            model=self.model,
-            processor=self.processor,
+            model=self.modal_model,
+            processor=self.modal_processor,
             img_inputs=image,
             txt_inputs=text,
             batch=1,
             device=self.device,
         )
 
-    def run(self, table: DataFrame, text: List[str], image: List[Image]):
+    def concat_dataset(self, table_dataset: ndarray, img_txt_dataset: ndarray) -> ndarray:
+        """
+        Конкатенация двух датафреймов
+
+        Args:
+            table_dataset (ndarray): массив таблички
+            img_txt_dataset (ndarray): массив текста и изображений
+        Returns:
+            ndarray: конкатенированный датафрейм
+        """
+
+        return np.concatenate((table_dataset, img_txt_dataset), axis=1)
+
+    def run(self, table: DataFrame, text: list[str], image: list[Image]) -> ndarray:
         """
         Запуск обработки
         Args:
             table (DataFrame): датафрейм таблицы
-            text (List[str]): Список текстовых данных
-            image (List[Image]): Список изображений
+            text (list[str]): Список текстовых данных
+            image (list[Image]): Список изображений
         Returns:
             np.array: единый датафрейм
         """
