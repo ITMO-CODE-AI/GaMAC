@@ -57,11 +57,46 @@ class KMeansGPU:
         n_features = cp.shape(X)[1]
         centroids = cp.zeros((self.k, n_features))
         get_new_centroids = cp.RawKernel(r'''
+        #include <thrust/device_vector.h>
+        #include <thrust/reduce.h>
         extern "C" __global__
-        void new_centroids(float* centroids, float* X) {
+        void new_centroids(const float* clusters, const float* X, float* centroids) {
             int tid = blockDim.x * blockIdx.x + threadIdx.x;
+            int num = sizeof(X[clusters[tid]])/sizeof(X[clusters[tid]][0]);
+            thrust::device_vector< float > iVec(X[clusters[tid]], X[clusters[tid]]+num);
+            float sum = thrust::reduce(iVec.begin(), iVec.end(), 0, thrust::plus<float>());
+            double mean = sum/(double)num;
+            centroids[tid] = mean;
             }''', 'new_centroids')
-        for i, cluster in enumerate(clusters):
-            centroid = np.mean(X[cluster], axis=0)
-            centroids[i] = centroid
+        get_new_centroids((n_features,), (n_features,), (clusters, X, centroids))
         return centroids
+
+    def _get_cluster_labels(self, clusters, X):
+        """Classify samples as the index of their clusters"""
+        # One prediction for each sample
+        y_pred = np.zeros(np.shape(X)[0])
+        for cluster_i, cluster in enumerate(clusters):
+            for sample_i in cluster:
+                y_pred[sample_i] = cluster_i
+        return y_pred
+
+    def predict(self, X):
+        """Do K-Means clustering and return cluster indices"""
+
+        # Initialize centroids as k random samples from X
+        centroids = self._init_random_centroids(X)
+
+        # Iterate until convergence or for max iterations
+        for _ in range(self.max_iterations):
+            # Assign samples to closest centroids (create clusters)
+            clusters = self._create_clusters(centroids, X)
+            # Save current centroids for convergence check
+            prev_centroids = centroids
+            # Calculate new centroids from the clusters
+            centroids = self._calculate_centroids(clusters, X)
+            # If no centroids have changed => convergence
+            diff = centroids - prev_centroids
+            if not diff.any():
+                break
+
+        return self._get_cluster_labels(clusters, X)
