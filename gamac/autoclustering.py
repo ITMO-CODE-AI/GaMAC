@@ -1,4 +1,6 @@
 """Основной скрипт класса Gamac"""
+from typing import Optional
+
 from pandas import DataFrame
 from numpy import ndarray
 from PIL import Image
@@ -16,10 +18,19 @@ class Gamac:
         self.meta_advisor = MetaAdvisor()
         self.autocluster_pipeline = AutoClustering()
 
-    def run(
-        self, table: DataFrame,
-        text: list[str], image: list[Image]
-    ) -> tuple[ndarray, list[int]]:
+    def input_checker(self,
+                      table: DataFrame,
+                      text: list[str],
+                      image: list[Image]):
+        if not table and not text and not image:
+            assert "There is not data included"
+        if not table and (not text or not image):
+            assert "text and image must be specified"
+
+    def run(self,
+            table: Optional[DataFrame],
+            text: Optional[list[str]],
+            image: Optional[list[Image]]) -> tuple[ndarray, list[int]]:
         """
         Запуск пайплайна
 
@@ -30,12 +41,7 @@ class Gamac:
         Returns:
             tuple[ndarray, list[int]]: Кортеж датасет и список кластеров
         """
-        if not isinstance(table, DataFrame):
-            raise TypeError('Table must be a DataFrame')
-        if not isinstance(text, list):
-            raise TypeError('text must be a list')
-        if not isinstance(image, list):
-            raise TypeError('image must be a list')
+        self.input_checker(table, text, image)
 
         # Обработка данных в единый датасет
         dataset = self.data_processing(table, text, image)

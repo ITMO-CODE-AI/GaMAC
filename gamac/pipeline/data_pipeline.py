@@ -88,9 +88,17 @@ class DataHandler:
         Returns:
             np.array: единый датафрейм
         """
-        table_dataset = self.table_preprocess(table)
-        img_txt_dataset = self.text_image_preprocess(text, image)
+        dataset = None
+        table_dataset = None
+        img_txt_dataset = None
 
-        dataset = self.concat_dataset(table_dataset, img_txt_dataset)
+        if table:
+            table_dataset = self.table_preprocess(table)
 
-        return dataset
+        if text and image:
+            img_txt_dataset = self.text_image_preprocess(text, image)
+
+        if table_dataset and img_txt_dataset:
+            dataset = self.concat_dataset(table_dataset, img_txt_dataset)
+
+        return dataset if dataset is not None else table_dataset if table_dataset is not None else img_txt_dataset
