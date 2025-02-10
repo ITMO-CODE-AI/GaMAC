@@ -24,6 +24,8 @@ class Gamac:
                       image: list[Image]):
         if not table and not text and not image:
             assert "There is not data included"
+        if not table and (not text or not image):
+            assert "text and image must be specified"
 
     def run(self,
             table: Optional[DataFrame],
