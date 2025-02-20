@@ -10,7 +10,7 @@ from sklearn.cluster import (
     Birch,
 )
 
-from gamac.src.meta.collector import DatasetForMetaCVI
+from gamac.meta.collector import DatasetForMetaCVI
 
 
 class Producer:

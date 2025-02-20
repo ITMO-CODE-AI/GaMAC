@@ -1,12 +1,10 @@
 import numpy as np
-import numba as nb
 from scipy.stats import tmean, tstd
 from sklearn.metrics import pairwise_distances
 
-from gamac.src.meta.storage import traverse_data, read_gen_data, meta_features_exist, write_meta_features
+from gamac.meta.storage import traverse_data, COMPUTED, CONTENTS
 
 NUM_BUCKETS = 100
-OVERRIDE_FEATURES = False
 
 
 # @nb.jit(nopython=True)
@@ -29,12 +27,12 @@ def extract(distances: np.ndarray) -> np.ndarray:
 
 
 def features(data_path):
-    if not OVERRIDE_FEATURES and meta_features_exist(data_path):
+    if COMPUTED.meta_features_exist(data_path):
         return
-    data = read_gen_data(data_path)
+    data = CONTENTS.read_gen_data(data_path)
     d_matrix = pairwise_distances(data)
     meta_features = extract(d_matrix)
-    write_meta_features(data_path, meta_features)
+    COMPUTED.write_meta_features(data_path, meta_features)
 
 if __name__ == "__main__":
     traverse_data(features)

@@ -1,10 +1,11 @@
-import os
+import sys
 import time
 
-from gamac.src.meta.storage import traverse_data, PARTITIONS_TO_ESTIMATE
+from gamac.meta.collector import PARTITIONS_TO_ESTIMATE
+from gamac.meta.storage import MARKUPS, CONTENTS, AccessorResult, traverse_data
 
 ALT_PUSH, ALT_PULL = "PUSH", "PULL"
-ACCESSOR_IDX = 0
+ACCESSOR_ID = sys.argv[1]
 
 
 class ComparisonContext:
@@ -41,9 +42,10 @@ class DataContext:
         self.data_path, self._comp_ctx = data_path, None
         self.images = [self._photo_image(idx) for idx in range(PARTITIONS_TO_ESTIMATE)]
 
-        self._accessor_path = f'data/{data_path}/accessor-{ACCESSOR_IDX}.txt'
-        if os.path.exists(self._accessor_path):
-            raise FileExistsError(f"Data {data_path} has been already estimated by accessor {ACCESSOR_IDX}")
+        MARKUPS.create_markup_dir(self.data_path)
+
+        if MARKUPS.accessor_exists(data_path, ACCESSOR_ID):
+            raise FileExistsError(f"Data {data_path} has been already estimated by accessor {ACCESSOR_ID}")
 
         self._sorted_indices, self._comparisons = [0], []
 
@@ -83,15 +85,15 @@ class DataContext:
             comp_ctx.shift()
 
     def persist(self):
-        with open(self._accessor_path, 'w') as fp:
-            fp.writelines([
-                self._sorted_indices.__str__(),
-                "\n",
-                self._comparisons.__str__()
-            ])
+        result = AccessorResult(
+            sorted_indices=self._sorted_indices,
+            all_comparisons=self._comparisons,
+        )
+        MARKUPS.write_markup(self.data_path, ACCESSOR_ID, result)
 
     def _photo_image(self, idx):
-        return PhotoImage(file=f'data/{self.data_path}/img-{idx}.png')
+        img_path = CONTENTS.image_path(self.data_path, idx)
+        return PhotoImage(file=img_path)
 
 
 class Application:
@@ -113,15 +115,14 @@ class Application:
 
 
 def is_estimated(data_path):
-    content = os.listdir(f'data/{data_path}')
-    return f'accessor-{ACCESSOR_IDX}.txt' in content
+    return MARKUPS.accessor_exists(data_path, ACCESSOR_ID)
 
 
 if __name__ == '__main__':
     from tkinter import *
 
     root = Tk()
-    root.title(f"GAMaC Assessment [Accessor #{ACCESSOR_IDX}]")
+    root.title(f"GAMaC Assessment [Accessor {ACCESSOR_ID}]")
     root.geometry("3200x2400")
 
     data_for_estimation = [
