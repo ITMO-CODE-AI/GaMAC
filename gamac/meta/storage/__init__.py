@@ -21,9 +21,9 @@ def traverse_data(handler):
     for dataset in sorted(datasets):
         contents = os.listdir(f'{DATA_ROOT}/{dataset}')
         for subdir in sorted(contents):
-            if not os.path.isdir(subdir):
-                continue
             data_path = f'{dataset}/{subdir}'
+            if not os.path.isdir(f'{DATA_ROOT}/{data_path}'):
+                continue
             try:
                 result[data_path] = handler(data_path)
                 print(f'HANDLED {data_path}')

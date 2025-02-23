@@ -13,12 +13,39 @@ class DataOrdering:
         self.accessors = accessors
         self.measures = measures
 
+
+class DataScoring:
+    def __init__(
+            self,
+            disagreement: float,
+            measures_score: Dict[str, float]
+    ):
+        self.disagreement = disagreement
+        self.measures_score = measures_score
+
+
+class PreMetaDataItem:
+    def __init__(self, weight: float, values: List[float]):
+        self.weight = weight
+        self.values = values
+
+
+class PreMetaDataset:
+    def __init__(
+            self,
+            measures: List[str],
+            data: Dict[str, PreMetaDataItem]
+    ):
+        self.measures = measures
+        self.data = data
+
+
 class Gathered:
     def __init__(self, common_root):
         self.common_root = common_root
 
         self.orderings_path = f'{common_root}/orderings.json'
-        self.scores_path = f'{common_root}/scores.json'
+        self.scores_path = f'{common_root}/scorings.json'
         self.pre_meta_path = f'{common_root}/pre-meta.json'
         self.classifier_data_path = f'{common_root}/classifier.csv'
         self.regressor_data_path = f'{common_root}/regressor.csv'
@@ -59,30 +86,46 @@ class Gathered:
             )
         return orderings
 
-    def write_scores(self, scores):
+    def write_scorings(self, scorings: Dict[str, DataScoring]):
         with open(self.scores_path, 'w') as fp:
-            json.dump(scores, fp)
+            content = {
+                data_path: {
+                    'disagreement': scoring.disagreement,
+                    'measures_score': scoring.measures_score
+                } for data_path, scoring in scorings.items()
+            }
+            json.dump(content, fp)
 
-    def read_scores(self):
+    def read_scorings(self) -> Dict[str, DataScoring]:
         with open(self.scores_path, 'r') as fp:
-            return json.load(fp)
+            content = json.load(fp)
+            return {
+                data_path: DataScoring(
+                    disagreement=scoring['disagreement'],
+                    measures_score=scoring['measures_score']
+                ) for data_path, scoring in content.items()
+            }
 
-    def write_pre_meta(self, pre_meta_items):
+    def write_pre_meta_dataset(self, pre_meta_dataset: PreMetaDataset):
         with open(self.pre_meta_path, 'w') as fp:
-            json.dump(pre_meta_items, fp)
+            content = {
+                'measures': pre_meta_dataset.measures,
+                'data': {
+                    data_path: {
+                        'weight': item.weight,
+                        'values': item.values
+
+                    }
+                    for data_path, item in pre_meta_dataset.data.items()
+                }
+            }
+            json.dump(content, fp)
 
     def read_pre_values(self) -> Dict[str, int]:
         content = pd.read_csv(self.pre_value_path).values
         return {
             data_path: score for data_path, score in content
         }
-        # pre_val_dict = dict()
-        # with open(PRE_VALUE_PATH) as fp:
-        #     for line in fp.readlines():
-        #         data_path, score = line.split(",")
-        #         pre_val_dict[data_path] = int(score.replace("\n", ""))
-        #
-        # return pre_val_dict
 
     def write_classifier_dataset(self, measures, X, Z):
         x_col = [f'mf_{idx}' for idx in range(X.shape[1])]

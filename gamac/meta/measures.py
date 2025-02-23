@@ -34,9 +34,12 @@ def compute_measures(data_path):
     COMPUTED.write_measures(data_path, evaluations)
 
 
-
-if __name__ == '__main__':
+def traverse_measures():
     pre_values = GATHERED.read_pre_values()
     filtered = [data_path for data_path, pre_val in pre_values.items() if pre_val > 1]
     for data_path in sorted(filtered):
         compute_measures(data_path)
+
+
+if __name__ == '__main__':
+    traverse_measures()

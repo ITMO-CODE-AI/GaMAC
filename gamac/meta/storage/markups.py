@@ -44,3 +44,21 @@ class Markups:
         a_path = self.accessor_path(data_path, accessor_id)
         with open(a_path, 'w') as fp:
             json.dump(content, fp)
+
+
+    def read_markup(self, data_path, accessor_id) -> AccessorResult:
+        a_path = self.accessor_path(data_path, accessor_id)
+        with open(a_path, 'r') as fp:
+            content = json.load(fp)
+        return AccessorResult(
+            sorted_indices=eval(content['sorted_indices']),
+            all_comparisons=[eval(comp) for comp in content['all_comparisons']]
+        )
+
+    def read_markups(self, data_path) -> List[AccessorResult]:
+        markups, markup_dir = list(), self.dir_path(data_path)
+        for markup_file in os.listdir(markup_dir):
+            accessor_id = markup_file.removesuffix(".json")
+            markup = self.read_markup(data_path, accessor_id)
+            markups.append(markup)
+        return markups
