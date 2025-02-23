@@ -2,8 +2,8 @@ import pandas as pd
 from sklearn.preprocessing import MinMaxScaler
 
 from gamac.meta.collector import DatasetForMetaCVI, DatasetInfoCollector
-from gamac.meta.producers import ProducerProvider
-from gamac.meta.reducers import ReducerProvider
+from gamac.meta.impl.producers import ProducerProvider
+from gamac.meta.impl.reducers import ReducerProvider
 
 
 def launch(data_name):

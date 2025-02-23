@@ -4,7 +4,7 @@ import numpy as np
 from sklearn import metrics
 from sklearn.preprocessing import MinMaxScaler
 
-from gamac.meta.reducers import Reducer
+from gamac.meta.impl.reducers import Reducer
 from gamac.meta.render import COLORS, scatter_image
 from gamac.meta.storage import CONTENTS
 
