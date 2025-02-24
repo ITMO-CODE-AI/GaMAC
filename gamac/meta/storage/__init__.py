@@ -2,7 +2,7 @@ import os
 
 from gamac.meta.storage.computed import Computed
 from gamac.meta.storage.contents import Contents
-from gamac.meta.storage.models import Models
+from gamac.meta.storage.binaries import Binaries
 from gamac.meta.storage.gathered import Gathered
 from gamac.meta.storage.markups import Markups, AccessorResult
 
@@ -13,7 +13,7 @@ MARKUPS = Markups(data_root=DATA_ROOT)
 CONTENTS = Contents(data_root=DATA_ROOT)
 COMPUTED = Computed(data_root=DATA_ROOT)
 GATHERED = Gathered(common_root=COMMON_ROOT)
-MODELS = Models(common_root=COMMON_ROOT)
+BINARIES = Binaries(common_root=COMMON_ROOT)
 
 
 def traverse_data(handler):

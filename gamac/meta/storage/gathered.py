@@ -44,13 +44,29 @@ class Gathered:
     def __init__(self, common_root):
         self.common_root = common_root
 
-        self.orderings_path = f'{common_root}/orderings.json'
-        self.scores_path = f'{common_root}/scorings.json'
-        self.pre_meta_path = f'{common_root}/pre-meta.json'
-        self.classifier_data_path = f'{common_root}/classifier.csv'
-        self.regressor_data_path = f'{common_root}/regressor.csv'
+    @property
+    def pre_value_path(self):
+        return f'{self.common_root}/pre-value.csv'
 
-        self.pre_value_path = f'{common_root}/pre-value.csv'
+    @property
+    def orderings_path(self):
+        return f'{self.common_root}/orderings.json'
+
+    @property
+    def scorings_path(self):
+        return f'{self.common_root}/scorings.json'
+
+    @property
+    def pre_meta_path(self):
+        return f'{self.common_root}/pre-meta.json'
+
+    @property
+    def classifier_data_path(self):
+        return f'{self.common_root}/classifier.csv'
+
+    @property
+    def regressor_data_path(self):
+        return f'{self.common_root}/regressor.csv'
 
     def write_orderings(self, orderings: Dict[str, DataOrdering]):
         content = dict()
@@ -121,25 +137,39 @@ class Gathered:
             }
             json.dump(content, fp)
 
+    def read_pre_meta_dataset(self) -> PreMetaDataset:
+        with open(self.pre_meta_path, 'r') as fp:
+            content = json.load(fp)
+            return PreMetaDataset(
+                measures=content['measures'],
+                data={
+                    data_path: PreMetaDataItem(
+                        weight=item['weight'],
+                        values=item['values']
+                    )
+                    for data_path, item in content['data'].items()
+                }
+            )
+
     def read_pre_values(self) -> Dict[str, int]:
         content = pd.read_csv(self.pre_value_path).values
         return {
             data_path: score for data_path, score in content
         }
 
-    def write_classifier_dataset(self, measures, X, Z):
-        x_col = [f'mf_{idx}' for idx in range(X.shape[1])]
+    def write_classifier_dataset(self, measures, x, z):
+        x_col = [f'mf_{idx}' for idx in range(x.shape[1])]
 
-        class_df = pd.DataFrame(data=X, columns=x_col)
-        class_df['measure'] = [measures[z] for z in Z]
+        class_df = pd.DataFrame(data=x, columns=x_col)
+        class_df['measure'] = [measures[m_idx] for m_idx in z]
 
         class_df.to_csv(self.classifier_data_path, index=False)
 
-    def write_regressor_dataset(self, measures, X, Y):
-        x_col = [f'mf_{idx}' for idx in range(X.shape[1])]
-        reg_df = pd.DataFrame(data=X, columns=x_col)
+    def write_regressor_dataset(self, measures, x, y):
+        x_col = [f'mf_{idx}' for idx in range(x.shape[1])]
+        reg_df = pd.DataFrame(data=x, columns=x_col)
 
         for m_idx, m_name in enumerate(measures):
-            reg_df[m_name] = Y[:, m_idx]
+            reg_df[m_name] = y[:, m_idx]
 
         reg_df.to_csv(self.regressor_data_path, index=False)

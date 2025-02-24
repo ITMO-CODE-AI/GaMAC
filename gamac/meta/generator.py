@@ -22,7 +22,7 @@ def launch(data_name):
         collector = DatasetInfoCollector(dataset)
         for producer in ProducerProvider.get_all():
             print(f"--- {producer.name} ---")
-            partition = producer.fit_predict(dataset)
+            partition = producer.algo.fit_predict(dataset.data)
             collector.save(partition, producer)
         collector.persist()
 

@@ -5,16 +5,7 @@ from sklearn.decomposition import PCA
 from sklearn.manifold import MDS, TSNE, LocallyLinearEmbedding, SpectralEmbedding
 from umap import UMAP
 
-
-class Reducer:
-    def __init__(self, name, algo):
-        self.name, self.algo = name, algo
-
-    def fit_transform(self, x: np.ndarray) -> np.ndarray:
-        result = self.algo.fit_transform(x)
-        if result.size != np.isfinite(result).sum():
-            raise ValueError("Got incorrect transformed values")
-        return result
+from gamac.meta.impl.utils import Reducer
 
 
 class ReducerProvider:
