@@ -3,7 +3,6 @@ from umap import UMAP
 from xgboost import XGBClassifier, XGBRegressor
 
 from gamac.meta.impl.utils import Reducer, Producer
-from gamac.meta.premeta import NUM_MEASURES
 
 
 class ModelProvider:
@@ -17,16 +16,17 @@ class ModelProvider:
     @staticmethod
     def get_best_classifier_extractor():
         return UMAP(
-            n_components=12,
-            n_neighbors=NUM_MEASURES,
+            n_components=10,
+            n_neighbors=3,
             min_dist=0.07,
             low_memory=False,
             random_state=42,
         )
 
+
     @staticmethod
     def get_best_xgb_classifier():
-        # f1 0.9126003519147281
+        # f1 0.911420147502174
         return XGBClassifier(
             n_estimators=80,
             learning_rate=0.2,
@@ -39,9 +39,9 @@ class ModelProvider:
 
     @staticmethod
     def get_best_knn_classifier():
-        # f1 0.9062663323163725
+        # f1 0.9077918234847665
         return KNeighborsClassifier(
-            n_neighbors=4,
+            n_neighbors=3,
             weights=ModelProvider._knn_weighted_dist
         )
 
@@ -52,7 +52,7 @@ class ModelProvider:
     @staticmethod
     def _knn_classifiers():
         classifiers = list()
-        for n_neighbours in [3, 4, 5, 6, 7, 8]:
+        for n_neighbours in [3, 4, 5, 7, 9, 10, 12]:
             classifiers.append(
                 Producer(
                     KNeighborsClassifier(
@@ -69,7 +69,7 @@ class ModelProvider:
         classifiers = list()
         for n_estimators in [50, 80, 120]:
             for lr in [0.05, 0.2]:
-                for max_depth in [3, 5, 7]:
+                for max_depth in [3, 5, 7, 9]:
                     classifiers.append(
                         Producer(
                             XGBClassifier(
@@ -96,16 +96,16 @@ class ModelProvider:
     @staticmethod
     def get_best_regressor_extractor():
         return UMAP(
-            n_components=15,
-            n_neighbors=NUM_MEASURES,
-            min_dist=0.07,
+            n_components=12,
+            n_neighbors=7,
+            min_dist=0.03,
             low_memory=False,
             random_state=42,
         )
 
     @staticmethod
     def get_best_xgb_regressor():
-        # smape -0.09655866014085755
+        # smape -0.0970943151852698
         return XGBRegressor(
             n_estimators=50,
             learning_rate=0.05,
@@ -119,16 +119,16 @@ class ModelProvider:
 
     @staticmethod
     def get_best_knn_regressor():
-        # smape -0.09937646604388396
+        # smape -0.10144033819068903
         return KNeighborsRegressor(
-            n_neighbors=8,
+            n_neighbors=12,
             weights=ModelProvider._knn_weighted_dist
         )
 
     @staticmethod
     def _knn_regressors():
         regressors = list()
-        for n_neighbours in [3, 4, 5, 6, 7, 8]:
+        for n_neighbours in [3, 4, 5, 7, 9, 10, 12]:
             regressors.append(
                 Producer(
                     KNeighborsRegressor(
@@ -145,7 +145,7 @@ class ModelProvider:
         regressors = list()
         for n_estimators in [50, 80, 120]:
             for lr in [0.05, 0.2]:
-                for max_depth in [3, 5, 7]:
+                for max_depth in [3, 5, 7, 9]:
                     regressors.append(
                         Producer(
                             XGBRegressor(
@@ -172,9 +172,9 @@ class ModelProvider:
     @staticmethod
     def _umap_extractor():
         reducers = list()
-        for n_components in [5, 7, 10, 12, 15]:
-            for min_dist in [0.03, 0.07, 0.12]:
-                for n_neighbours in [NUM_MEASURES, 2 * NUM_MEASURES, 3 * NUM_MEASURES]:
+        for n_components in [7, 10, 12, 15, 17]:
+            for min_dist in [0.03, 0.05, 0.07, 0.1]:
+                for n_neighbours in [3, 4, 5, 7]:
                     reducers.append(
                         Reducer(
                             f'umap-{n_components}-{min_dist}-{n_neighbours}',

@@ -1,58 +1,9 @@
-import random
-from typing import Tuple
-
 import numpy as np
-from scipy.special import softmax
-from sklearn.metrics import pairwise_distances, make_scorer
+from sklearn.metrics import make_scorer
 from sklearn.model_selection import cross_validate
 
 from gamac.meta.build import get_smooth_labels, shuffle_data, collect_raw_meta_dataset
 from gamac.meta.impl.models import ModelProvider
-from gamac.meta.storage import traverse_data, GATHERED, COMPUTED
-
-# SMOOTH_NEIGHBOURS = 12
-#
-#
-# def get_smooth_labels(xs, ys, ws):
-#     dists, labels = pairwise_distances(xs), list()
-#     m_scores = np.array([softmax(-y) for y in ys])
-#
-#     for idx, own_m in enumerate(m_scores):
-#         d_row = dists[idx]
-#         nearest = np.argsort(d_row)[:SMOOTH_NEIGHBOURS]
-#
-#         neighbours_d = d_row[nearest]
-#         d_scores = softmax(-neighbours_d)
-#
-#         neighbours_w = ws[nearest]
-#         w_scores = softmax(neighbours_w)
-#
-#         m_matrix = m_scores[nearest]
-#         wd_scores = w_scores * d_scores
-#
-#         label_scores = wd_scores @ m_matrix
-#         labels.append(np.argmax(label_scores))
-#
-#     return labels
-#
-# def shuffle_data(l1, l2):
-#     spliced = list(zip(l1, l2))
-#     random.shuffle(spliced)
-#     u1, u2 = zip(*spliced)
-#     v1, v2 = list(u1), list(u2)
-#     return np.array(v1), np.array(v2)
-#
-# def collect_data() -> Tuple[np.ndarray, np.ndarray, np.ndarray]:
-#     pre_meta_dataset = GATHERED.read_pre_meta_dataset()
-#     meta_features = traverse_data(COMPUTED.read_meta_features)
-#
-#     xs, ys, ws = list(), list(), list()
-#     for data_path, data_item in pre_meta_dataset.data.items():
-#         mfs = meta_features[data_path]
-#         vals = np.array(data_item.values)
-#         xs.append(mfs), ys.append(vals)
-#         ws.append(data_item.weight)
-#     return np.array(xs), np.array(ys), np.array(ws)
 
 
 def tune_classifier(x_orig, y_orig, weights):
