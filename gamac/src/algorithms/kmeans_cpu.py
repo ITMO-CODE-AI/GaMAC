@@ -1,8 +1,7 @@
 import numpy as np
 import sys
 
-sys.path.append('../')
-from utils.utils import cpu_distance
+from gamac.src.utils.utils import cpu_distance
 
 
 class KMeans:
