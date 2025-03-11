@@ -1,9 +1,7 @@
-# GaMAC - sandbox
+# GaMAC - GPU-accelerated Multimodal Auto Clustering
 
-```sh
-docker build -t sandbox .
-```
+**GaMAC** is a Python module for automated machine learning on clustering tasks.
 
-```sh
-docker run --rm -it --gpus=all sandbox
-```
+The project was started in 2024 by ITMO AI Laboratory of Information Technologies and Programming Faculty, and since then we are currently working on this project. 
+
+Currently in progress.
