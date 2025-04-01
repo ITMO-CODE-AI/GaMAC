@@ -1,7 +1,10 @@
 import math
-from cupyx.scipy.spatial.distance import euclidean
+# from cupyx.scipy.spatial.distance import euclidean
+from cuvs.distance import pairwise_distance
 import numpy as np
+import pylibraft.config
 
+pylibraft.config.set_output_as("cupy")
 
 def normalize(X, axis=-1, order=2):
     """Normalize the dataset X"""
@@ -20,4 +23,4 @@ def cpu_distance(x1, x2):
 
 def gpu_distance(x1, x2):
     """Calculates the l2 distance between two vectors on GPU"""
-    return euclidean(x1, x2)
+    return pairwise_distance(x1, x2, metric="euclidean")

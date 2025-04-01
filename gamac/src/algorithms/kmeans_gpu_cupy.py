@@ -2,6 +2,10 @@ import cupy as cp
 import numpy as np
 import sys
 
+import pylibraft.config
+
+pylibraft.config.set_output_as("cupy")
+
 sys.path.append('../')
 from utils.utils import gpu_distance
 

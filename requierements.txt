@@ -53,7 +53,7 @@ pure_eval==0.2.3
 pyarrow==17.0.0
 pycocotools==2.0.8
 Pygments==2.18.0
-pylibraft-cu12==25.2.*
+# pylibraft-cu12==25.2.*
 pyparsing==3.1.2
 python-dateutil==2.9.0.post0
 pytz==2025.1
