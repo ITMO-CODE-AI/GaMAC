@@ -1,5 +1,6 @@
 import math
 # from cupyx.scipy.spatial.distance import euclidean
+import cupy as cp
 from cuvs.distance import pairwise_distance
 import numpy as np
 import pylibraft.config
@@ -23,4 +24,5 @@ def cpu_distance(x1, x2):
 
 def gpu_distance(x1, x2):
     """Calculates the l2 distance between two vectors on GPU"""
+    x1, x2 = cp.asarray(x1), cp.asarray(x2)
     return pairwise_distance(x1, x2, metric="euclidean")

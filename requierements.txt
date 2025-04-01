@@ -11,6 +11,7 @@ comm==0.2.2
 contourpy==1.2.1
 cycler==0.12.1
 cupy-cuda12x==13.3.0
+cuvs-cu12
 datasets==2.21.0
 dbscan==0.0.12
 debugpy==1.8.5
