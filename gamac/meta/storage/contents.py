@@ -1,3 +1,7 @@
+"""
+Interface to handle dataset partitions storage
+"""
+
 import json
 import os
 from typing import List

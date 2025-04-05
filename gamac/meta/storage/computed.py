@@ -1,3 +1,7 @@
+"""
+Interface to handle apriori dataset characteristics storage
+"""
+
 import json
 import os
 from typing import Dict, List

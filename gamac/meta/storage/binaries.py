@@ -1,3 +1,7 @@
+"""
+Interface to handle fitted models storage
+"""
+
 import pickle
 
 

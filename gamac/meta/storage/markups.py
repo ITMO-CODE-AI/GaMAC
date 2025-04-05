@@ -1,3 +1,7 @@
+"""
+Interface to handle accessors markups storage
+"""
+
 import json
 import os
 from typing import Tuple, List

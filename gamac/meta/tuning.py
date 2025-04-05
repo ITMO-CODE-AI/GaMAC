@@ -1,3 +1,7 @@
+"""
+Optimise meta-classifier F1-score by tuning hyperparameters
+"""
+
 import numpy as np
 from sklearn.metrics import make_scorer
 from sklearn.model_selection import cross_validate

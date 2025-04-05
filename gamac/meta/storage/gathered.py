@@ -1,3 +1,7 @@
+"""
+Interface to handle aposteriori datasets characteristics storage
+"""
+
 import json
 from typing import List, Dict
 

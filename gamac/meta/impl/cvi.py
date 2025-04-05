@@ -1,3 +1,7 @@
+"""
+CPU internal measures implementations
+"""
+
 from typing import List, Callable
 
 import numba

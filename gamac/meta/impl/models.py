@@ -1,3 +1,7 @@
+"""
+Search space for meta-classifier / meta-regressor hyperparameters
+"""
+
 from sklearn.neighbors import KNeighborsClassifier, KNeighborsRegressor
 from umap import UMAP
 from xgboost import XGBClassifier, XGBRegressor

@@ -1,3 +1,7 @@
+"""
+Provides utils to read and write meta-classifier data
+"""
+
 import os
 
 from gamac.meta.storage.computed import Computed

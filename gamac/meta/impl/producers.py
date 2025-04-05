@@ -1,3 +1,7 @@
+"""
+A set of clustering algorithms with different hyperparameters
+"""
+
 from typing import List
 
 from sklearn.cluster import (

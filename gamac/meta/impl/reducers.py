@@ -1,6 +1,9 @@
+"""
+A set of feature extractors with different hyperparameters
+"""
+
 from typing import List
 
-import numpy as np
 from sklearn.decomposition import PCA
 from sklearn.manifold import MDS, TSNE, LocallyLinearEmbedding, SpectralEmbedding
 from umap import UMAP

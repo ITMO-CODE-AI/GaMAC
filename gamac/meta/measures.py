@@ -1,3 +1,7 @@
+"""
+Compute internal measures values on available datasets
+"""
+
 from collections import defaultdict
 
 from gamac.meta.impl.cvi import *

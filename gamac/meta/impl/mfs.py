@@ -1,3 +1,7 @@
+"""
+CPU meta features computation
+"""
+
 import numba as nb
 import numpy as np
 

@@ -1,3 +1,7 @@
+"""
+Transform markups and measure values into strong orderings for markuped datasets
+"""
+
 from typing import List
 
 import numpy as np

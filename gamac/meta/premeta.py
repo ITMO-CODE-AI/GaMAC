@@ -1,3 +1,7 @@
+"""
+Select the top of internal measures w.r.t higher correlation with accessor markups
+"""
+
 from typing import Dict, List
 
 import numpy as np

@@ -1,3 +1,7 @@
+"""
+Estimate scalar measures scores w.r.t accessors markup
+"""
+
 from typing import Dict, List
 
 import numpy as np

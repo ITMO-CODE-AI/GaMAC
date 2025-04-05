@@ -1,3 +1,7 @@
+"""
+Collect and filter partitions for visualisation
+"""
+
 import random
 
 import numpy as np

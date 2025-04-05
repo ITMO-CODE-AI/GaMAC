@@ -1,3 +1,7 @@
+"""
+Compute meta-features on available datasets
+"""
+
 from gamac.meta.impl.mfs import compute_mfs
 from gamac.meta.storage import COMPUTED, CONTENTS, traverse_data
 

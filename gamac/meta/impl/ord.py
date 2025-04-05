@@ -1,3 +1,7 @@
+"""
+Functions to compute distance between two orderings
+"""
+
 from typing import List
 
 import numpy as np

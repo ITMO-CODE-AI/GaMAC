@@ -1,3 +1,7 @@
+"""
+Named containers for clustering algorithms and feature extractors
+"""
+
 import numpy as np
 
 

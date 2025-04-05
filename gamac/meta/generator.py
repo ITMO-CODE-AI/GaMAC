@@ -1,3 +1,7 @@
+"""
+Generate 2D projections from original datasets and produce partitions for them
+"""
+
 import pandas as pd
 from sklearn.preprocessing import MinMaxScaler
 

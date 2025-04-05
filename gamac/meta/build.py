@@ -1,3 +1,7 @@
+"""
+Persists pickle binaries for fitted meta-classifier and meta-regressor
+"""
+
 import random
 from typing import Tuple, List
 

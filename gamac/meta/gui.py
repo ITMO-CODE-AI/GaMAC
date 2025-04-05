@@ -1,3 +1,7 @@
+"""
+Launch GUI tool for accessor markup
+"""
+
 import sys
 import time
 
