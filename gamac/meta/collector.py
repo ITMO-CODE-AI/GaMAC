@@ -1,13 +1,19 @@
+"""
+Collect and filter partitions for visualisation
+"""
+
 import random
 
 import numpy as np
 from sklearn import metrics
 from sklearn.preprocessing import MinMaxScaler
 
-from gamac.src.meta.reducers import Reducer
-from gamac.src.meta.render import COLORS, scatter_image
-from gamac.src.meta.storage import create_data_dir, write_gen_data, write_partitions, write_producers, \
-    PARTITIONS_TO_ESTIMATE, DATA_ROOT
+from gamac.meta.impl.reducers import Reducer
+from gamac.meta.render import COLORS, scatter_image
+from gamac.meta.storage import CONTENTS
+
+
+PARTITIONS_TO_ESTIMATE = 15
 
 
 class DatasetForMetaCVI:
@@ -17,12 +23,11 @@ class DatasetForMetaCVI:
         self.data = MinMaxScaler().fit_transform(self.data)
         self.data_path = f'{name}/{reducer.name}'
 
-        create_data_dir(self.data_path)
-        write_gen_data(self.data_path, self.data)
+        CONTENTS.create_data_dir(self.data_path)
+        CONTENTS.write_gen_data(self.data_path, self.data)
 
 
 class DatasetInfoCollector:
-
     def __init__(self, dataset: DatasetForMetaCVI):
         self.dataset = dataset
         self.registered = list()
@@ -51,8 +56,8 @@ class DatasetInfoCollector:
             )
             partitions.append(partition)
             self._scatter(partition, idx)
-        write_producers(self.dataset.data_path, producers)
-        write_partitions(self.dataset.data_path, partitions)
+        CONTENTS.write_producers(self.dataset.data_path, producers)
+        CONTENTS.write_partitions(self.dataset.data_path, partitions)
 
     def _choose_most_different(self):
         n = len(self.registered)
@@ -77,5 +82,5 @@ class DatasetInfoCollector:
     def _scatter(self, labels: np.ndarray, p_idx: int):
         x, y = self.dataset.data[:, 0], self.dataset.data[:, 1]
         colors = [COLORS[label] for label in labels]
-        img_path = f'{DATA_ROOT}/{self.dataset.data_path}/img-{p_idx}.png'
+        img_path = CONTENTS.image_path(self.dataset.data_path, p_idx)
         scatter_image(x, y, colors, img_path)
