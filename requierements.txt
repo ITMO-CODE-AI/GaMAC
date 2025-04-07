@@ -10,6 +10,8 @@ colorama==0.4.6
 comm==0.2.2
 contourpy==1.2.1
 cycler==0.12.1
+cupy-cuda12x==13.3.0
+cuvs-cu12
 datasets==2.21.0
 dbscan==0.0.12
 debugpy==1.8.5
@@ -40,7 +42,6 @@ multidict==6.0.5
 multiprocess==0.70.16
 nest-asyncio==1.6.0
 networkx==3.3
-numba==0.6.0
 numpy==1.26.4
 packaging==24.1
 pandas==2.2.2
@@ -53,12 +54,14 @@ pure_eval==0.2.3
 pyarrow==17.0.0
 pycocotools==2.0.8
 Pygments==2.18.0
+# pylibraft-cu12==25.2.*
 pyparsing==3.1.2
 python-dateutil==2.9.0.post0
-pytz==2024.1
-pywin32==306
+pytz==2025.1
+# pywin32==306
 PyYAML==6.0.2
 pyzmq==26.2.0
+raft-dask-cu12==25.2.*
 regex==2024.7.24
 requests==2.32.3
 safetensors==0.4.4
@@ -67,13 +70,13 @@ scipy==1.14.1
 setuptools==73.0.1
 six==1.16.0
 stack-data==0.6.3
-sympy==1.13.2
+sympy==1.13.1
 tbb==2021.13.1
 threadpoolctl==3.5.0
 tokenizers==0.19.1
-torch==2.4.0+cu124
-torchaudio==2.4.0+cu124
-torchvision==0.19.0
+torch==2.6.0+cu126
+torchaudio==2.6.0+cu126
+torchvision==0.21.0+cu126
 tornado==6.4.1
 tqdm==4.66.5
 traitlets==5.14.3
