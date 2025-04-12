@@ -22,7 +22,15 @@ def cpu_distance(x1, x2):
         distance += pow((x1[i] - x2[i]), 2)
     return math.sqrt(distance)
 
-def gpu_distance(x1, x2):
+def gpu_cupy_distance(x1, x2):
     """Calculates the l2 distance between two vectors on GPU"""
     x1, x2 = cp.asarray(x1), cp.asarray(x2)
     return pairwise_distance(x1, x2, metric="euclidean")
+
+def gpu_distance(x1, x2):
+    """Calculates the l2 distance between two vectors on CPU"""
+    distance = 0
+    # Squared distance between each coordinate
+    for i in range(len(x1)):
+        distance += pow((x1[i] - x2[i]), 2)
+    return math.sqrt(distance)
