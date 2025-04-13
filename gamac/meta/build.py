@@ -55,7 +55,7 @@ def collect_raw_meta_dataset() -> Tuple[List[str], np.ndarray, np.ndarray, np.nd
         vals = np.array(data_item.values)
         xs.append(mfs), ys.append(vals)
         ws.append(data_item.weight)
-    return pre_meta_dataset.measures, np.array(xs), np.array(ys), np.array(ws)
+    return pre_meta_dataset._measures_arg, np.array(xs), np.array(ys), np.array(ws)
 
 
 def build_classifier(ms, xs, ys, ws):
