@@ -1,13 +1,8 @@
-# FROM nvidia/cuda:12.8.1-devel-ubuntu24.04
-FROM nvcr.io/nvidia/rapidsai/base:25.02-cuda12.8-py3.12
-
-USER root
+FROM nvidia/cuda:12.8.1-devel-ubuntu24.04
 
 RUN apt-get update && \
     apt-get install -y python3-pip python3-dev python-is-python3 python3.12-venv && \
     rm -rf /var/lib/apt/lists/*
-
-USER 1001
 
 COPY requierements.txt requierements.txt
 

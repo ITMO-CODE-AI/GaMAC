@@ -60,7 +60,7 @@ class KMeansGPU:
         """Calculate new centroids as the means of the samples in each cluster using GPU"""
         n_features = cp.shape(X)[1]
         centroids = cp.zeros((self.k, n_features))
-        get_new_centroids = cp.RawKernel(r'''
+        get_new_centroids = cp.RawKernel(code=r'''
         #include <thrust/device_vector.h>
         #include <thrust/reduce.h>
         extern "C" __global__
@@ -71,7 +71,7 @@ class KMeansGPU:
             float sum = thrust::reduce(iVec.begin(), iVec.end(), 0, thrust::plus<float>());
             double mean = sum/(double)num;
             centroids[tid] = mean;
-            }''', 'new_centroids')
+            }''', name='new_centroids', backend='nvcc')
         get_new_centroids((n_features,), (n_features,), (clusters, X, centroids))
         return centroids
 
