@@ -16,14 +16,13 @@ pylibraft.config.set_output_as("cupy")
 
 
 def gpu_test():
-    X, _ = make_blobs(n_samples=50, centers=3, cluster_std=0.6)
+    X, _ = make_blobs(n_samples=150, centers=3, cluster_std=0.6)
 
-    # bisecting_kmeans_testing(X)
-    # agglomerative_testing(X)
-    # birch_testing(X)
-    # affinity_testing(X)
-    # dbscan_testing(X)
-
+    bisecting_kmeans_testing(X)
+    agglomerative_testing(X)
+    birch_testing(X)
+    affinity_testing(X)
+    dbscan_testing(X)
     hdbscan_testing(X)
 
 
