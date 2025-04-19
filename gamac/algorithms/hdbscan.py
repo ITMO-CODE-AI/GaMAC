@@ -2,9 +2,10 @@ import cupy as cp
 import numpy as np
 from collections import defaultdict
 
+
 class HDBSCAN:
     def __init__(self, min_cluster_size=5, min_samples=None, metric='euclidean',
-                 alpha=1.0, cluster_selection_epsilon=0.0, 
+                 alpha=1, cluster_selection_epsilon=0.1,
                  cluster_selection_method='eom', allow_single_cluster=False):
         self.min_cluster_size = min_cluster_size
         self.min_samples = min_samples if min_samples is not None else min_cluster_size
@@ -59,19 +60,19 @@ class HDBSCAN:
         """KNN implementation using pure CuPy"""
         n_samples = X_gpu.shape[0]
         n_neighbors = min(self.min_samples, n_samples - 1)
-        
+
         # Compute pairwise distances
         dist_matrix = self._pairwise_distance(X_gpu)
-        
+
         # Find k+1 neighbors (including self)
         indices = cp.argpartition(dist_matrix, kth=n_neighbors+1, axis=1)
         indices = indices[:, :n_neighbors+1]
-        
+
         # Get distances and sort
         rows = cp.arange(n_samples)[:, None]
         knn_distances = cp.take_along_axis(dist_matrix, indices, axis=1)
         sorted_indices = cp.argsort(knn_distances, axis=1)
-        
+
         return knn_distances[rows, sorted_indices][:, 1:]
 
     def _mutual_reachability_gpu(self, X_gpu, core_distances):
@@ -84,57 +85,52 @@ class HDBSCAN:
         """Kruskal's algorithm implementation for MST"""
         n = graph.shape[0]
         edges = []
-        
+
         # Extract upper triangle of distance matrix
         for i in range(n):
             for j in range(i+1, n):
                 if graph[i, j] > 0:
                     edges.append((graph[i, j], i, j))
-        
+
         # Sort edges by weight
         edges.sort(key=lambda x: x[0])
-        
+
         # Union-Find data structure
         parent = list(range(n))
         mst = []
-        
+
         def find(u):
             while parent[u] != u:
                 parent[u] = parent[parent[u]]
                 u = parent[u]
             return u
-        
+
         for weight, u, v in edges:
             root_u = find(u)
             root_v = find(v)
             if root_u != root_v:
                 mst.append((u, v, weight))
                 parent[root_u] = root_v
-                
+
             if len(mst) == n - 1:
                 break
-                
-        return self._mst_to_adjacency_matrix(mst, n)
 
-    def _mst_to_adjacency_matrix(self, mst, n):
-        """Convert MST edges list to adjacency matrix"""
-        adj_matrix = cp.full((n, n), cp.inf)
-        for u, v, weight in mst:
-            adj_matrix[u, v] = weight
-            adj_matrix[v, u] = weight
-        return adj_matrix
+        return self._mst_to_adjacency_matrix(mst, n)
 
     def _build_single_linkage_tree(self):
         """Build hierarchical tree from MST"""
         n = self.mst_.shape[0]
         edges = []
-        
+
+        # Преобразуем MST матрицу в CPU numpy array
+        mst_cpu = self.mst_.get()
+
         for i in range(n):
             for j in range(i+1, n):
-                weight = self.mst_[i, j]
-                if weight < cp.inf:
+                weight = mst_cpu[i, j]
+                if weight < np.inf:
                     edges.append((i, j, weight))
-        
+
         edges = sorted(edges, key=lambda x: x[2])
         return self._union_find(edges, n)
 
@@ -146,6 +142,11 @@ class HDBSCAN:
         linkage = []
         
         for u, v, weight in edges:
+            # Явное преобразование в Python-типы
+            u = int(u)
+            v = int(v)
+            weight = float(weight)
+            
             root_u = self._find(parent, u)
             root_v = self._find(parent, v)
             
@@ -156,7 +157,19 @@ class HDBSCAN:
                 size[next_label] = new_size
                 next_label += 1
                 
-        return np.array(linkage)
+        return np.array(linkage, dtype=np.float32)
+
+    def _mst_to_adjacency_matrix(self, mst, n):
+        """Convert MST edges list to adjacency matrix"""
+        adj_matrix = cp.full((n, n), cp.inf)
+        for u, v, weight in mst:
+            # Явное преобразование типов
+            u = int(u)
+            v = int(v)
+            weight = float(weight)
+            adj_matrix[u, v] = weight
+            adj_matrix[v, u] = weight
+        return adj_matrix
 
     def _find(self, parent, x):
         while parent[x] != x:
