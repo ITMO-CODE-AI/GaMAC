@@ -1,80 +1,80 @@
-import numpy as np
-import sys
+import cupy as cp
+import pylibraft.config
 
-sys.path.append('../')
-from utils.utils import cpu_distance
+pylibraft.config.set_output_as("cupy")
 
 class DBSCAN:
-    def __init__(self, eps=1, min_samples=5):
+    def __init__(self, eps=1.0, min_samples=5):
         self.eps = eps
         self.min_samples = min_samples
+        self.X = None
+        self.labels_ = None
+        self.clusters = []
+        self.visited_samples = None
+        self.neighbors = None
+
+    def _compute_distance_matrix(self, X):
+        diff = X[:, cp.newaxis, :] - X[cp.newaxis, :, :]
+        return cp.linalg.norm(diff, axis=2)
 
     def _get_neighbors(self, sample_i):
-        neighbors = []
-        idxs = np.arange(len(self.X))
-        for i, _sample in enumerate(self.X[idxs != sample_i]):
-            distance = cpu_distance(self.X[sample_i], _sample)
-            if distance < self.eps:
-                neighbors.append(i)
-        return np.array(neighbors)
+        # Возвращаем индексы точек, расстояние до которых <= eps
+        distances = self.distance_matrix[sample_i]
+        neighbors = cp.where(distances <= self.eps)[0]
+        return neighbors
 
     def _expand_cluster(self, sample_i, neighbors):
-        """Recursive method which expands the cluster until we have reached the border
-        of the dense area (density determined by eps and min_samples)"""
         cluster = [sample_i]
-        # Iterate through neighbors
-        for neighbor_i in neighbors:
-            if neighbor_i not in self.visited_samples:
-                self.visited_samples.append(neighbor_i)
-                # Fetch the sample's distant neighbors (neighbors of neighbor)
-                self.neighbors[neighbor_i] = self._get_neighbors(neighbor_i)
-                # Make sure the neighbor's neighbors are more than min_samples
-                # (If this is true the neighbor is a core point)
-                if len(self.neighbors[neighbor_i]) >= self.min_samples:
-                    # Expand the cluster from the neighbor
-                    expanded_cluster = self._expand_cluster(
-                        neighbor_i, self.neighbors[neighbor_i]
-                    )
-                    # Add expanded cluster to this cluster
-                    cluster = cluster + expanded_cluster
-                else:
-                    # If the neighbor is not a core point we only add the neighbor point
-                    cluster.append(neighbor_i)
+        i = 0
+        while i < len(neighbors):
+            neighbor_i = neighbors[i]
+            if not self.visited_samples[neighbor_i]:
+                self.visited_samples[neighbor_i] = True
+                neighbor_neighbors = self._get_neighbors(neighbor_i)
+                if len(neighbor_neighbors) >= self.min_samples:
+                    # Добавляем новых соседей в список для проверки
+                    neighbors = cp.unique(cp.concatenate((neighbors, neighbor_neighbors)))
+            # Добавляем точку в кластер, если она еще не в нем
+            if neighbor_i not in cluster:
+                cluster.append(neighbor_i)
+            i += 1
         return cluster
 
+    def fit(self, X):
+        self.X = cp.asarray(X, dtype=cp.float32)
+        n_samples = self.X.shape[0]
+        self.distance_matrix = self._compute_distance_matrix(self.X)
+        self.visited_samples = cp.zeros(n_samples, dtype=bool)
+        self.clusters = []
+
+        for sample_i in range(n_samples):
+            if self.visited_samples[sample_i]:
+                continue
+            neighbors = self._get_neighbors(sample_i)
+            if len(neighbors) < self.min_samples:
+                self.visited_samples[sample_i] = True
+                continue
+            self.visited_samples[sample_i] = True
+            cluster = self._expand_cluster(sample_i, neighbors)
+            self.clusters.append(cluster)
+
+        self.labels_ = self._get_cluster_labels()
+
     def _get_cluster_labels(self):
-        """Return the samples labels as the index of the cluster in which they are
-        contained"""
-        # Set default value to number of clusters
-        # Will make sure all outliers have same cluster label
-        labels = np.full(shape=self.X.shape[0], fill_value=len(self.clusters))
-        for cluster_i, cluster in enumerate(self.clusters):
+        n_samples = self.X.shape[0]
+        labels = cp.full(n_samples, fill_value=-1, dtype=cp.int32)  # -1 для шумов
+        for cluster_id, cluster in enumerate(self.clusters):
             for sample_i in cluster:
-                labels[sample_i] = cluster_i
+                labels[sample_i] = cluster_id
         return labels
 
-    # DBSCAN
-    def predict(self, X):
-        self.X = X
-        self.clusters = []
-        self.visited_samples = []
-        self.neighbors = {}
-        n_samples = np.shape(self.X)[0]
-        # Iterate through samples and expand clusters from them
-        # if they have more neighbors than self.min_samples
-        for sample_i in range(n_samples):
-            if sample_i in self.visited_samples:
-                continue
-            self.neighbors[sample_i] = self._get_neighbors(sample_i)
-            if len(self.neighbors[sample_i]) >= self.min_samples:
-                # If core point => mark as visited
-                self.visited_samples.append(sample_i)
-                # Sample has more neighbors than self.min_samples => expand
-                # cluster from sample
-                new_cluster = self._expand_cluster(sample_i, self.neighbors[sample_i])
-                # Add cluster to list of clusters
-                self.clusters.append(new_cluster)
-
-        # Get the resulting cluster labels
-        cluster_labels = self._get_cluster_labels()
-        return cluster_labels
+    def predict(self, X_new):
+        if self.labels_ is None:
+            raise ValueError("Model not fitted yet. Call fit() before predict().")
+        X_new = cp.asarray(X_new, dtype=cp.float32)
+        # Для каждого нового образца находим ближайшую точку из обучающего набора
+        diff = X_new[:, cp.newaxis, :] - self.X[cp.newaxis, :, :]
+        distances = cp.linalg.norm(diff, axis=2)
+        nearest_idx = cp.argmin(distances, axis=1)
+        # Возвращаем метки ближайших точек
+        return self.labels_[nearest_idx].get()

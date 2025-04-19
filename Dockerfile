@@ -14,4 +14,4 @@ COPY gamac gamac
 
 CMD . .venv/bin/activate && \
     cd gamac/tests && \
-    python kmeans.py
+    python clustering_algo_test.py

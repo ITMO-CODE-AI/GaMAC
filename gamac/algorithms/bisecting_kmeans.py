@@ -1,7 +1,10 @@
 import cupy as cp
+import pylibraft.config
+
+pylibraft.config.set_output_as("cupy")
 
 
-class BisectingKMeansCupy:
+class BisectingKMeans:
     def __init__(self, n_clusters=2, max_iter=100):
         self.n_clusters = n_clusters
         self.max_iter = max_iter
@@ -9,7 +12,7 @@ class BisectingKMeansCupy:
         self.labels_ = None
 
     def _kmeans(self, X, k):
-        """Базовый K-Means для деления кластера на два с использованием CuPy"""
+        """Базовый K-Means для деления кластера на два c использованием CuPy"""
         # Инициализация случайных центров
         centers = cp.random.rand(k, X.shape[1])
 
@@ -86,4 +89,12 @@ class BisectingKMeansCupy:
         self.labels_ = cp.asnumpy(self.labels_)
         self.centers_ = cp.asnumpy(self.centers_)
 
-        return self
+    def predict(self, X):
+        """Предсказание кластеров для новых данных"""
+        if self.centers_ is None:
+            raise ValueError("Model not fitted yet.")
+        X_gpu = cp.asarray(X)
+        centers_gpu = cp.asarray(self.centers_)
+        distances = cp.linalg.norm(X_gpu[:, cp.newaxis] - centers_gpu, axis=2)
+        labels = cp.argmin(distances, axis=1)
+        return cp.asnumpy(labels)
