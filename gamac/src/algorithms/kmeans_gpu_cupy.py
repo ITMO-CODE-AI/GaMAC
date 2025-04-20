@@ -1,5 +1,4 @@
 import cupy as cp
-import numpy as np
 import sys
 
 import pylibraft.config
@@ -30,10 +29,10 @@ class KMeansGPU:
 
     def _init_random_centroids(self, X):
         """Initialize the centroids as k random samples of X"""
-        n_samples, n_features = np.shape(X)
-        centroids = np.zeros((self.k, n_features))
+        n_samples, n_features = cp.shape(X)
+        centroids = cp.zeros((self.k, n_features))
         for i in range(self.k):
-            centroid = X[np.random.choice(range(n_samples))]
+            centroid = X[cp.random.choice(a=range(n_samples), size=1)]
             centroids[i] = centroid
         return centroids
 
@@ -67,7 +66,7 @@ class KMeansGPU:
         void new_centroids(const float* clusters, const float* X, float* centroids) {
             int tid = blockDim.x * blockIdx.x + threadIdx.x;
             int num = sizeof(X[clusters[tid]])/sizeof(X[clusters[tid]][0]);
-            thrust::device_vector< float > iVec(X[clusters[tid]], X[clusters[tid]]+num);
+            thrust::device_vector< float > iVec(X[clusters[tid]], X[clusters[tid]] + num);
             float sum = thrust::reduce(iVec.begin(), iVec.end(), 0, thrust::plus<float>());
             double mean = sum/(double)num;
             centroids[tid] = mean;
@@ -78,7 +77,7 @@ class KMeansGPU:
     def _get_cluster_labels(self, clusters, X):
         """Classify samples as the index of their clusters"""
         # One prediction for each sample
-        y_pred = np.zeros(np.shape(X)[0])
+        y_pred = cp.zeros(cp.shape(X)[0])
         for cluster_i, cluster in enumerate(clusters):
             for sample_i in cluster:
                 y_pred[sample_i] = cluster_i
@@ -88,6 +87,7 @@ class KMeansGPU:
         """Do K-Means clustering and return cluster indices"""
 
         # Initialize centroids as k random samples from X
+        X = cp.array(X)
         centroids = self._init_random_centroids(X)
 
         # Iterate until convergence or for max iterations
