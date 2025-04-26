@@ -1,6 +1,9 @@
+"""
+A set of clustering algorithms with different hyperparameters
+"""
+
 from typing import List
 
-import numpy as np
 from sklearn.cluster import (
     KMeans,
     DBSCAN,
@@ -10,15 +13,7 @@ from sklearn.cluster import (
     Birch,
 )
 
-from gamac.src.meta.collector import DatasetForMetaCVI
-
-
-class Producer:
-    def __init__(self, algo, name):
-        self.algo, self.name = algo, name
-
-    def fit_predict(self, dataset: DatasetForMetaCVI) -> np.ndarray:
-        return self.algo.fit_predict(dataset.data)
+from gamac.meta.impl.utils import Producer
 
 
 class ProducerProvider:

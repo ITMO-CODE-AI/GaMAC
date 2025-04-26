@@ -1,9 +1,13 @@
+"""
+Generate 2D projections from original datasets and produce partitions for them
+"""
+
 import pandas as pd
 from sklearn.preprocessing import MinMaxScaler
 
-from gamac.src.meta.collector import DatasetForMetaCVI, DatasetInfoCollector
-from gamac.src.meta.producers import ProducerProvider
-from gamac.src.meta.reducers import ReducerProvider
+from gamac.meta.collector import DatasetForMetaCVI, DatasetInfoCollector
+from gamac.meta.impl.producers import ProducerProvider
+from gamac.meta.impl.reducers import ReducerProvider
 
 
 def launch(data_name):
@@ -22,7 +26,7 @@ def launch(data_name):
         collector = DatasetInfoCollector(dataset)
         for producer in ProducerProvider.get_all():
             print(f"--- {producer.name} ---")
-            partition = producer.fit_predict(dataset)
+            partition = producer.algo.fit_predict(dataset.data)
             collector.save(partition, producer)
         collector.persist()
 

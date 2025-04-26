@@ -1,3 +1,7 @@
+"""
+Util to render dataset partitions
+"""
+
 import matplotlib
 import matplotlib.pyplot as plt
 
