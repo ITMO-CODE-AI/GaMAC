@@ -8,4 +8,4 @@ class CVIPredictor:
 
     @staticmethod
     def run(df: DataFrameType) -> Internal:
-        return Internal.C_INDEX
+        return Internal.MCR

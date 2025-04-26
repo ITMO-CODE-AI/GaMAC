@@ -1,6 +1,7 @@
 """Основной скрипт этапа предобработки данных"""
 import torch
 import numpy as np
+from cupy.typing import NDArray
 from numpy import ndarray
 from pandas import DataFrame
 from PIL import Image
@@ -12,8 +13,8 @@ from transformers import (
 from gamac.data.table_preprocessing import table_preprocessing
 from gamac.data.modal_preprocessing import get_clip_embeddings
 
-DataFrameType = np.ndarray
-LabelsType = np.ndarray
+DataFrameType = NDArray
+LabelsType = NDArray
 
 
 class DataHandler:

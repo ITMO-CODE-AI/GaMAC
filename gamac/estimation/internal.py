@@ -10,13 +10,13 @@ from gamac.data.data_pipeline import DataFrameType, LabelsType
 
 
 class Internal(Enum):
-    BR = br
-    C_INDEX = c_index
-    MCR = mcr
-    SYM = sym
+    BR = ('banfield_raftery', br)
+    C_INDEX = ('c_index', c_index)
+    MCR = ('mc_clain_rao', mcr)
+    SYM = ('sym', sym)
 
 
-EstimationResult = Dict[Internal, float]
+EstimationResult = dict[Internal, float]
 
 
 class InternalEvaluator:
@@ -61,7 +61,8 @@ class InternalEvaluator:
     @staticmethod
     def _eval_internal(df: DataFrameType, measures: Set[Internal], labels: LabelsType) -> EstimationResult:
         container = EstimationContainer.create(df, labels)
-        return EstimationResult({
-            measure: measure.value.__call__(container) for measure in measures
-        })
+        values = {
+            measure: measure.value[1](container) for measure in measures
+        }
+        return EstimationResult(values)
 

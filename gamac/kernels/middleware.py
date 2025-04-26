@@ -1,3 +1,5 @@
+import os.path
+
 from cupy import RawModule
 from cupy.typing import NDArray
 
@@ -5,9 +7,11 @@ from gamac.data.data_pipeline import DataFrameType, LabelsType
 
 
 def load_module(file: str):
-    with open(file, 'r') as fp:
+    real_path = os.path.realpath(__file__)
+    dir_path = os.path.dirname(real_path)
+    with open(f"{dir_path}/{file}", 'r') as fp:
         content = fp.read()
-    return RawModule(content)
+    return RawModule(code=content)
 
 
 class KernelInvocation:
