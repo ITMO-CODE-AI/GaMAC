@@ -1,6 +1,7 @@
 """Основной скрипт этапа предобработки данных"""
 import torch
 import numpy as np
+from cupy.typing import NDArray
 from numpy import ndarray
 from pandas import DataFrame
 from PIL import Image
@@ -11,6 +12,9 @@ from transformers import (
 
 from gamac.data.table_preprocessing import table_preprocessing
 from gamac.data.modal_preprocessing import get_clip_embeddings
+
+DataFrameType = NDArray
+LabelsType = NDArray
 
 
 class DataHandler:
@@ -78,7 +82,7 @@ class DataHandler:
 
         return np.concatenate((table_dataset, img_txt_dataset), axis=1)
 
-    def run(self, table: DataFrame, text: list[str], image: list[Image]) -> ndarray:
+    def run(self, table: DataFrame, text: list[str], image: list[Image]) -> DataFrameType:
         """
         Запуск обработки
         Args:
