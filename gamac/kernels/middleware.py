@@ -26,6 +26,7 @@ class Middleware:
     def __init__(self):
         self._meta = load_module('meta-kernels.c')
         self._cvi = load_module('cvi-kernels.c')
+        self._kmeans = load_module('kmeans-kernels.c')
 
     def get_centroids(
             self, *,
@@ -140,6 +141,34 @@ class Middleware:
         return KernelInvocation(
             kernel=self._cvi.get_function('crosstab'),
             args=(N, classes, classes_k, labels, labels_k, crosstab_matrix),
+        )
+
+    def kmeans_labels(
+            self, *,
+            X: NDArray,
+            centers: NDArray,
+            N: int,
+            K: int,
+            D: int,
+            labels: NDArray,
+    ) -> KernelInvocation:
+        return KernelInvocation(
+            kernel=self._kmeans.get_function('kmeans_labels'),
+            args=(X, centers, N, K, D, labels)
+        )
+
+    def kmeans_sse(
+            self, *,
+            X: NDArray,
+            centers: NDArray,
+            labels: NDArray,
+            sse: NDArray,
+            N: int,
+            D: int,
+    ) -> KernelInvocation:
+        return KernelInvocation(
+            kernel=self._kmeans.get_function('kmeans_sse'),
+            args=(X, centers, labels, sse, N, D)
         )
 
 MIDDLEWARE = Middleware()

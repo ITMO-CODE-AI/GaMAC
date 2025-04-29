@@ -19,7 +19,6 @@ class ClusteringAlgo(ABC):
     def fit(self, df: DataFrameType) -> ClusteringModel:
         pass
 
-    @abstractmethod
     def fit_predict(self, df: DataFrameType) -> LabelsType:
         return self.fit(df).predict(df)
 

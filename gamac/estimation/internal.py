@@ -1,3 +1,4 @@
+import time
 from enum import Enum
 from typing import Dict, Set, List
 
@@ -60,9 +61,11 @@ class InternalEvaluator:
 
     @staticmethod
     def _eval_internal(df: DataFrameType, measures: Set[Internal], labels: LabelsType) -> EstimationResult:
+        t_start = time.time()
         container = EstimationContainer.create(df, labels)
         values = {
             measure: measure.value[1](container) for measure in measures
         }
+        print(f"=== MEASURE {time.time() - t_start} ===")
         return EstimationResult(values)
 

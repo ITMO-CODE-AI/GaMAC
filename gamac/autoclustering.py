@@ -5,6 +5,7 @@ from PIL import Image
 from numpy import ndarray
 from pandas import DataFrame
 
+from gamac.algorithms.c_kernel.bisecting_kmeans import BisectingKMeansConf
 from gamac.estimation.internal import Internal, InternalEvaluator
 from gamac.data.data_pipeline import DataHandler, DataFrameType, LabelsType
 from gamac.pipeline.hyper_optimisers import HyperOptimisers
@@ -26,7 +27,7 @@ class Gamac:
         self._mab_arg = mab_solver
         self._hyper_arg = hyper_optimiser
         self._measures_arg = target_measures
-        self._algorithms = []
+        self._algorithms = [BisectingKMeansConf()]
         self._time_limit_arg = time_limit
         self._iter_limit_arg = iter_limit
 
@@ -57,10 +58,11 @@ class Gamac:
         Returns:
             tuple[ndarray, list[int]]: Кортеж датасет и список кластеров
         """
-        self._check_input(table, text, image)
-
-        # Обработка данных в единый датасет
-        df = self._data_handler(table, text, image)
+        # self._check_input(table, text, image)
+        #
+        # # Обработка данных в единый датасет
+        # df = self._data_handler(table, text, image)
+        df = table
 
         # Получение рекомендации мер качества
         if self._measures_arg is None:
