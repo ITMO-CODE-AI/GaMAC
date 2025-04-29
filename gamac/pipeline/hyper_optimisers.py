@@ -38,8 +38,8 @@ class HyperOptimiser(ABC):
         algo = self.algo_conf.build(**config)
         step_result = self._eval_algo(algo)
 
-        self._post_step_hook(step_result)
         self._runs.append(step_result)
+        self._post_step_hook(step_result)
 
         return step_result
 
@@ -51,23 +51,38 @@ class HyperOptimiser(ABC):
         pass
 
     def _is_optimal(self, estimation: EstimationResult) -> bool:
-        return self.optimal is None or estimation > self.optimal.estimation
+        return (
+                self.optimal is None or
+                self.evaluator.is_better(estimation, self.optimal.estimation)
+        )
 
     def _eval_algo(self, algo: ClusteringAlgo) -> HistoryRun:
-        algo_start = time.time()
+        start_timestamp = time.time()
         try:
-            model, labeled_sdf = algo.fit_predict_with_model(self.df)
-            fit_time = time.time() - algo_start
-            estimation = self.evaluator.evaluate(labeled_sdf)
-            eval_time = time.time() - fit_time
+            model = algo.fit(self.df)
+            labels = model.predict(self.df)
+            fit_timestamp = time.time()
+            estimation = self.evaluator.evaluate(labels)
+            eval_timestamp = time.time()
 
             if self._is_optimal(estimation):
-                self.optimal = Optimal(algo, model, labeled_sdf, estimation)
+                self.optimal = Optimal(algo, model, labels, estimation)
 
-            return SuccessRun(algo.name, algo.params, fit_time, eval_time, estimation)
+            print(f"=== ALGO {fit_timestamp - start_timestamp} ===")
+            return SuccessRun(
+                algo_name=algo.name,
+                algo_params=algo.params,
+                fit_time=fit_timestamp - start_timestamp,
+                eval_time=eval_timestamp - fit_timestamp,
+                estimation=estimation
+            )
         except RuntimeError:
-            failed_time = time.time() - algo_start
-            return FailedRun(algo.name, algo.params, failed_time)
+            failed_time = time.time() - start_timestamp
+            return FailedRun(
+                algo_name=algo.name,
+                algo_params=algo.params,
+                consumed=failed_time
+            )
 
 
 class RandomOptimiser(HyperOptimiser):
@@ -123,6 +138,8 @@ class OptunaOptimiser(HyperOptimiser):
 
         trials = self._session.get_trials(deepcopy=False)
         values = list(map(self._value_for_run, self._runs))
+
+        assert len(trials) == len(values)
 
         recalculated_trials = [
             optuna.trial.create_trial(

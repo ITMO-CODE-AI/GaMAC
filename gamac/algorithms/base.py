@@ -20,16 +20,13 @@ class ClusteringAlgo(ABC):
         pass
 
     @abstractmethod
-    def fit_predict_with_model(self, df: DataFrameType) -> Tuple[ClusteringModel, LabelsType]:
-        pass
-
     def fit_predict(self, df: DataFrameType) -> LabelsType:
-        _, labels = self.fit_predict_with_model(df)
-        return labels
+        return self.fit(df).predict(df)
 
     @staticmethod
     def make_seed(seed: Optional[int]) -> int:
         return seed if seed is not None else random.randint(0, 2 ** 32)
+
 
 
 class AlgoConf(ABC):
