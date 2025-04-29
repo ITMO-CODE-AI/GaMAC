@@ -14,6 +14,54 @@ class BisectingKMeans:
         self.tol = tol
         self.centers_ = None
         self.labels_ = None
+        self._init_kernels()
+
+    def _init_kernels(self):
+        # Ядро для вычисления меток кластеров
+        self._labels_kernel = cp.RawKernel(r'''
+            extern "C" __global__
+            void compute_labels(const double* X, const double* centers, 
+                                int num_points, int num_centers, int dim, 
+                                int* labels) {
+                int idx = blockIdx.x * blockDim.x + threadIdx.x;
+                if (idx >= num_points) return;
+
+                double min_dist = 1e308;
+                int min_label = -1;
+
+                for (int c = 0; c < num_centers; ++c) {
+                    double dist = 0.0;
+                    for (int d = 0; d < dim; ++d) {
+                        double diff = X[idx * dim + d] - centers[c * dim + d];
+                        dist += diff * diff;
+                    }
+                    if (dist < min_dist) {
+                        min_dist = dist;
+                        min_label = c;
+                    }
+                }
+                labels[idx] = min_label;
+            }
+        ''', 'compute_labels')
+
+        # Ядро для вычисления SSE
+        self._sse_kernel = cp.RawKernel(r'''
+            extern "C" __global__
+            void compute_sse(const double* X, const double* centers, 
+                            const int* labels, double* sse, 
+                            int num_points, int dim) {
+                int idx = blockIdx.x * blockDim.x + threadIdx.x;
+                if (idx >= num_points) return;
+
+                int label = labels[idx];
+                double sum = 0.0;
+                for (int d = 0; d < dim; ++d) {
+                    double diff = X[idx * dim + d] - centers[label * dim + d];
+                    sum += diff * diff;
+                }
+                atomicAdd(sse, sum);
+            }
+        ''', 'compute_sse')
 
     def _kmeans_init(self, X, k):
         """Инициализация центров методом K-Means++"""
@@ -37,21 +85,25 @@ class BisectingKMeans:
         return centers
 
     def _kmeans(self, X, k):
-        """Оптимизированный K-Means с использованием CuPy"""
         if self.init == 'k-means++':
             centers = self._kmeans_init(X, k)
         else:
-            # Случайная выборка из данных
             idx = cp.random.choice(X.shape[0], k, replace=False)
             centers = X[idx]
 
         for _ in range(self.max_iter):
-            # Векторизованное вычисление расстояний
-            distances = cp.linalg.norm(X[:, None] - centers, axis=2)
-            labels = cp.argmin(distances, axis=1)
+            # Вычисление меток через CUDA ядро
+            labels = cp.empty(X.shape[0], dtype=cp.int32)
+            block_size = 256
+            grid_size = (X.shape[0] + block_size - 1) // block_size
+            self._labels_kernel(
+                (grid_size,), (block_size,),
+                (X, centers, X.shape[0], k, X.shape[1], labels)
+            )
 
-            # Векторизованное обновление центров
+            # Обновление центров
             new_centers = cp.zeros_like(centers)
+            counts = cp.zeros(k, dtype=cp.int32)
             for i in range(k):
                 mask = (labels == i)
                 if cp.any(mask):
@@ -67,14 +119,19 @@ class BisectingKMeans:
         return labels, centers
 
     def _sse(self, X, labels):
-        """Векторизованный расчет SSE"""
-        unique_labels = cp.unique(labels)
-        sse = 0.0
-        for lbl in unique_labels:
-            cluster = X[labels == lbl]
-            if len(cluster) > 0:
-                sse += cp.sum((cluster - cluster.mean(axis=0))**2)
+        # Векторизованный расчет SSE через CUDA ядро
+        sse = cp.zeros(1, dtype=X.dtype)
+        if len(X) == 0:
+            return 0.0
+        centers = cp.stack([X[labels == i].mean(axis=0) for i in cp.unique(labels)])
+        block_size = 256
+        grid_size = (X.shape[0] + block_size - 1) // block_size
+        self._sse_kernel(
+            (grid_size,), (block_size,),
+            (X, centers, labels, sse, X.shape[0], X.shape[1])
+        )
         return sse.item()
+
 
     def fit(self, X):
         # Оптимизация передачи данных
