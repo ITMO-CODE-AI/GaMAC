@@ -43,6 +43,7 @@ multiprocess==0.70.16
 nest-asyncio==1.6.0
 networkx==3.3
 numpy==1.26.4
+optuna
 packaging==24.1
 pandas==2.2.2
 parso==0.8.4

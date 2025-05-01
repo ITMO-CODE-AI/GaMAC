@@ -6,6 +6,10 @@ from numpy import ndarray
 from pandas import DataFrame
 
 from gamac.algorithms.bisecting_kmeans import BisectingKMeansConfig
+from gamac.algorithms.kmeans import KMeansConfig
+from gamac.algorithms.hdbscan import HDBSCANConfig
+from gamac.algorithms.dbscan import DBSCANConfig
+from gamac.algorithms.meanshift import MeanShiftConfig
 from gamac.data.data_pipeline import DataHandler, DataFrameType, LabelsType
 from gamac.estimation.internal import Internal, InternalEvaluator
 from gamac.pipeline.cvi_predictor import CVIPredictor
@@ -27,7 +31,11 @@ class Gamac:
         self._mab_arg = mab_solver
         self._hyper_arg = hyper_optimiser
         self._measures_arg = target_measures
-        self._algorithms = [BisectingKMeansConfig()]
+        self._algorithms = [MeanShiftConfig(),
+                            DBSCANConfig(),
+                            HDBSCANConfig(),
+                            KMeansConfig(),
+                            BisectingKMeansConfig()]
         self._time_limit_arg = time_limit
         self._iter_limit_arg = iter_limit
 

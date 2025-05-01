@@ -1,15 +1,26 @@
 import cupy as cp
 import numpy as np
-import sys
-
 import pylibraft.config
+
+from gamac.algorithms.base import ClusteringModel, ClusteringAlgo, AlgoConfig
+from gamac.data.data_pipeline import DataFrameType, LabelsType
+from gamac.utils.utils import gpu_distance
 
 pylibraft.config.set_output_as("cupy")
 
-sys.path.append('../')
-from utils.utils import gpu_distance
 
-class KMeans:
+class KMeansModel(ClusteringModel):
+    def __init__(self, labels_, centroids_):
+        super().__init__(labels_)
+        self.centroids_ = centroids_
+
+    def predict(self, df: DataFrameType) -> LabelsType:
+        diff = df[:, None] - self.centroids_
+        distances = cp.linalg.norm(diff, axis=2)
+        return cp.argmin(distances, axis=1)
+
+
+class KMeans(ClusteringAlgo):
     """A simple clustering method that forms k clusters by iteratively reassigning
     samples to the closest centroids and after that moves the centroids to the center
     of the new formed clusters using GPU.
@@ -23,84 +34,93 @@ class KMeans:
         The number of iterations the algorithm will run for if it does
         not converge before that.
     """
+    def __init__(
+            self,
+            n_clusters=2,
+            max_iter=100,
+            tol=1e-4,
+            random_state=None
+    ):
+        super().__init__()
+        self.n_clusters = n_clusters
+        self.max_iter = max_iter
+        self.tol = tol
+        self.random_state = random_state
+        self.centroids = None
 
-    def __init__(self, k=2, max_iterations=500):
-        self.k = k
-        self.max_iterations = max_iterations
+    def fit(self, X):
+        # Преобразование входных данных в массив CuPy
+        X = cp.asarray(X)
 
-    def _init_random_centroids(self, X):
-        """Initialize the centroids as k random samples of X"""
-        n_samples, n_features = np.shape(X)
-        centroids = np.zeros((self.k, n_features))
-        for i in range(self.k):
-            centroid = X[np.random.choice(range(n_samples))]
-            centroids[i] = centroid
-        return centroids
+        # Установка случайного зерна для воспроизводимости
+        if self.random_state is not None:
+            cp.random.seed(self.random_state)
 
-    def _closest_centroid(self, sample, centroids):
-        """Return the index of the closest centroid to the sample"""
-        closest_i = 0
-        closest_dist = float("inf")
-        for i, centroid in enumerate(centroids):
-            distance = gpu_distance(sample, centroid)
-            if distance < closest_dist:
-                closest_i = i
-                closest_dist = distance
-        return closest_i
+        # Инициализация центроидов: случайный выбор уникальных точек из данных
+        n_samples = X.shape[0]
+        indices = cp.random.permutation(n_samples)[:self.n_clusters]
+        self.centroids = X[indices]
 
-    def _create_clusters(self, centroids, X):
-        """Assign the samples to the closest centroids to create clusters"""
-        clusters = [[] for _ in range(self.k)]
-        for sample_i, sample in enumerate(X):
-            centroid_i = self._closest_centroid(sample, centroids)
-            clusters[centroid_i].append(sample_i)
-        return clusters
+        for _ in range(self.max_iter):
+            # Вычисление квадратов норм для X и центроидов
+            x_squared = cp.sum(X**2, axis=1)[:, cp.newaxis]
+            centroids_squared = cp.sum(self.centroids**2, axis=1)[cp.newaxis, :]
 
-    def _calculate_centroids(self, clusters, X):
-        """Calculate new centroids as the means of the samples in each cluster using GPU"""
-        n_features = cp.shape(X)[1]
-        centroids = cp.zeros((self.k, n_features))
-        get_new_centroids = cp.RawKernel(code=r'''
-        #include <thrust/device_vector.h>
-        #include <thrust/reduce.h>
-        extern "C" __global__
-        void new_centroids(const float* clusters, const float* X, float* centroids) {
-            int tid = blockDim.x * blockIdx.x + threadIdx.x;
-            int num = sizeof(X[clusters[tid]])/sizeof(X[clusters[tid]][0]);
-            thrust::device_vector< float > iVec(X[clusters[tid]], X[clusters[tid]]+num);
-            float sum = thrust::reduce(iVec.begin(), iVec.end(), 0, thrust::plus<float>());
-            double mean = sum/(double)num;
-            centroids[tid] = mean;
-            }''', name='new_centroids', backend='nvcc')
-        get_new_centroids((n_features,), (n_features,), (clusters, X, centroids))
-        return centroids
+            # Вычисление матрицы расстояний между точками и центроидами
+            distances = x_squared + centroids_squared - 2 * X.dot(self.centroids.T)
 
-    def _get_cluster_labels(self, clusters, X):
-        """Classify samples as the index of their clusters"""
-        # One prediction for each sample
-        y_pred = np.zeros(np.shape(X)[0])
-        for cluster_i, cluster in enumerate(clusters):
-            for sample_i in cluster:
-                y_pred[sample_i] = cluster_i
-        return y_pred
+            # Назначение меток: индекс ближайшего центроида для каждой точки
+            labels = cp.argmin(distances, axis=1)
 
-    def predict(self, X):
-        """Do K-Means clustering and return cluster indices"""
+            # Обновление центроидов
+            new_centroids = cp.zeros_like(self.centroids)
+            for i in range(self.n_clusters):
+                # Выбор точек, принадлежащих текущему кластеру
+                cluster_points = X[labels == i]
+                if cluster_points.shape[0] > 0:
+                    new_centroids[i] = cluster_points.mean(axis=0)
+                else:
+                    # Если кластер пуст, сохраняем прежний центроид
+                    new_centroids[i] = self.centroids[i]
 
-        # Initialize centroids as k random samples from X
-        centroids = self._init_random_centroids(X)
-
-        # Iterate until convergence or for max iterations
-        for _ in range(self.max_iterations):
-            # Assign samples to closest centroids (create clusters)
-            clusters = self._create_clusters(centroids, X)
-            # Save current centroids for convergence check
-            prev_centroids = centroids
-            # Calculate new centroids from the clusters
-            centroids = self._calculate_centroids(clusters, X)
-            # If no centroids have changed => convergence
-            diff = centroids - prev_centroids
-            if not diff.any():
+            # Проверка условия сходимости (изменение центроидов)
+            centroid_shift = cp.max(cp.linalg.norm(new_centroids - self.centroids, axis=1))
+            if centroid_shift <= self.tol:
                 break
 
-        return self._get_cluster_labels(clusters, X)
+            self.centroids = new_centroids
+
+        print(labels)
+        print(self.centroids)
+
+        return KMeansModel(
+            labels_=labels,
+            centroids_=self.centroids
+        )
+
+    def predict(self, X):
+        # Преобразование входных данных в массив CuPy
+        X = cp.asarray(X)
+
+        # Вычисление квадратов норм
+        x_squared = cp.sum(X**2, axis=1)[:, cp.newaxis]
+        centroids_squared = cp.sum(self.centroids**2, axis=1)[cp.newaxis, :]
+
+        # Вычисление расстояний и определение меток
+        distances = x_squared + centroids_squared - 2 * X.dot(self.centroids.T)
+        return cp.argmin(distances, axis=1)
+
+
+class KMeansConfig(AlgoConfig):
+    def __init__(
+            self, *,
+            n_clusters=(2, 15),
+            max_iter=100,
+            tol=1e-4
+    ):
+        super().__init__(
+            KMeans,
+            n_clusters=n_clusters,
+            max_iter=max_iter,
+            tol=tol
+        )

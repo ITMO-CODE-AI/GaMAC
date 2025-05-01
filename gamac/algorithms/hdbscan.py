@@ -1,12 +1,33 @@
 import cupy as cp
 import numpy as np
+import pylibraft.config
 from collections import defaultdict
 
+from gamac.algorithms.base import ClusteringModel, ClusteringAlgo, AlgoConfig
+from gamac.data.data_pipeline import DataFrameType, LabelsType
 
-class HDBSCAN:
+pylibraft.config.set_output_as("cupy")
+
+
+class HDBSCANModel(ClusteringModel):
+    def __init__(self, labels_):
+        super().__init__(labels_)
+        self.labels_ = labels_
+
+    def predict(self, X):
+        """Predict using nearest core points"""
+        X = cp.asarray(X, dtype=cp.float32)
+        sum_X = cp.sum(X**2, axis=1)
+        dists = cp.sqrt(cp.abs(sum_X[:, None] + sum_X[None, :] - 2 * cp.dot(X, X.T)))
+        nearest = cp.argmin(dists, axis=1)
+        return self.labels_[nearest.get()]
+
+
+class HDBSCAN(ClusteringAlgo):
     def __init__(self, min_cluster_size=5, min_samples=None, metric='euclidean',
                  alpha=1, cluster_selection_epsilon=0.1,
                  cluster_selection_method='eom', allow_single_cluster=False):
+        super().__init__()
         self.min_cluster_size = min_cluster_size
         self.min_samples = min_samples if min_samples is not None else min_cluster_size
         self.metric = metric
@@ -44,7 +65,9 @@ class HDBSCAN:
         # Step 6: Extract clusters
         self.labels_ = self._extract_clusters()
         
-        return self
+        return HDBSCANModel(
+            labels_=self.labels_
+        )
 
     def _validate_data(self, X):
         if len(X.shape) != 2:
@@ -223,3 +246,20 @@ class HDBSCAN:
         dists = self._pairwise_distance(X_gpu)
         nearest = cp.argmin(dists, axis=1)
         return self.labels_[nearest.get()]
+
+
+class HDBSCANConfig(AlgoConfig):
+    def __init__(
+            self, *,
+            min_cluster_size=(5, 15),
+            min_samples=None,
+            alpha=1,
+            cluster_selection_epsilon=(0.1, 0.5)
+    ):
+        super().__init__(
+            HDBSCAN,
+            min_cluster_size=min_cluster_size,
+            min_samples=min_samples,
+            alpha=alpha,
+            cluster_selection_epsilon=cluster_selection_epsilon
+        )
