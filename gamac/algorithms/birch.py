@@ -37,6 +37,7 @@ class CFNode:
         self.branching_factor = branching_factor
         self.subclusters = []
         self.children = []
+        self.parent = None  # Важное добавление для работы split
 
     def insert(self, point):
         if not self.children:
@@ -49,15 +50,12 @@ class CFNode:
             self.subclusters.append(ClusteringFeature(point))
             return
 
-        # Векторизованный расчет расстояний
         point_cf = ClusteringFeature(point)
         radii = cp.array([cf.radius() for cf in self.subclusters])
         new_radius = point_cf.radius()
         distances = radii + new_radius
 
-        # Преобразование в целое число
         closest_idx = int(cp.argmin(distances).item())
-
         merged_radius = self.subclusters[closest_idx].radius() + new_radius
 
         if merged_radius <= self.threshold:
@@ -68,8 +66,63 @@ class CFNode:
                 self._split()
 
     def _split(self):
-        # Заглушка для реализации разделения
-        pass
+        # Шаг 1: Находим пару наиболее удаленных подкластеров
+        subcluster_centers = cp.stack([cf.centroid for cf in self.subclusters])
+        pairwise_distances = cp.linalg.norm(
+            subcluster_centers[:, cp.newaxis] - subcluster_centers,
+            axis=2
+        )
+        
+        # Находим индексы максимального расстояния
+        max_idx = cp.unravel_index(
+            cp.argmax(pairwise_distances),
+            pairwise_distances.shape
+        )
+        idx1, idx2 = int(max_idx[0].item()), int(max_idx[1].item())
+
+        # Шаг 2: Создаем два новых узла
+        new_node1 = CFNode(
+            threshold=self.threshold,
+            branching_factor=self.branching_factor
+        )
+        new_node2 = CFNode(
+            threshold=self.threshold,
+            branching_factor=self.branching_factor
+        )
+        new_node1.parent = self.parent
+        new_node2.parent = self.parent
+
+        # Шаг 3: Распределяем подкластеры между новыми узлами
+        for cf in self.subclusters:
+            dist1 = cp.linalg.norm(cf.centroid - self.subclusters[idx1].centroid)
+            dist2 = cp.linalg.norm(cf.centroid - self.subclusters[idx2].centroid)
+            
+            if dist1 < dist2:
+                new_node1.subclusters.append(cf)
+            else:
+                new_node2.subclusters.append(cf)
+
+        # Шаг 4: Обновляем структуру дерева
+        if self.parent:
+            # Удаляем текущий узел из родителя и добавляем новые
+            self.parent.children.remove(self)
+            self.parent.children.append(new_node1)
+            self.parent.children.append(new_node2)
+        else:
+            # Если это корневой узел, создаем новый корень
+            new_root = CFNode(
+                threshold=self.threshold,
+                branching_factor=self.branching_factor
+            )
+            new_root.children.extend([new_node1, new_node2])
+            new_node1.parent = new_root
+            new_node2.parent = new_root
+            self.parent = new_root
+
+        # Шаг 5: Проверяем необходимость рекурсивного разделения
+        for node in [new_node1, new_node2]:
+            if len(node.subclusters) > self.branching_factor:
+                node._split()
 
 
 class BirchModel(ClusteringModel):
@@ -101,8 +154,10 @@ class Birch(ClusteringAlgo):
         if not subclusters:
             raise ValueError("No subclusters formed during BIRCH construction")
 
-        centroids = cp.stack([cf.centroid for cf in subclusters])
-        centroids_, labels_ = self._kmeans(centroids)
+        # Автоматическая корректировка количества кластеров
+        self.n_clusters = min(self.n_clusters, len(subclusters))
+        subcluster_centroids = cp.stack([cf.centroid for cf in subclusters])
+        centroids_, labels_ = self._kmeans(subcluster_centroids)
         return BirchModel(labels_=labels_, centroids_=centroids_)
 
     def _get_all_subclusters(self, root):
@@ -114,20 +169,39 @@ class Birch(ClusteringAlgo):
             nodes.extend(node.children)
         return subclusters
 
-    def _kmeans(self, centroids):
-        # Векторизованная реализация K-means
-        for _ in range(100):
-            diff = centroids[:, cp.newaxis] - centroids
-            distances = cp.linalg.norm(diff, axis=2)
-            labels = cp.argmin(distances, axis=0)
+    def _kmeans(self, subcluster_centroids):
+        n_subclusters, n_features = subcluster_centroids.shape
+        rng = cp.random.RandomState()
 
-            new_centroids = cp.empty_like(centroids)
+        # Инициализация центроидов K-means
+        if n_subclusters <= self.n_clusters:
+            centroids = subcluster_centroids.copy()
+            if n_subclusters < self.n_clusters:
+                additional = self.n_clusters - n_subclusters
+                indices = rng.choice(n_subclusters, additional, replace=True)
+                centroids = cp.concatenate([centroids, subcluster_centroids[indices]])
+        else:
+            indices = rng.choice(n_subclusters, self.n_clusters, replace=False)
+            centroids = subcluster_centroids[indices]
+
+        for _ in range(100):
+            # Векторизованный расчет расстояний
+            distances = cp.linalg.norm(
+                subcluster_centroids[:, cp.newaxis] - centroids,
+                axis=2
+            )
+            labels = cp.argmin(distances, axis=1)
+
+            new_centroids = cp.empty((self.n_clusters, n_features), 
+                                     dtype=subcluster_centroids.dtype)
+            
             for i in range(self.n_clusters):
                 mask = (labels == i)
                 if cp.any(mask):
-                    new_centroids[i] = centroids[mask].mean(axis=0)
+                    new_centroids[i] = subcluster_centroids[mask].mean(axis=0)
                 else:
-                    new_centroids[i] = centroids[i]
+                    # Повторная инициализация пустых кластеров
+                    new_centroids[i] = subcluster_centroids[rng.randint(n_subclusters)]
 
             if cp.allclose(centroids, new_centroids):
                 break
@@ -140,7 +214,7 @@ class BirchConfig(AlgoConfig):
     def __init__(
             self, *,
             threshold=(0.1, 0.9),
-            branching_factor=(5, 80),
+            branching_factor=(10, 80),
             n_clusters=(2, 15),
     ):
         super().__init__(
