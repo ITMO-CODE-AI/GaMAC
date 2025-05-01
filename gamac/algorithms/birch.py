@@ -8,121 +8,203 @@ pylibraft.config.set_output_as("cupy")
 
 
 class ClusteringFeature:
-    def __init__(self, point):
-        self.n = 1
-        self.LS = point.astype(cp.float32)
-        self.SS = cp.square(self.LS)
+    def __init__(self, point=None, dim=0):
+        self.n_points = 0
+        self.dim = dim
+        self.linear_sum = cp.zeros(dim, dtype=cp.float32) if dim > 0 else cp.array([], dtype=cp.float32)
+        self.squared_sum = 0.0
+        if point is not None:
+            self.add_point(point)
 
     def add_point(self, point):
-        self.n += 1
-        self.LS += point
-        self.SS += cp.square(point)
+        if self.dim == 0 and self.linear_sum.size == 0:
+            self.dim = point.size
+            self.linear_sum = cp.zeros(self.dim, dtype=cp.float32)
+        
+        self.n_points += 1
+        self.linear_sum += point
+        self.squared_sum += cp.sum(point ** 2)
 
     def merge(self, other):
-        self.n += other.n
-        self.LS += other.LS
-        self.SS += other.SS
+        if self.dim == 0 and other.dim > 0:
+            self.dim = other.dim
+            self.linear_sum = cp.zeros(self.dim, dtype=cp.float32)
+            
+        self.n_points += other.n_points
+        self.linear_sum += other.linear_sum
+        self.squared_sum += other.squared_sum
 
     @property
     def centroid(self):
-        return self.LS / self.n
+        return self.linear_sum / self.n_points if self.n_points > 0 else None
 
+    @property
     def radius(self):
-        return cp.sqrt(cp.sum(self.SS / self.n - cp.square(self.centroid)))
-
+        if self.n_points == 0: return 0.0
+        return cp.sqrt(cp.maximum(self.squared_sum/self.n_points - cp.sum(self.centroid**2, axis=0), 0))
 
 class CFNode:
+    def __init__(self, is_leaf=True):
+        self.is_leaf = is_leaf
+        self.entries = []
+        self.children = []
+        self.parent = None
+
+    def insert_entry(self, cf, child=None):
+        self.entries.append(cf)
+        if not self.is_leaf:
+            self.children.append(child)
+            child.parent = self
+
+
+class CFTree:
     def __init__(self, threshold, branching_factor):
         self.threshold = threshold
         self.branching_factor = branching_factor
-        self.subclusters = []
-        self.children = []
-        self.parent = None  # Важное добавление для работы split
+        self.root = CFNode(is_leaf=True)
+        self.dim = None
 
-    def insert(self, point):
-        if not self.children:
-            self._insert_to_leaf(point)
-        else:
-            self._insert_to_internal(point)
+    def insert(self, X_batch):
+        X_batch = cp.asarray(X_batch, dtype=cp.float32)
+        if self.dim is None:
+            self.dim = X_batch.shape[1]
+            for cf in self.root.entries:
+                cf.dim = self.dim
+                cf.linear_sum = cp.zeros(self.dim, dtype=cp.float32)
 
-    def _insert_to_leaf(self, point):
-        if not self.subclusters:
-            self.subclusters.append(ClusteringFeature(point))
+        for point in X_batch:
+            leaf = self._find_leaf(point)
+            self._insert_into_leaf(leaf, point)
+
+    def _find_leaf(self, point):
+        node = self.root
+        while not node.is_leaf:
+            centroids = cp.stack([cf.centroid for cf in node.entries])
+            dists = cp.sum((centroids - point)**2, axis=1)
+            node = node.children[cp.argmin(dists)]
+        return node
+
+    def _insert_into_leaf(self, leaf, point):
+        if not leaf.entries:
+            leaf.entries.append(ClusteringFeature(point))
             return
 
-        point_cf = ClusteringFeature(point)
-        radii = cp.array([cf.radius() for cf in self.subclusters])
-        new_radius = point_cf.radius()
-        distances = radii + new_radius
+        centroids = cp.stack([cf.centroid for cf in leaf.entries])
+        dists = cp.sum((centroids - point)**2, axis=1)
+        closest_idx = cp.argmin(dists).item()
+        closest_cf = leaf.entries[closest_idx]
 
-        closest_idx = int(cp.argmin(distances).item())
-        merged_radius = self.subclusters[closest_idx].radius() + new_radius
-
-        if merged_radius <= self.threshold:
-            self.subclusters[closest_idx].merge(point_cf)
-        else:
-            self.subclusters.append(point_cf)
-            if len(self.subclusters) > self.branching_factor:
-                self._split()
-
-    def _split(self):
-        # Шаг 1: Находим пару наиболее удаленных подкластеров
-        subcluster_centers = cp.stack([cf.centroid for cf in self.subclusters])
-        pairwise_distances = cp.linalg.norm(
-            subcluster_centers[:, cp.newaxis] - subcluster_centers,
-            axis=2
-        )
+        temp_cf = ClusteringFeature()
+        temp_cf.merge(closest_cf)
+        temp_cf.add_point(point)
         
-        # Находим индексы максимального расстояния
-        max_idx = cp.unravel_index(
-            cp.argmax(pairwise_distances),
-            pairwise_distances.shape
-        )
-        idx1, idx2 = int(max_idx[0].item()), int(max_idx[1].item())
-
-        # Шаг 2: Создаем два новых узла
-        new_node1 = CFNode(
-            threshold=self.threshold,
-            branching_factor=self.branching_factor
-        )
-        new_node2 = CFNode(
-            threshold=self.threshold,
-            branching_factor=self.branching_factor
-        )
-        new_node1.parent = self.parent
-        new_node2.parent = self.parent
-
-        # Шаг 3: Распределяем подкластеры между новыми узлами
-        for cf in self.subclusters:
-            dist1 = cp.linalg.norm(cf.centroid - self.subclusters[idx1].centroid)
-            dist2 = cp.linalg.norm(cf.centroid - self.subclusters[idx2].centroid)
-            
-            if dist1 < dist2:
-                new_node1.subclusters.append(cf)
-            else:
-                new_node2.subclusters.append(cf)
-
-        # Шаг 4: Обновляем структуру дерева
-        if self.parent:
-            # Удаляем текущий узел из родителя и добавляем новые
-            self.parent.children.remove(self)
-            self.parent.children.append(new_node1)
-            self.parent.children.append(new_node2)
+        if temp_cf.radius <= self.threshold:
+            closest_cf.merge(ClusteringFeature(point))
+            self._propagate_update(leaf)
         else:
-            # Если это корневой узел, создаем новый корень
-            new_root = CFNode(
-                threshold=self.threshold,
-                branching_factor=self.branching_factor
-            )
-            new_root.children.extend([new_node1, new_node2])
-            new_node1.parent = new_root
-            new_node2.parent = new_root
-            self.parent = new_root
+            leaf.entries.append(ClusteringFeature(point))
+            if len(leaf.entries) > self.branching_factor:
+                self._split(leaf)
+            self._propagate_update(leaf)
 
-        # Шаг 5: Проверяем необходимость рекурсивного разделения
-        for node in [new_node1, new_node2]:
-            if len(node.subclusters) > self.branching_factor:
-                node._split()
+    def _split(self, node):
+        entries = node.entries
+        centroids = cp.stack([cf.centroid for cf in entries])
+
+        # Векторизованный расчет попарных расстояний
+        dist_matrix = cp.sum(centroids**2, axis=1)[:, None] + \
+                      cp.sum(centroids**2, axis=1) - \
+                      2 * centroids @ centroids.T
+        cp.fill_diagonal(dist_matrix, -cp.inf)
+        idx = cp.unravel_index(cp.argmax(dist_matrix), dist_matrix.shape)
+        
+        # Разделение на две группы
+        mask = cp.sum((centroids - centroids[idx[0]])**2, axis=1) < \
+               cp.sum((centroids - centroids[idx[1]])**2, axis=1)
+        
+        new_node = CFNode(is_leaf=node.is_leaf)
+        new_entries = [entries[i] for i in cp.where(mask)[0]]
+        remaining_entries = [entries[i] for i in cp.where(~mask)[0]]
+
+        node.entries = new_entries
+        new_node.entries = remaining_entries
+
+        if node.parent is None:
+            new_root = CFNode(is_leaf=False)
+            new_root.insert_entry(ClusteringFeature(), node)
+            self.root = new_root
+
+        parent = node.parent
+        new_parent_cf = ClusteringFeature()
+        for cf in new_node.entries:
+            new_parent_cf.merge(cf)
+        parent.insert_entry(new_parent_cf, new_node)
+
+        if len(parent.entries) > self.branching_factor:
+            self._split(parent)
+
+    def _propagate_update(self, node):
+        while node.parent:
+            parent = node.parent
+            idx = parent.children.index(node)
+            new_cf = ClusteringFeature()
+            for cf in node.entries:
+                new_cf.merge(cf)
+            parent.entries[idx] = new_cf
+            node = parent
+
+    def get_subclusters(self):
+        subclusters = []
+        stack = [self.root]
+        while stack:
+            node = stack.pop()
+            if node.is_leaf:
+                subclusters.extend(node.entries)
+            else:
+                stack.extend(node.children)
+        return subclusters
+
+
+class GPUAgglomerativeClustering:
+    def __init__(self, n_clusters=3):
+        self.n_clusters = n_clusters
+        self.labels_ = None
+
+    def fit(self, X):
+        X = cp.asarray(X)
+        n = X.shape[0]
+        self._labels = cp.arange(n)
+        dist_matrix = self._pairwise_distance(X)
+        
+        for _ in range(n - self.n_clusters):
+            i, j = self._find_closest_pair(dist_matrix)
+            self._merge_clusters(i, j, dist_matrix)
+        
+        self.labels_ = cp.asnumpy(self._labels)
+        return self
+
+    def _pairwise_distance(self, X):
+        # Векторизованный расчет матрицы расстояний
+        sq_norm = cp.sum(X**2, axis=1)
+        return sq_norm[:, None] + sq_norm - 2 * X @ X.T
+
+    def _find_closest_pair(self, dist_matrix):
+        cp.fill_diagonal(dist_matrix, cp.inf)
+        return cp.unravel_index(cp.argmin(dist_matrix), dist_matrix.shape)
+
+    def _merge_clusters(self, i, j, dist_matrix):
+        mask = self._labels == j
+        self._labels[mask] = i
+        
+        # Обновление матрицы расстояний методом полной связи
+        new_dists = cp.minimum(dist_matrix[i], dist_matrix[j])
+        dist_matrix[i] = new_dists
+        dist_matrix[:, i] = new_dists
+        dist_matrix[i, i] = cp.inf
+
+        # Удаление старого кластера
+        dist_matrix[j] = cp.inf
+        dist_matrix[:, j] = cp.inf
 
 
 class BirchModel(ClusteringModel):
@@ -130,12 +212,22 @@ class BirchModel(ClusteringModel):
         super().__init__(labels_)
         self.centroids_ = centroids_
 
-    def predict(self, df: DataFrameType) -> LabelsType:
-        distances = cp.linalg.norm(
-            df[:, cp.newaxis] - self.centroids_,
-            axis=2
-        )
-        return cp.argmin(distances, axis=1)
+    def predict(self, X):
+        """
+        Предсказывает метки кластеров для новых данных
+        """
+        if self.subcluster_centers_ is None or self.labels_ is None:
+            raise ValueError("Модель еще не обучена. Сначала вызовите fit()")
+            
+        X = cp.asarray(X, dtype=cp.float32)
+        
+        # 1. Находим ближайшие подкластеры
+        subcluster_idx = self._find_nearest_subcluster(X)
+        
+        # 2. Преобразуем индексы подкластеров в метки кластеров
+        cluster_labels = self.labels_[subcluster_idx]
+        
+        return cluster_labels.get()  # Возвращаем numpy массив
 
 
 class Birch(ClusteringAlgo):
@@ -144,70 +236,78 @@ class Birch(ClusteringAlgo):
         self.threshold = threshold
         self.branching_factor = branching_factor
         self.n_clusters = n_clusters
+        self.subcluster_centers_ = None
+        self.labels_ = None
 
-    def fit(self, df: DataFrameType) -> BirchModel:
-        root = CFNode(threshold=self.threshold, branching_factor=self.branching_factor)
-        for point in df:
-            root.insert(point)
+    def fit(self, X, batch_size=10000):
+        X_gpu = cp.asarray(X, dtype=cp.float32)
+        self.tree = CFTree(self.threshold, self.branching_factor)
+        
+        # Пакетная обработка данных
+        for i in range(0, len(X_gpu), batch_size):
+            batch = X_gpu[i:i+batch_size]
+            self.tree.insert(batch)
+        
+        subclusters = self.tree.get_subclusters()
+        self.subcluster_centers_ = cp.stack([cf.centroid for cf in subclusters])
+        
+        # GPU-реализация агломеративной кластеризации
+        clusterer = GPUAgglomerativeClustering(n_clusters=self.n_clusters)
+        clusterer.fit(self.subcluster_centers_)
+        self.labels_ = clusterer.labels_
+        self.labels_ = cp.array(self.labels_, dtype=cp.int32)
+        
+        labels = self.predict(X)
+        labels = cp.array(labels, dtype=cp.int32)
+        
+        print(labels)
+        
+        return BirchModel(
+            labels_=labels,
+            centroids_=self.subcluster_centers_
+        )
+        
+    def _find_nearest_subcluster(self, X):
+        """
+        Находит ближайший подкластер для каждой точки
+        """
+        # Векторизованный расчет расстояний
+        X_norm = cp.sum(X**2, axis=1, keepdims=True)
+        C_norm = cp.sum(self.subcluster_centers_**2, axis=1)
+        distances = X_norm + C_norm - 2 * X @ self.subcluster_centers_.T
+        
+        return cp.argmin(distances, axis=1)
 
-        subclusters = self._get_all_subclusters(root)
-        if not subclusters:
-            raise ValueError("No subclusters formed during BIRCH construction")
-
-        # Автоматическая корректировка количества кластеров
-        self.n_clusters = min(self.n_clusters, len(subclusters))
-        subcluster_centroids = cp.stack([cf.centroid for cf in subclusters])
-        centroids_, labels_ = self._kmeans(subcluster_centroids)
-        return BirchModel(labels_=labels_, centroids_=centroids_)
-
-    def _get_all_subclusters(self, root):
-        nodes = [root]
-        subclusters = []
-        while nodes:
-            node = nodes.pop(0)
-            subclusters.extend(node.subclusters)
-            nodes.extend(node.children)
-        return subclusters
-
-    def _kmeans(self, subcluster_centroids):
-        n_subclusters, n_features = subcluster_centroids.shape
-        rng = cp.random.RandomState()
-
-        # Инициализация центроидов K-means
-        if n_subclusters <= self.n_clusters:
-            centroids = subcluster_centroids.copy()
-            if n_subclusters < self.n_clusters:
-                additional = self.n_clusters - n_subclusters
-                indices = rng.choice(n_subclusters, additional, replace=True)
-                centroids = cp.concatenate([centroids, subcluster_centroids[indices]])
-        else:
-            indices = rng.choice(n_subclusters, self.n_clusters, replace=False)
-            centroids = subcluster_centroids[indices]
-
-        for _ in range(100):
-            # Векторизованный расчет расстояний
-            distances = cp.linalg.norm(
-                subcluster_centroids[:, cp.newaxis] - centroids,
-                axis=2
-            )
-            labels = cp.argmin(distances, axis=1)
-
-            new_centroids = cp.empty((self.n_clusters, n_features), 
-                                     dtype=subcluster_centroids.dtype)
+    def _calculate_cluster_centers(self):
+        """
+        Вычисляет центры финальных кластеров
+        """
+        unique_labels = cp.unique(self.labels_)
+        centers = cp.zeros((len(unique_labels), self.subcluster_centers_.shape[1]))
+        
+        for label in unique_labels:
+            mask = self.labels_ == label
+            cluster_centers = self.subcluster_centers_[mask]
+            centers[label] = cluster_centers.mean(axis=0)
             
-            for i in range(self.n_clusters):
-                mask = (labels == i)
-                if cp.any(mask):
-                    new_centroids[i] = subcluster_centroids[mask].mean(axis=0)
-                else:
-                    # Повторная инициализация пустых кластеров
-                    new_centroids[i] = subcluster_centroids[rng.randint(n_subclusters)]
-
-            if cp.allclose(centroids, new_centroids):
-                break
-            centroids = new_centroids
-
-        return centroids, labels
+        return centers.get()
+        
+    def predict(self, X):
+        """
+        Предсказывает метки кластеров для новых данных
+        """
+        if self.subcluster_centers_ is None or self.labels_ is None:
+            raise ValueError("Модель еще не обучена. Сначала вызовите fit()")
+            
+        X = cp.asarray(X, dtype=cp.float32)
+        
+        # 1. Находим ближайшие подкластеры
+        subcluster_idx = self._find_nearest_subcluster(X)
+        
+        # 2. Преобразуем индексы подкластеров в метки кластеров
+        cluster_labels = self.labels_[subcluster_idx]
+        
+        return cluster_labels.get()  # Возвращаем numpy массив
 
 
 class BirchConfig(AlgoConfig):
