@@ -11,6 +11,7 @@ from gamac.estimation.internal import Internal, InternalEvaluator
 from gamac.pipeline.cvi_predictor import CVIPredictor
 from gamac.pipeline.hyper_optimisers import HyperOptimisers
 from gamac.pipeline.mab_solvers import MabSolvers
+from gamac.pipeline.run_types import Optimal
 
 
 class Gamac:
@@ -47,7 +48,7 @@ class Gamac:
             table: Optional[DataFrame],
             text: Optional[list[str]],
             image: Optional[list[Image]],
-    ) -> tuple[DataFrameType, LabelsType]:
+    ) -> tuple[DataFrameType, Optimal]:
         """
         Запуск пайплайна
 
@@ -71,9 +72,9 @@ class Gamac:
             measures = self._measures_arg
 
         # Кластеризация датасета с применением рекомендованной меры качества
-        clusters = self._auto_clustering(df, measures)
+        optimal = self._auto_clustering(df, measures)
 
-        return df, clusters
+        return df, optimal
 
     def _data_handler(
             self,
@@ -110,7 +111,7 @@ class Gamac:
             self,
             df: DataFrameType,
             measures: Set[Internal],
-    ) -> LabelsType:
+    ) -> Optimal:
         """
         Кластеризация датасета с применением рекомендованной меры качества
 

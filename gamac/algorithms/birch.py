@@ -154,8 +154,6 @@ class Birch(ClusteringAlgo):
         if not subclusters:
             raise ValueError("No subclusters formed during BIRCH construction")
 
-        # Автоматическая корректировка количества кластеров
-        self.n_clusters = min(self.n_clusters, len(subclusters))
         subcluster_centroids = cp.stack([cf.centroid for cf in subclusters])
         centroids_, labels_ = self._kmeans(subcluster_centroids)
         return BirchModel(labels_=labels_, centroids_=centroids_)
@@ -173,15 +171,18 @@ class Birch(ClusteringAlgo):
         n_subclusters, n_features = subcluster_centroids.shape
         rng = cp.random.RandomState()
 
+        # Автоматическая корректировка количества кластеров
+        n_clusters = min(self.n_clusters, len(n_subclusters))
+
         # Инициализация центроидов K-means
-        if n_subclusters <= self.n_clusters:
+        if n_subclusters <= n_clusters:
             centroids = subcluster_centroids.copy()
-            if n_subclusters < self.n_clusters:
-                additional = self.n_clusters - n_subclusters
+            if n_subclusters < n_clusters:
+                additional = n_clusters - n_subclusters
                 indices = rng.choice(n_subclusters, additional, replace=True)
                 centroids = cp.concatenate([centroids, subcluster_centroids[indices]])
         else:
-            indices = rng.choice(n_subclusters, self.n_clusters, replace=False)
+            indices = rng.choice(n_subclusters, n_clusters, replace=False)
             centroids = subcluster_centroids[indices]
 
         for _ in range(100):
@@ -192,10 +193,10 @@ class Birch(ClusteringAlgo):
             )
             labels = cp.argmin(distances, axis=1)
 
-            new_centroids = cp.empty((self.n_clusters, n_features), 
+            new_centroids = cp.empty((n_clusters, n_features),
                                      dtype=subcluster_centroids.dtype)
             
-            for i in range(self.n_clusters):
+            for i in range(n_clusters):
                 mask = (labels == i)
                 if cp.any(mask):
                     new_centroids[i] = subcluster_centroids[mask].mean(axis=0)
