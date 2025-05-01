@@ -66,6 +66,6 @@ class InternalEvaluator:
         values = {
             measure: measure.value[1](container) for measure in measures
         }
-        print(f"=== MEASURE {time.time() - t_start} ===")
+        print(f"=== MEASURE {time.time() - t_start}, {values.values()} ===")
         return EstimationResult(values)
 

@@ -116,7 +116,6 @@ class Middleware:
             N: int,
             D: int,
             pairs: int,
-            batch_start: int,
             labels: NDArray,
             s_min_idx: int,
             s_min: NDArray,
@@ -126,8 +125,27 @@ class Middleware:
     ) -> KernelInvocation:
         return KernelInvocation(
             kernel=self._cvi.get_function('c_index'),
-            args=(data, N, D, pairs, batch_start, labels, s_min_idx, s_min, s_max_idx, s_max, s_c),
+            args=(data, N, D, pairs, labels, s_min_idx, s_min, s_max_idx, s_max, s_c),
         )
+
+    # def c_index(
+    #         self, *,
+    #         data: NDArray,
+    #         N: int,
+    #         D: int,
+    #         pairs: int,
+    #         batch_start: int,
+    #         labels: NDArray,
+    #         s_min_idx: int,
+    #         s_min: NDArray,
+    #         s_max_idx: int,
+    #         s_max: NDArray,
+    #         s_c: NDArray,
+    # ) -> KernelInvocation:
+    #     return KernelInvocation(
+    #         kernel=self._cvi.get_function('c_index'),
+    #         args=(data, N, D, pairs, batch_start, labels, s_min_idx, s_min, s_max_idx, s_max, s_c),
+    #     )
 
     def crosstab(
             self, *,

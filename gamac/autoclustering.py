@@ -5,12 +5,12 @@ from PIL import Image
 from numpy import ndarray
 from pandas import DataFrame
 
-from gamac.algorithms.c_kernel.bisecting_kmeans import BisectingKMeansConf
-from gamac.estimation.internal import Internal, InternalEvaluator
+from gamac.algorithms.bisecting_kmeans import BisectingKMeansConfig
 from gamac.data.data_pipeline import DataHandler, DataFrameType, LabelsType
+from gamac.estimation.internal import Internal, InternalEvaluator
+from gamac.pipeline.cvi_predictor import CVIPredictor
 from gamac.pipeline.hyper_optimisers import HyperOptimisers
 from gamac.pipeline.mab_solvers import MabSolvers
-from gamac.pipeline.cvi_predictor import CVIPredictor
 
 
 class Gamac:
@@ -27,7 +27,7 @@ class Gamac:
         self._mab_arg = mab_solver
         self._hyper_arg = hyper_optimiser
         self._measures_arg = target_measures
-        self._algorithms = [BisectingKMeansConf()]
+        self._algorithms = [BisectingKMeansConfig()]
         self._time_limit_arg = time_limit
         self._iter_limit_arg = iter_limit
 

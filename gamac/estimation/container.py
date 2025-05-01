@@ -1,5 +1,4 @@
 import cupy as cp
-import numpy as np
 
 from gamac.kernels import MIDDLEWARE, BATCH_SIZE
 
@@ -59,7 +58,7 @@ class EstimationContainer:
     @property
     def centroids(self) -> list:
         if self._centroids is None:
-            centroids = cp.empty(shape=(self.k, self.d), dtype=np.float32)
+            centroids = cp.empty(shape=(self.k, self.d), dtype=cp.float32)
             MIDDLEWARE.get_centroids(
                 data=self.data,
                 labels=self.labels,
@@ -81,7 +80,7 @@ class EstimationContainer:
             for k_idx in range(self.k):
                 cluster = self.clusters[k_idx]
                 cl_n = len(cluster)
-                cent_dists = cp.empty(shape=cl_n, dtype=np.float32)
+                cent_dists = cp.empty(shape=cl_n, dtype=cp.float32)
 
                 MIDDLEWARE.get_cent_dists(
                     cluster=cluster,
@@ -108,7 +107,7 @@ class EstimationContainer:
                 cent_dists = self.cent_dists[k_idx]
                 cl_n = len(cluster)
 
-                sym_data = cp.empty(shape=cluster.shape, dtype=np.float32)
+                sym_data = cp.empty(shape=cluster.shape, dtype=cp.float32)
                 MIDDLEWARE.get_sym_data(
                     cluster=cluster,
                     cl_n=cl_n,
@@ -121,7 +120,7 @@ class EstimationContainer:
                     blocks=(BATCH_SIZE, 1),
                 )
 
-                sym_dists = cp.empty(shape=cl_n, dtype=np.float32)
+                sym_dists = cp.empty(shape=cl_n, dtype=cp.float32)
                 MIDDLEWARE.get_sym_dists(
                     cluster=cluster,
                     cl_n=cl_n,
@@ -141,7 +140,7 @@ class EstimationContainer:
     @property
     def cent_matrix(self):
         if self._cent_matrix is None:
-            cent_matrix = cp.empty(shape=(self.k, self.k), dtype=np.float32)
+            cent_matrix = cp.empty(shape=(self.k, self.k), dtype=cp.float32)
             MIDDLEWARE.get_cent_matrix(
                 centroids=self.centroids,
                 K=self.k,

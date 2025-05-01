@@ -1,53 +1,82 @@
-# v0.1
 import cupy as cp
+import numpy as np
 import pylibraft.config
-from cupyx.scipy import sparse
+
+from gamac.algorithms.base import ClusteringModel, ClusteringAlgo, AlgoConfig
+from gamac.data.data_pipeline import DataFrameType, LabelsType
 
 pylibraft.config.set_output_as("cupy")
 
 
-class BisectingKMeans:
-    def __init__(self, n_clusters=2, max_iter=100, init='k-means++', tol=1e-4):
+class BisectingKMeansModel(ClusteringModel):
+    def __init__(self, labels_, centroids_):
+        super().__init__(labels_)
+        self.centroids_ = centroids_
+
+    def predict(self, df: DataFrameType) -> LabelsType:
+        diff = df[:, None] - self.centroids_
+        distances = cp.linalg.norm(diff, axis=2)
+        return cp.argmin(distances, axis=1)
+
+
+class BisectingKMeans(ClusteringAlgo):
+    def __init__(
+            self,
+            n_clusters=2,
+            max_iter=100,
+            init='k-means++',
+            tol=1e-4
+    ):
+        super().__init__()
         self.n_clusters = n_clusters
         self.max_iter = max_iter
         self.init = init
         self.tol = tol
-        self.centers_ = None
-        self.labels_ = None
 
-    def _kmeans_init(self, X, k):
+    def _kmeans_pp_init(self, data, k):
         """Инициализация центров методом K-Means++"""
-        n_samples, n_features = X.shape
-        centers = cp.empty((k, n_features), dtype=X.dtype)
+        n, d = data.shape
+        centers = cp.empty(shape=(k, d), dtype=cp.float32)
 
         # Первый центр выбирается случайно
-        first_idx = cp.random.randint(n_samples)
-        centers[0] = X[first_idx]
+        first_idx = cp.random.randint(n)
+        centers[0] = data[first_idx]
 
         for i in range(1, k):
             # Вычисление расстояний до ближайшего центра
-            distances = cp.linalg.norm(X[:, None] - centers[:i], axis=2)
+            diff = data[:, None] - centers[:i]
+            distances = cp.linalg.norm(diff, axis=2)
             min_dists = cp.min(distances, axis=1)
             # Вероятности пропорциональны квадрату расстояний
             probs = min_dists ** 2
             probs /= cp.sum(probs)
             # Выбор следующего центра
             next_idx = cp.where(cp.random.rand() < cp.cumsum(probs))[0][0]
-            centers[i] = X[next_idx]
+            centers[i] = data[next_idx]
         return centers
 
-    def _kmeans(self, X, k):
+    def _random_init(self, data, k):
+        n = data.shape[0]
+        idx = cp.random.choice(n, k, replace=False)
+        return data[idx]
+
+    def _init_centroids(self, data, k):
+        match self.init:
+            case 'k-means++':
+                return self._kmeans_pp_init(data, k)
+            case 'random':
+                return self._random_init(data, k)
+            case _:
+                raise ValueError
+
+    def _kmeans(self, data, k):
         """Оптимизированный K-Means с использованием CuPy"""
-        if self.init == 'k-means++':
-            centers = self._kmeans_init(X, k)
-        else:
-            # Случайная выборка из данных
-            idx = cp.random.choice(X.shape[0], k, replace=False)
-            centers = X[idx]
+        centers = self._init_centroids(data, k)
 
         for _ in range(self.max_iter):
             # Векторизованное вычисление расстояний
-            distances = cp.linalg.norm(X[:, None] - centers, axis=2)
+            diff = data[:, None] - centers
+            distances = cp.linalg.norm(diff, axis=2)
             labels = cp.argmin(distances, axis=1)
 
             # Векторизованное обновление центров
@@ -55,7 +84,7 @@ class BisectingKMeans:
             for i in range(k):
                 mask = (labels == i)
                 if cp.any(mask):
-                    new_centers[i] = X[mask].mean(axis=0)
+                    new_centers[i] = data[mask].mean(axis=0)
                 else:
                     new_centers[i] = centers[i]
 
@@ -66,31 +95,28 @@ class BisectingKMeans:
 
         return labels, centers
 
-    def _sse(self, X, labels):
+    def _sse(self, data, labels):
         """Векторизованный расчет SSE"""
         unique_labels = cp.unique(labels)
-        sse = 0.0
+        sse_accumulator = 0.0
         for lbl in unique_labels:
-            cluster = X[labels == lbl]
+            cluster = data[labels == lbl]
             if len(cluster) > 0:
-                sse += cp.sum((cluster - cluster.mean(axis=0))**2)
-        return sse.item()
+                centroid = cluster.mean(axis=0)
+                diff = cluster - centroid
+                sse_accumulator += cp.sum(diff * diff).item()
+        return sse_accumulator
 
-    def fit(self, X):
-        # Оптимизация передачи данных
-        if not isinstance(X, cp.ndarray):
-            X_gpu = cp.asarray(X)
-        else:
-            X_gpu = X
-
-        clusters = [cp.arange(X_gpu.shape[0])]
+    def fit(self, df: DataFrameType) -> BisectingKMeansModel:
+        N, D = df.shape
+        clusters = [cp.arange(N)]
 
         while len(clusters) < self.n_clusters:
             sse_values = []
             kmeans_results = []
 
             for cluster in clusters:
-                cluster_data = X_gpu[cluster]
+                cluster_data = df[cluster]
                 if len(cluster_data) < 2:
                     sse_values.append(0.0)
                     kmeans_results.append(None)
@@ -101,7 +127,7 @@ class BisectingKMeans:
                 sse_values.append(self._sse(cluster_data, labels))
 
             # Выбор кластера для разделения
-            max_sse_idx = cp.argmax(cp.array(sse_values)).item()
+            max_sse_idx = np.argmax(sse_values)
             if sse_values[max_sse_idx] <= 0:
                 break  # Не осталось кластеров для разделения
 
@@ -114,23 +140,34 @@ class BisectingKMeans:
             ])
 
         # Формирование финальных меток
-        self.labels_ = cp.zeros(X_gpu.shape[0], dtype=int)
+        labels_ = cp.full(shape=N, fill_value=-1, dtype=cp.int32)
         for i, cluster in enumerate(clusters):
-            self.labels_[cluster] = i
- 
+            labels_[cluster] = i
+
         # Вычисление центров
-        self.centers_ = cp.stack([
-            X_gpu[self.labels_ == i].mean(axis=0)
+        centroids_ = cp.stack([
+            df[labels_ == i].mean(axis=0)
             for i in range(self.n_clusters)
         ])
 
-        # Конвертация результатов в CPU
-        self.labels_ = cp.asnumpy(self.labels_)
-        self.centers_ = cp.asnumpy(self.centers_)
+        return BisectingKMeansModel(
+            labels_=labels_,
+            centroids_=centroids_
+        )
 
-    def predict(self, X):
-        if self.centers_ is None:
-            raise ValueError("Model not fitted yet.")
-        X_gpu = cp.asarray(X)
-        distances = cp.linalg.norm(X_gpu[:, None] - cp.asarray(self.centers_), axis=2)
-        return cp.argmin(distances, axis=1).get()
+
+class BisectingKMeansConfig(AlgoConfig):
+    def __init__(
+            self, *,
+            n_clusters=(2, 15),
+            init=frozenset(['random', 'k-means++']),
+            max_iter=100,
+            tol=1e-4
+    ):
+        super().__init__(
+            BisectingKMeans,
+            n_clusters=n_clusters,
+            max_iter=max_iter,
+            init=init,
+            tol=tol
+        )

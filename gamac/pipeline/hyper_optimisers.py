@@ -3,7 +3,7 @@ from abc import abstractmethod, ABC
 from enum import Enum
 from typing import List
 
-from gamac.algorithms.base import AlgoConf, ClusteringAlgo
+from gamac.algorithms.base import AlgoConfig, ClusteringAlgo
 from gamac.estimation.internal import InternalEvaluator, EstimationResult
 from gamac.data.data_pipeline import DataFrameType
 from gamac.pipeline.run_types import SuccessRun, HistoryRun, Optimal, FailedRun
@@ -15,14 +15,15 @@ class HyperOptimiser(ABC):
 
     def __init__(
         self,
-        algo_conf: AlgoConf,
+        algo_conf: AlgoConfig,
         df: DataFrameType,
         evaluator: InternalEvaluator
     ):
         self.algo_conf = algo_conf
         self.df = df
         self.evaluator = evaluator
-        self._runs, self.optimal = list(), None
+        self._runs = list()
+        self.optimal = None
 
     @property
     def success_runs(self) -> List[SuccessRun]:
@@ -60,18 +61,18 @@ class HyperOptimiser(ABC):
         start_timestamp = time.time()
         try:
             model = algo.fit(self.df)
-            labels = model.predict(self.df)
+            labels = model.labels_
             fit_timestamp = time.time()
+
             estimation = self.evaluator.evaluate(labels)
             eval_timestamp = time.time()
 
             if self._is_optimal(estimation):
-                self.optimal = Optimal(algo, model, labels, estimation)
+                self.optimal = Optimal(algo, model, estimation)
 
             print(f"=== ALGO {fit_timestamp - start_timestamp} ===")
             return SuccessRun(
-                algo_name=algo.name,
-                algo_params=algo.params,
+                algo_params=algo.__dict__,
                 fit_time=fit_timestamp - start_timestamp,
                 eval_time=eval_timestamp - fit_timestamp,
                 estimation=estimation
@@ -79,8 +80,7 @@ class HyperOptimiser(ABC):
         except RuntimeError:
             failed_time = time.time() - start_timestamp
             return FailedRun(
-                algo_name=algo.name,
-                algo_params=algo.params,
+                algo_params=algo.__dict__,
                 consumed=failed_time
             )
 
@@ -88,7 +88,7 @@ class HyperOptimiser(ABC):
 class RandomOptimiser(HyperOptimiser):
     def __init__(
             self,
-            algo_conf: AlgoConf,
+            algo_conf: AlgoConfig,
             df: DataFrameType,
             evaluator: InternalEvaluator
     ):
@@ -101,7 +101,7 @@ class RandomOptimiser(HyperOptimiser):
 class OptunaOptimiser(HyperOptimiser):
     def __init__(
         self,
-        algo_conf: AlgoConf,
+        algo_conf: AlgoConfig,
         df: DataFrameType,
         evaluator: InternalEvaluator
     ):

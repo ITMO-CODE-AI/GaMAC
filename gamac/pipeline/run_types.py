@@ -1,15 +1,12 @@
 from abc import ABC, abstractmethod
-
 from typing import Dict, Any
 
 from gamac.algorithms.base import ClusteringAlgo, ClusteringModel
 from gamac.estimation.internal import EstimationResult
-from gamac.data.data_pipeline import LabelsType
 
 
 class HistoryRun(ABC):
-    def __init__(self, algo_name: str, algo_params: Dict[str, Any]):
-        self.algo_name = algo_name
+    def __init__(self, algo_params: Dict[str, Any]):
         self.algo_params = algo_params
 
     @abstractmethod
@@ -20,11 +17,10 @@ class HistoryRun(ABC):
 class FailedRun(HistoryRun):
     def __init__(
         self,
-        algo_name: str,
         algo_params: Dict[str, Any],
         consumed: float,
     ):
-        super().__init__(algo_name, algo_params)
+        super().__init__(algo_params)
         self.consumed = consumed
 
     def elapsed(self) -> float:
@@ -34,13 +30,12 @@ class FailedRun(HistoryRun):
 class SuccessRun(HistoryRun):
     def __init__(
         self,
-        algo_name: str,
         algo_params: Dict[str, Any],
         fit_time: float,
         eval_time: float,
         estimation: EstimationResult
     ):
-        super().__init__(algo_name, algo_params)
+        super().__init__(algo_params)
         self.fit_time, self.eval_time = fit_time, eval_time
         self.estimation = estimation
 
@@ -53,9 +48,7 @@ class Optimal:
         self,
         algo: ClusteringAlgo,
         model: ClusteringModel,
-        labels: LabelsType,
         estimation: EstimationResult
     ):
         self.algo, self.model = algo, model
-        self.labels = labels
         self.estimation = estimation

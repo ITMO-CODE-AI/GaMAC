@@ -6,6 +6,9 @@ from gamac.data.data_pipeline import DataFrameType, LabelsType
 
 
 class ClusteringModel(ABC):
+    def __init__(self, labels_: LabelsType):
+        self.labels_ = labels_
+
     @abstractmethod
     def predict(self, df: DataFrameType) -> LabelsType:
         pass
@@ -28,7 +31,7 @@ class ClusteringAlgo(ABC):
 
 
 
-class AlgoConf(ABC):
+class AlgoConfig(ABC):
     def __init__(self, builder, **kwargs):
         self.config_space, self.builder = kwargs, builder
         self.algo_name = builder.__name__

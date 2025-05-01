@@ -4,29 +4,12 @@ import sys
 
 import pylibraft.config
 
-from gamac.algorithms.base import ClusteringAlgo, ClusteringModel, AlgoConf
-from gamac.data.data_pipeline import DataFrameType, LabelsType
-
 pylibraft.config.set_output_as("cupy")
 
 sys.path.append('../')
-from gamac.utils.utils import gpu_distance
+from utils.utils import gpu_distance
 
-class KMeansModel(ClusteringModel):
-    def __init__(self, clusters):
-        self.clusters_ = clusters
-
-    def predict(self, df: DataFrameType) -> LabelsType:
-        """Classify samples as the index of their clusters"""
-        # One prediction for each sample
-        y_pred = np.zeros(np.shape(df)[0])
-        for cluster_i, cluster in enumerate(self.clusters_):
-            for sample_i in cluster:
-                y_pred[sample_i] = cluster_i
-        return y_pred
-
-
-class KMeans(ClusteringAlgo):
+class KMeans:
     """A simple clustering method that forms k clusters by iteratively reassigning
     samples to the closest centroids and after that moves the centroids to the center
     of the new formed clusters using GPU.
@@ -42,10 +25,6 @@ class KMeans(ClusteringAlgo):
     """
 
     def __init__(self, k=2, max_iterations=500):
-        super().__init__(
-            k=k,
-            max_iterations=max_iterations,
-        )
         self.k = k
         self.max_iterations = max_iterations
 
@@ -105,7 +84,7 @@ class KMeans(ClusteringAlgo):
                 y_pred[sample_i] = cluster_i
         return y_pred
 
-    def fit(self, X):
+    def predict(self, X):
         """Do K-Means clustering and return cluster indices"""
 
         # Initialize centroids as k random samples from X
@@ -124,17 +103,4 @@ class KMeans(ClusteringAlgo):
             if not diff.any():
                 break
 
-        return KMeansModel(clusters)
-
-
-class KMeansConf(AlgoConf):
-    def __init__(
-            self, *,
-            k=(2, 10),
-            max_iterations=500,
-    ):
-        super().__init__(
-            KMeans,
-            k=k,
-            max_iterations=max_iterations,
-        )
+        return self._get_cluster_labels(clusters, X)

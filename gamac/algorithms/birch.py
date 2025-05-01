@@ -1,6 +1,9 @@
 import cupy as cp
 import pylibraft.config
 
+from gamac.algorithms.base import ClusteringModel, ClusteringAlgo, AlgoConfig
+from gamac.data.data_pipeline import DataFrameType, LabelsType
+
 pylibraft.config.set_output_as("cupy")
 
 
@@ -69,28 +72,41 @@ class CFNode:
         pass
 
 
-class BIRCH:
+class BirchModel(ClusteringModel):
+    def __init__(self, labels_, centroids_):
+        super().__init__(labels_)
+        self.centroids_ = centroids_
+
+    def predict(self, df: DataFrameType) -> LabelsType:
+        distances = cp.linalg.norm(
+            df[:, cp.newaxis] - self.centroids_,
+            axis=2
+        )
+        return cp.argmin(distances, axis=1)
+
+
+class Birch(ClusteringAlgo):
     def __init__(self, threshold=0.5, branching_factor=50, n_clusters=3):
+        super().__init__()
         self.threshold = threshold
         self.branching_factor = branching_factor
         self.n_clusters = n_clusters
-        self.root = CFNode(threshold, branching_factor)
-        self.cluster_centers_ = None
 
-    def fit(self, X):
-        X_gpu = cp.asarray(X, dtype=cp.float32)
-        for point in X_gpu:
-            self.root.insert(point)
+    def fit(self, df: DataFrameType) -> BirchModel:
+        root = CFNode(threshold=self.threshold, branching_factor=self.branching_factor)
+        for point in df:
+            root.insert(point)
 
-        subclusters = self._get_all_subclusters()
+        subclusters = self._get_all_subclusters(root)
         if not subclusters:
             raise ValueError("No subclusters formed during BIRCH construction")
 
         centroids = cp.stack([cf.centroid for cf in subclusters])
-        self._kmeans(centroids)
+        centroids_, labels_ = self._kmeans(centroids)
+        return BirchModel(labels_=labels_, centroids_=centroids_)
 
-    def _get_all_subclusters(self):
-        nodes = [self.root]
+    def _get_all_subclusters(self, root):
+        nodes = [root]
         subclusters = []
         while nodes:
             node = nodes.pop(0)
@@ -101,10 +117,8 @@ class BIRCH:
     def _kmeans(self, centroids):
         # Векторизованная реализация K-means
         for _ in range(100):
-            distances = cp.linalg.norm(
-                centroids[:, cp.newaxis] - centroids, 
-                axis=2
-            )
+            diff = centroids[:, cp.newaxis] - centroids
+            distances = cp.linalg.norm(diff, axis=2)
             labels = cp.argmin(distances, axis=0)
 
             new_centroids = cp.empty_like(centroids)
@@ -119,15 +133,19 @@ class BIRCH:
                 break
             centroids = new_centroids
 
-        self.cluster_centers_ = centroids
+        return centroids, labels
 
-    def predict(self, X):
-        if self.cluster_centers_ is None:
-            raise ValueError("Model not fitted yet")
 
-        X_gpu = cp.asarray(X, dtype=cp.float32)
-        distances = cp.linalg.norm(
-            X_gpu[:, cp.newaxis] - self.cluster_centers_,
-            axis=2
+class BirchConfig(AlgoConfig):
+    def __init__(
+            self, *,
+            threshold=(0.1, 0.9),
+            branching_factor=(5, 80),
+            n_clusters=(2, 15),
+    ):
+        super().__init__(
+            Birch,
+            threshold=threshold,
+            branching_factor=branching_factor,
+            n_clusters=n_clusters,
         )
-        return cp.argmin(distances, axis=1).get()
