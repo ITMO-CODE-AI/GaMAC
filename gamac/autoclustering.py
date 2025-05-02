@@ -1,4 +1,5 @@
 """Основной скрипт класса Gamac"""
+import time
 from typing import Optional, Set
 
 from PIL import Image
@@ -104,7 +105,10 @@ class Gamac:
         Returns:
             str: Рекомендованная мера качества
         """
+        meta_start = time.time()
         single_prediction = CVIPredictor.run(df)
+        meta_time = time.time() - meta_start
+        print(f"Picked {single_prediction.name} in {meta_time}s")
         return {single_prediction}
 
     def _auto_clustering(
