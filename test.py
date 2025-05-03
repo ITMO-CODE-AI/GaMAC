@@ -11,7 +11,6 @@ def main():
     gpu_data = cp.array(data, dtype=cp.float32)
     df, optimal = Gamac().run(table=gpu_data, text=None, image=None)
 
-    print(df)
     print(f'clusters: {optimal.model.labels_}')
 
 
