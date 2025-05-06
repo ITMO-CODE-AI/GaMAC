@@ -8,9 +8,8 @@ from gamac.autoclustering import Gamac
 
 def main():
     data = pd.read_csv('test-data/gen.csv')
-    data = data.head(1000).values
-    gpu_data = cp.array(data, dtype=cp.float32)
-    df, optimal = Gamac().run(table=gpu_data, text=None, image=None)
+    data = data.head(1000)
+    df, optimal = Gamac().run(table=data, text=None, image=None)
 
     print(f'optimal.model: {optimal.model}')
     print(f'clusters: {optimal.model.labels_}')

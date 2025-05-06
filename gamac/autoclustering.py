@@ -1,5 +1,6 @@
 """Основной скрипт класса Gamac"""
 import time
+import cupy as cp
 from typing import Optional, Set
 
 from PIL import Image
@@ -36,8 +37,9 @@ class Gamac:
         self._mab_arg = mab_solver
         self._hyper_arg = hyper_optimiser
         self._measures_arg = target_measures
-        self._algorithms = [BisectingKMeansConfig(), AffinityPropagationConfig(), KMeansConfig(), 
-                            DBSCANConfig(), MeanShiftConfig(), HDBSCANConfig(), BirchConfig()]
+        self._algorithms = [BisectingKMeansConfig(), MeanShiftConfig(), DBSCANConfig(),
+                            HDBSCANConfig(), BirchConfig(), AffinityPropagationConfig(),
+                            KMeansConfig()]
         self._time_limit_arg = time_limit
         self._iter_limit_arg = iter_limit
 
@@ -47,9 +49,9 @@ class Gamac:
             text: Optional[list[str]],
             image: Optional[list[Image]],
     ):
-        if not table and not text and not image:
+        if table is None and text is None and image is None:
             assert "There is not data included"
-        if not table and (not text or not image):
+        if table is None and (text is None or image is None):
             assert "text and image must be specified"
 
     def run(
@@ -68,11 +70,13 @@ class Gamac:
         Returns:
             tuple[ndarray, list[int]]: Кортеж датасет и список кластеров
         """
-        # self._check_input(table, text, image)
-        #
-        # # Обработка данных в единый датасет
-        # df = self._data_handler(table, text, image)
-        df = table
+        self._check_input(table, text, image)
+        
+        # Обработка данных в единый датасет
+        df = self._data_handler(table, text, image)
+        # df = table
+
+        df = cp.array(df, dtype=cp.float32)
 
         # Получение рекомендации мер качества
         if self._measures_arg is None:
