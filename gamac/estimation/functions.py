@@ -37,8 +37,11 @@ def br(container: EstimationContainer) -> float:
         cl_var = (cl_d * cl_d).mean().item()
         var_stable = 1.0 + cl_var + 1e-6
         result_acc += cl_n * np.log(var_stable)
-    result = result_acc / container.n
-    return -result
+    if container.n:
+        result = result_acc / container.n
+        print(result_acc, container.n)
+        return -result
+    return -100000
 
 
 def sym(container: EstimationContainer) -> float:

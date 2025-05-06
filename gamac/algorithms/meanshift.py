@@ -27,71 +27,69 @@ class MeanShiftModel(ClusteringModel):
 
 
 class MeanShift(ClusteringAlgo):
-    def __init__(self, radius=4, max_iter=100):
-        super().__init__()
-        self.radius = radius
-        self.radius_sq = radius**2  # Предвычисляем квадрат радиуса
+    def __init__(self, bandwidth=1.0, max_iter=300, tol=1e-3):
+        self.bandwidth = bandwidth
         self.max_iter = max_iter
+        self.tol = tol
         self.centroids = None
+        self.labels = None
 
-    def fit(self, data):
-        data_cp = cp.asarray(data, dtype=cp.float32)
-        centroids = data_cp.copy()
-        optimized = False
-        iteration = 0
-
-        while not optimized and iteration < self.max_iter:
-            iteration += 1
-
-            # Оптимизированное вычисление масок через квадраты расстояний
-            centroids_sq = cp.sum(centroids**2, axis=1)[:, cp.newaxis]
-            data_sq = cp.sum(data_cp**2, axis=1)[cp.newaxis, :]
-            dot_product = cp.dot(centroids, data_cp.T)
-            distances_sq = centroids_sq + data_sq - 2 * dot_product
-
-            masks = distances_sq < self.radius_sq
-
-            # Векторизованное вычисление новых центроидов
-            sum_data = masks.astype(cp.float32) @ data_cp
-            counts = cp.sum(masks, axis=1, keepdims=True)
-            valid = counts > 0
-            new_centroids = cp.where(valid, sum_data / counts, centroids)
-
-            # Оптимизированное определение уникальности
-            rounded = cp.round(new_centroids, decimals=4)
-            unique_centroids = cp.unique(rounded, axis=0)
-
-            if unique_centroids.shape == centroids.shape:
-                optimized = True
-            centroids = unique_centroids
-
-        self.centroids = centroids
-        labels = self.predict(data)
-        labels = cp.array(labels, dtype=cp.int32)
-        return MeanShiftModel(labels_=labels, centroids_=self.centroids)
-
-    def predict(self, data):
-        data = cp.asarray(data, dtype=cp.float32)
-        if self.centroids is None:
-            raise ValueError("Модель еще не обучена!")
-
-        # Повторно используем оптимизированный расчет расстояний
-        data_sq = cp.sum(data**2, axis=1, keepdims=True)
-        centroids_sq = cp.sum(self.centroids**2, axis=1)
-        dot_product = cp.dot(data, self.centroids.T)
-        distances_sq = data_sq + centroids_sq - 2 * dot_product
-
-        return cp.argmin(distances_sq, axis=1).get()
+    def fit(self, X):
+        X = cp.asarray(X)  # Конвертация в CuPy массив
+        centroids = X.copy()
+        
+        for _ in range(self.max_iter):
+            max_shift = 0.0
+            for i in range(len(centroids)):
+                centroid = centroids[i]
+                distances = cp.linalg.norm(X - centroid, axis=1)
+                in_window = distances <= self.bandwidth
+                if not cp.any(in_window):
+                    continue
+                new_centroid = cp.mean(X[in_window], axis=0)
+                shift = cp.linalg.norm(new_centroid - centroid)
+                centroids[i] = new_centroid
+                max_shift = max(max_shift, shift)
+            if max_shift < self.tol:
+                break
+        
+        # Объединение центроидов
+        unique_centroids = []
+        for centroid in centroids:
+            if not unique_centroids:
+                unique_centroids.append(centroid)
+                continue
+            distances = cp.linalg.norm(cp.array(unique_centroids) - centroid, axis=1)
+            if cp.min(distances) > self.bandwidth:
+                unique_centroids.append(centroid)
+        self.centroids = cp.array(unique_centroids)
+        
+        # Назначение меток
+        self.labels = self._assign_labels(X)
+        return MeanShiftModel(labels_=self.labels, centroids_=self.centroids)
+    
+    def _assign_labels(self, X):
+        labels = cp.zeros(X.shape[0], dtype=cp.int32)
+        for i, x in enumerate(X):
+            distances = cp.linalg.norm(self.centroids - x, axis=1)
+            labels[i] = cp.argmin(distances)
+        return labels
+    
+    def predict(self, X):
+        X = cp.asarray(X)  # Конвертация в CuPy массив
+        return self._assign_labels(X)
 
 
 class MeanShiftConfig(AlgoConfig):
     def __init__(
             self, *,
-            radius=(2, 8),
-            max_iter=100
+            bandwidth=(1e-4, 1.0), 
+            max_iter=(50, 300), 
+            tol=(1e-5, 1e-4)
     ):
         super().__init__(
             MeanShift,
-            radius=radius,
-            max_iter=max_iter
+            bandwidth=bandwidth, 
+            max_iter=max_iter, 
+            tol=tol
         )

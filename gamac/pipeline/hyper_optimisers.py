@@ -60,6 +60,7 @@ class HyperOptimiser(ABC):
     def _eval_algo(self, algo: ClusteringAlgo) -> HistoryRun:
         start_timestamp = time.time()
         try:
+            print('ALGO', algo)
             model = algo.fit(self.df)
             labels = model.labels_
             fit_timestamp = time.time()

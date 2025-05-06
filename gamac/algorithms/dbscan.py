@@ -6,6 +6,7 @@ from gamac.data.data_pipeline import DataFrameType, LabelsType
 
 pylibraft.config.set_output_as("cupy")
 
+
 class DBSCANModel(ClusteringModel):
     def __init__(self, labels_, X_, eps):
         super().__init__(labels_)

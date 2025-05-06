@@ -90,9 +90,6 @@ class KMeans(ClusteringAlgo):
 
             self.centroids = new_centroids
 
-        print(labels)
-        print(self.centroids)
-
         return KMeansModel(
             labels_=labels,
             centroids_=self.centroids
