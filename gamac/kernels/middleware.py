@@ -28,6 +28,35 @@ class Middleware:
         self._cvi = load_module('cvi-kernels.c')
         self._kmeans = load_module('kmeans-kernels.c')
 
+    def meta_dist_sort(
+            self, *,
+            N: int,
+            D: int,
+            data: NDArray,
+            batch_start: int,
+            batch_size: int,
+            sorted_dists: NDArray,
+            max_dists: NDArray,
+    ) -> KernelInvocation:
+        return KernelInvocation(
+            kernel=self._meta.get_function('meta_dist_sort'),
+            args=(N, D, data, batch_start, batch_size, sorted_dists, max_dists),
+        )
+
+    def meta_dist_stat(
+            self, *,
+            Q: int,
+            R: int,
+            N: int,
+            sorted_dists: NDArray,
+            batch_size: int,
+            dist_stats: NDArray,
+    ) -> KernelInvocation:
+        return KernelInvocation(
+            kernel=self._meta.get_function('meta_dist_stat'),
+            args=(Q, R, N, sorted_dists, batch_size, dist_stats),
+        )
+
     def get_centroids(
             self, *,
             data: DataFrameType,

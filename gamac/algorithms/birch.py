@@ -236,78 +236,71 @@ class Birch(ClusteringAlgo):
         self.threshold = threshold
         self.branching_factor = branching_factor
         self.n_clusters = n_clusters
-        self.subcluster_centers_ = None
-        self.labels_ = None
 
-    def fit(self, X, batch_size=10000):
-        X_gpu = cp.asarray(X, dtype=cp.float32)
-        self.tree = CFTree(self.threshold, self.branching_factor)
-        
-        # Пакетная обработка данных
-        for i in range(0, len(X_gpu), batch_size):
-            batch = X_gpu[i:i+batch_size]
-            self.tree.insert(batch)
-        
-        subclusters = self.tree.get_subclusters()
-        self.subcluster_centers_ = cp.stack([cf.centroid for cf in subclusters])
-        
-        # GPU-реализация агломеративной кластеризации
-        clusterer = GPUAgglomerativeClustering(n_clusters=self.n_clusters)
-        clusterer.fit(self.subcluster_centers_)
-        self.labels_ = clusterer.labels_
-        self.labels_ = cp.array(self.labels_, dtype=cp.int32)
-        
-        labels = self.predict(X)
-        labels = cp.array(labels, dtype=cp.int32)
-        
-        print(labels)
-        
-        return BirchModel(
-            labels_=labels,
-            centroids_=self.subcluster_centers_
-        )
-        
-    def _find_nearest_subcluster(self, X):
-        """
-        Находит ближайший подкластер для каждой точки
-        """
-        # Векторизованный расчет расстояний
-        X_norm = cp.sum(X**2, axis=1, keepdims=True)
-        C_norm = cp.sum(self.subcluster_centers_**2, axis=1)
-        distances = X_norm + C_norm - 2 * X @ self.subcluster_centers_.T
-        
-        return cp.argmin(distances, axis=1)
+    def fit(self, df: DataFrameType) -> BirchModel:
+        root = CFNode(threshold=self.threshold, branching_factor=self.branching_factor)
+        for point in df:
+            root.insert(point)
 
-    def _calculate_cluster_centers(self):
-        """
-        Вычисляет центры финальных кластеров
-        """
-        unique_labels = cp.unique(self.labels_)
-        centers = cp.zeros((len(unique_labels), self.subcluster_centers_.shape[1]))
-        
-        for label in unique_labels:
-            mask = self.labels_ == label
-            cluster_centers = self.subcluster_centers_[mask]
-            centers[label] = cluster_centers.mean(axis=0)
+        subclusters = self._get_all_subclusters(root)
+        if not subclusters:
+            raise ValueError("No subclusters formed during BIRCH construction")
+
+        subcluster_centroids = cp.stack([cf.centroid for cf in subclusters])
+        centroids_, labels_ = self._kmeans(subcluster_centroids)
+        return BirchModel(labels_=labels_, centroids_=centroids_)
+
+    def _get_all_subclusters(self, root):
+        nodes = [root]
+        subclusters = []
+        while nodes:
+            node = nodes.pop(0)
+            subclusters.extend(node.subclusters)
+            nodes.extend(node.children)
+        return subclusters
+
+    def _kmeans(self, subcluster_centroids):
+        n_subclusters, n_features = subcluster_centroids.shape
+        rng = cp.random.RandomState()
+
+        # Автоматическая корректировка количества кластеров
+        n_clusters = min(self.n_clusters, len(n_subclusters))
+
+        # Инициализация центроидов K-means
+        if n_subclusters <= n_clusters:
+            centroids = subcluster_centroids.copy()
+            if n_subclusters < n_clusters:
+                additional = n_clusters - n_subclusters
+                indices = rng.choice(n_subclusters, additional, replace=True)
+                centroids = cp.concatenate([centroids, subcluster_centroids[indices]])
+        else:
+            indices = rng.choice(n_subclusters, n_clusters, replace=False)
+            centroids = subcluster_centroids[indices]
+
+        for _ in range(100):
+            # Векторизованный расчет расстояний
+            distances = cp.linalg.norm(
+                subcluster_centroids[:, cp.newaxis] - centroids,
+                axis=2
+            )
+            labels = cp.argmin(distances, axis=1)
+
+            new_centroids = cp.empty((n_clusters, n_features),
+                                     dtype=subcluster_centroids.dtype)
             
-        return centers.get()
-        
-    def predict(self, X):
-        """
-        Предсказывает метки кластеров для новых данных
-        """
-        if self.subcluster_centers_ is None or self.labels_ is None:
-            raise ValueError("Модель еще не обучена. Сначала вызовите fit()")
-            
-        X = cp.asarray(X, dtype=cp.float32)
-        
-        # 1. Находим ближайшие подкластеры
-        subcluster_idx = self._find_nearest_subcluster(X)
-        
-        # 2. Преобразуем индексы подкластеров в метки кластеров
-        cluster_labels = self.labels_[subcluster_idx]
-        
-        return cluster_labels.get()  # Возвращаем numpy массив
+            for i in range(n_clusters):
+                mask = (labels == i)
+                if cp.any(mask):
+                    new_centroids[i] = subcluster_centroids[mask].mean(axis=0)
+                else:
+                    # Повторная инициализация пустых кластеров
+                    new_centroids[i] = subcluster_centroids[rng.randint(n_subclusters)]
+
+            if cp.allclose(centroids, new_centroids):
+                break
+            centroids = new_centroids
+
+        return centroids, labels
 
 
 class BirchConfig(AlgoConfig):

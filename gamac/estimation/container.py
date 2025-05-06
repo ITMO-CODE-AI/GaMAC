@@ -4,6 +4,8 @@ from gamac.kernels import MIDDLEWARE, BATCH_SIZE
 
 
 class EstimationContainer:
+    NOISE_THRESHOLD = 0.1
+
     def __init__(self, data, labels, k):
         self.data = data
         self.labels = labels
@@ -16,21 +18,32 @@ class EstimationContainer:
         self._cent_matrix = None
 
     @staticmethod
-    def create(df, labels):
-        label_min = labels.min().get()
-        k = labels.max().get() + 1
+    def _denoise(df, labels):
+        denoised = labels != -1
+        denoised_labels = labels[denoised]
+        denoised_ratio = len(denoised_labels) / len(labels)
+        noise_ratio = 1.0 - denoised_ratio
+        if noise_ratio > EstimationContainer.NOISE_THRESHOLD:
+            noice_perc = int(noise_ratio * 100)
+            raise ValueError(f"Received {noice_perc}% objects with noise labels")
+        return df[denoised], denoised_labels
 
-        if label_min == -1:
+    @staticmethod
+    def create(df, labels):
+        uniq_labels = cp.unique(labels).get()
+
+        if -1 in uniq_labels:
+            _data, _labels = EstimationContainer._denoise(df, labels)
             return EstimationContainer(
-                data=df[labels != -1],
-                labels=labels[labels != -1],
-                k=k,
+                data=_data,
+                labels=_labels,
+                k=len(uniq_labels) - 1,
             )
         else:
             return EstimationContainer(
                 data=df,
                 labels=labels,
-                k=k,
+                k=len(uniq_labels),
             )
 
     @property

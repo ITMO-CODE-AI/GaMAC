@@ -9,10 +9,9 @@ from gamac.autoclustering import Gamac
 def main():
     data = pd.read_csv('test-data/gen.csv').head(1000).values
     gpu_data = cp.array(data, dtype=cp.float32)
-    df, clusters = Gamac().run(table=gpu_data, text=None, image=None)
+    df, optimal = Gamac().run(table=gpu_data, text=None, image=None)
 
-    print(df)
-    print(f'clusters: {clusters}')
+    print(f'clusters: {optimal.model.labels_}')
 
 
 if __name__ == '__main__':

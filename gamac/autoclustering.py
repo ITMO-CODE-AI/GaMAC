@@ -1,4 +1,5 @@
 """Основной скрипт класса Gamac"""
+import time
 from typing import Optional, Set
 
 from PIL import Image
@@ -16,6 +17,7 @@ from gamac.estimation.internal import Internal, InternalEvaluator
 from gamac.pipeline.cvi_predictor import CVIPredictor
 from gamac.pipeline.hyper_optimisers import HyperOptimisers
 from gamac.pipeline.mab_solvers import MabSolvers
+from gamac.pipeline.run_types import Optimal
 
 
 class Gamac:
@@ -52,7 +54,7 @@ class Gamac:
             table: Optional[DataFrame],
             text: Optional[list[str]],
             image: Optional[list[Image]],
-    ) -> tuple[DataFrameType, LabelsType]:
+    ) -> tuple[DataFrameType, Optimal]:
         """
         Запуск пайплайна
 
@@ -76,9 +78,9 @@ class Gamac:
             measures = self._measures_arg
 
         # Кластеризация датасета с применением рекомендованной меры качества
-        clusters = self._auto_clustering(df, measures)
+        optimal = self._auto_clustering(df, measures)
 
-        return df, clusters
+        return df, optimal
 
     def _data_handler(
             self,
@@ -108,14 +110,17 @@ class Gamac:
         Returns:
             str: Рекомендованная мера качества
         """
+        meta_start = time.time()
         single_prediction = CVIPredictor.run(df)
+        meta_time = time.time() - meta_start
+        print(f"Picked {single_prediction.name} in {meta_time}s")
         return {single_prediction}
 
     def _auto_clustering(
             self,
             df: DataFrameType,
             measures: Set[Internal],
-    ) -> LabelsType:
+    ) -> Optimal:
         """
         Кластеризация датасета с применением рекомендованной меры качества
 
