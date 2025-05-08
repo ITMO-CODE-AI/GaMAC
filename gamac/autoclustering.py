@@ -49,7 +49,7 @@ class Gamac:
             text: Optional[list[str]],
             image: Optional[list[Image]],
     ):
-        if table is None and text is None and image is None:
+        if all([var is None for var in [text, image, table]]):
             assert "There is not data included"
         if table is None and (text is None or image is None):
             assert "text and image must be specified"
