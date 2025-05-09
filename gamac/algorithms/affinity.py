@@ -13,7 +13,13 @@ class AffinityPropagationModel(ClusteringModel):
         self.cluster_centers_ = cluster_centers_
 
     def predict(self, X: DataFrameType) -> LabelsType:
-        pass
+        # Вычисление квадратов норм
+        x_squared = cp.sum(X**2, axis=1)[:, cp.newaxis]
+        centroids_squared = cp.sum(self.cluster_centers_**2, axis=1)[cp.newaxis, :]
+
+        # Вычисление расстояний и определение меток
+        distances = x_squared + centroids_squared - 2 * X.dot(self.cluster_centers_.T)
+        return cp.argmin(distances, axis=1)
 
 
 class AffinityPropagation(ClusteringAlgo):
@@ -22,12 +28,10 @@ class AffinityPropagation(ClusteringAlgo):
         self.max_iter = max_iter
         self.convergence_iter = convergence_iter
         self.preference = preference
-        self.labels_ = None
         self.cluster_centers_indices_ = None
         self.cluster_centers_ = None
 
     def fit(self, X):
-        X = cp.asarray(X)
         n_samples = X.shape[0]
 
         # Вычисление матрицы схожести (negative squared Euclidean distance)
@@ -77,13 +81,13 @@ class AffinityPropagation(ClusteringAlgo):
         # Назначение меток
         if len(self.cluster_centers_indices_) > 0:
             distances = -S[:, self.cluster_centers_indices_]
-            self.labels_ = cp.argmax(distances, axis=1)
+            labels_ = cp.argmax(distances, axis=1)
             self.cluster_centers_ = X[self.cluster_centers_indices_]
         else:
-            self.labels_ = cp.zeros(n_samples, dtype=int)
+            labels_ = cp.zeros(n_samples, dtype=cp.int32)
             self.cluster_centers_ = cp.array([])
 
-        return AffinityPropagationModel(labels_=self.labels_, cluster_centers_=self.cluster_centers_)
+        return AffinityPropagationModel(labels_=labels_, cluster_centers_=self.cluster_centers_)
 
 
 class AffinityPropagationConfig(AlgoConfig):
@@ -95,7 +99,7 @@ class AffinityPropagationConfig(AlgoConfig):
     ):
         super().__init__(
             AffinityPropagation,
-            damping=damping, 
-            max_iter=max_iter, 
+            damping=damping,
+            max_iter=max_iter,
             convergence_iter=convergence_iter
         )

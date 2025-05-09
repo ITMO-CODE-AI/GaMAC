@@ -30,7 +30,6 @@ class MeanShift(ClusteringAlgo):
         self.max_iter = max_iter
         self.tol = tol
         self.centroids = None
-        self.labels = None
 
     def fit(self, X):
         X = cp.asarray(X)  # Конвертация в CuPy массив
@@ -63,11 +62,11 @@ class MeanShift(ClusteringAlgo):
         self.centroids = cp.array(unique_centroids, dtype=cp.float32)
 
         # Назначение меток
-        self.labels = self._assign_labels(X)
-        return MeanShiftModel(labels_=self.labels, centroids_=self.centroids)
+        labels = self._assign_labels(X)
+        return MeanShiftModel(labels_=labels, centroids_=self.centroids)
 
     def _assign_labels(self, X):
-        labels = cp.zeros(X.shape[0], dtype=cp.int32)
+        labels = cp.empty(X.shape[0], dtype=cp.int32)
         for i, x in enumerate(X):
             distances = cp.linalg.norm(self.centroids - x, axis=1)
             labels[i] = cp.argmin(distances)
@@ -77,13 +76,13 @@ class MeanShift(ClusteringAlgo):
 class MeanShiftConfig(AlgoConfig):
     def __init__(
             self, *,
-            bandwidth=(1e-4, 1.0), 
-            max_iter=(50, 300), 
+            bandwidth=(1e-4, 1.0),
+            max_iter=(50, 300),
             tol=(1e-5, 1e-4)
     ):
         super().__init__(
             MeanShift,
-            bandwidth=bandwidth, 
-            max_iter=max_iter, 
+            bandwidth=bandwidth,
+            max_iter=max_iter,
             tol=tol
         )

@@ -52,7 +52,6 @@ class DBSCAN(ClusteringAlgo):
         self.eps_sq = eps ** 2
         self.min_samples = min_samples
         self.X = None
-        self.labels_ = None
 
     def _get_neighbors(self, idx):
         """Быстрый расчет соседей с использованием матричного умножения"""
@@ -94,7 +93,7 @@ class DBSCAN(ClusteringAlgo):
         n = len(self.X)
         visited = cp.zeros(n, dtype=bool)
         is_core = cp.zeros(n, dtype=bool)
-        self.labels_ = cp.full(n, -1, dtype=cp.int32)
+        labels_ = cp.full(n, -1, dtype=cp.int32)
 
         # Предварительный расчет core-точек
         for i in range(n):
@@ -109,10 +108,10 @@ class DBSCAN(ClusteringAlgo):
             if not visited[i] and is_core[i]:
                 cluster = self._process_core_point(i, visited, is_core)
                 if cluster:
-                    self.labels_[cluster] = cluster_id
+                    labels_[cluster] = cluster_id
                     cluster_id += 1
 
-        return DBSCANModel(self.labels_, self.X, self.eps)
+        return DBSCANModel(labels_, self.X, self.eps)
 
 
 class DBSCANConfig(AlgoConfig):

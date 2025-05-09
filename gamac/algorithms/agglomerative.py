@@ -11,7 +11,6 @@ pylibraft.config.set_output_as("cupy")
 class AgglomerativeClusteringModel(ClusteringModel):
     def __init__(self, labels_: LabelsType):
         super().__init__(labels_)
-        self.labels_ = labels_
 
     def predict(self, X: DataFrameType) -> LabelsType:
         if self.labels_ is None:
@@ -23,7 +22,6 @@ class AgglomerativeClustering(ClusteringAlgo):
     def __init__(self, n_clusters=2, linkage='ward'):
         self.n_clusters = n_clusters
         self.linkage = linkage
-        self.labels_ = None
 
     def fit(self, X):
         # X должен быть cupy-массивом
@@ -51,11 +49,11 @@ class AgglomerativeClustering(ClusteringAlgo):
                     key = (min(c1, c), max(c1, c))
                     cluster_distances[key] = dist
 
-        self.labels_ = cp.empty(n_samples, dtype=cp.int32)
+        labels_ = cp.empty(n_samples, dtype=cp.int32)
         for cluster_id, points in enumerate(clusters.values()):
             for point in points:
-                self.labels_[point] = cluster_id
-        return AgglomerativeClusteringModel(labels_=self.labels_)
+                labels_[point] = cluster_id
+        return AgglomerativeClusteringModel(labels_=labels_)
 
     def _compute_distances(self, X):
         sum_sq = cp.sum(X ** 2, axis=1)

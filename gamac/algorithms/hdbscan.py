@@ -11,7 +11,6 @@ pylibraft.config.set_output_as("cupy")
 class HDBSCANModel(ClusteringModel):
     def __init__(self, labels_, X_):
         super().__init__(labels_)
-        self.labels_ = labels_
         self.X_ = X_
 
     def predict(self, X):
@@ -40,11 +39,10 @@ class HDBSCAN(ClusteringAlgo):
         indices = cp.array(indices)
 
         # Шаг 2: вычисление достижимости и формирования кластера
-        self.labels_ = self._cluster(distances, indices)
-        self.labels_ = cp.array(self.labels_, dtype=cp.int32)
+        labels_ = self._cluster(distances, indices)
 
         return HDBSCANModel(
-            labels_=self.labels_, X_=X
+            labels_=labels_, X_=X
         )
 
     def _cluster(self, distances, indices):
@@ -61,7 +59,7 @@ class HDBSCAN(ClusteringAlgo):
                 self._expand_cluster(i, indices, labels, cluster_id)
                 cluster_id += 1
 
-        return cp.asnumpy(labels)  # Преобразование обратно в numpy массив
+        return cp.array(labels, dtype=cp.int32)  # Преобразование обратно в numpy массив
 
     def _expand_cluster(self, point_index, indices, labels, cluster_id):
         stack = [point_index]
