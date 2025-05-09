@@ -1,8 +1,8 @@
 import cupy as cp
 import numpy as np
 import pylibraft.config
-from sklearn.cluster import AgglomerativeClustering
 
+from gamac.algorithms.kmeans import KMeans
 from gamac.algorithms.base import ClusteringModel, ClusteringAlgo, AlgoConfig
 from gamac.data.data_pipeline import DataFrameType, LabelsType
 
@@ -29,20 +29,20 @@ class ClusteringFeatureGPU:
         self.n = 1
         self.LS = cp.array(point, dtype=cp.float64)
         self.SS = cp.square(point)
-    
+
     def add_point(self, point):
         self.n += 1
         self.LS += point
         self.SS += cp.square(point)
-    
+
     def merge(self, other):
         self.n += other.n
         self.LS += other.LS
         self.SS += other.SS
-    
+
     def centroid(self):
         return self.LS / self.n
-    
+
     def radius(self):
         return cp.sqrt(cp.sum(self.SS / self.n - cp.square(self.centroid())))
 
@@ -107,12 +107,10 @@ class Birch(ClusteringAlgo):
         self.branching_factor = branching_factor
         self.n_clusters = n_clusters
         self.subcluster_labels = None
-        self.labels_ = None
 
     def fit(self, X):
-        X_gpu = cp.array(X)
         self.tree = CFTreeGPU(self.threshold, self.branching_factor)
-        for point in X_gpu:
+        for point in X:
             self.tree.insert(point)
 
         subclusters = []
@@ -124,35 +122,25 @@ class Birch(ClusteringAlgo):
         # Проверка количества подкластеров
         if len(subclusters) < 2:
             self.subcluster_labels = np.zeros(len(subclusters), dtype=int)
-            self.labels_ = cp.zeros(len(X), dtype=cp.int32)
-            return BirchModel(labels_=self.labels_, subcluster_labels=self.subcluster_labels, tree=self.tree)
+            labels_ = cp.zeros(len(X), dtype=cp.int32)
+            return BirchModel(labels_=labels_, subcluster_labels=self.subcluster_labels, tree=self.tree)
 
         # Адаптация числа кластеров
         n_clusters = min(self.n_clusters, len(subclusters))
-        clustering = AgglomerativeClustering(n_clusters=n_clusters)
-        clustering.fit(subclusters)
-        self.subcluster_labels = clustering.labels_
+        subclusters = cp.array(subclusters, dtype=cp.float32)
+        clustering = KMeans(n_clusters=n_clusters)
+        self.subcluster_labels = clustering.fit(subclusters).labels_
 
         # Назначение меток
-        self.labels_ = []
+        labels_ = []
         subcluster_centers = np.array([cf.centroid().get() for cf in self.tree.root.cfs])
-        for point in X_gpu:
+        for point in X:
             point_cpu = point.get()
             closest = np.argmin(np.linalg.norm(subcluster_centers - point_cpu, axis=1))
-            self.labels_.append(self.subcluster_labels[closest])
-        self.labels_ = cp.array(self.labels_, dtype=cp.int32)
+            labels_.append(self.subcluster_labels[closest])
+        labels_ = cp.array(labels_, dtype=cp.int32)
 
-        return BirchModel(labels_=self.labels_, subcluster_labels=self.subcluster_labels, tree=self.tree)
-
-    def predict(self, X):
-        X_gpu = cp.array(X)
-        subclusters = np.array([cf.centroid().get() for cf in self.tree.root.cfs])
-        labels = []
-        for point in X_gpu:
-            point_cpu = point.get()
-            closest = np.argmin(np.linalg.norm(subclusters - point_cpu, axis=1))
-            labels.append(self.subcluster_labels[closest])
-        return cp.array(labels)
+        return BirchModel(labels_=labels_, subcluster_labels=self.subcluster_labels, tree=self.tree)
 
 
 class BirchConfig(AlgoConfig):
