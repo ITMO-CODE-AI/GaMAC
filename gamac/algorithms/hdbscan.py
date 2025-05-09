@@ -2,26 +2,28 @@ import cupy as cp
 import numpy as np
 import pylibraft.config
 from sklearn.neighbors import NearestNeighbors
-from collections import defaultdict
 
 from gamac.algorithms.base import ClusteringModel, ClusteringAlgo, AlgoConfig
-from gamac.data.data_pipeline import DataFrameType, LabelsType
 
 pylibraft.config.set_output_as("cupy")
 
 
 class HDBSCANModel(ClusteringModel):
-    def __init__(self, labels_):
+    def __init__(self, labels_, X_):
         super().__init__(labels_)
         self.labels_ = labels_
+        self.X_ = X_
 
     def predict(self, X):
         """Predict using nearest core points"""
-        X = cp.asarray(X, dtype=cp.float32)
-        sum_X = cp.sum(X**2, axis=1)
-        dists = cp.sqrt(cp.abs(sum_X[:, None] + sum_X[None, :] - 2 * cp.dot(X, X.T)))
-        nearest = cp.argmin(dists, axis=1)
-        return self.labels_[nearest.get()]
+        if not hasattr(self, 'labels_'):
+            raise Exception("Model not fitted yet")
+
+        nbrs = NearestNeighbors().fit(self.X_)
+        _, indices = nbrs.kneighbors(X)
+        labels_final = np.array([self.labels_[idx[0]] for idx in indices])
+        return cp.array(labels_final, dtype=cp.int32)
+
 
 class HDBSCAN(ClusteringAlgo):
     def __init__(self, min_cluster_size=5, min_samples=None):
@@ -42,7 +44,7 @@ class HDBSCAN(ClusteringAlgo):
         self.labels_ = cp.array(self.labels_, dtype=cp.int32)
 
         return HDBSCANModel(
-            labels_=self.labels_
+            labels_=self.labels_, X_=X
         )
 
     def _cluster(self, distances, indices):
@@ -69,14 +71,6 @@ class HDBSCAN(ClusteringAlgo):
                 if labels[neighbor_index] == -1:
                     labels[neighbor_index] = cluster_id
                     stack.append(neighbor_index)
-
-    def predict(self, X):
-        if not hasattr(self, 'labels_'):
-            raise Exception("Model not fitted yet")
-
-        nbrs = NearestNeighbors().fit(self.X)
-        _, indices = nbrs.kneighbors(X)
-        return np.array([self.labels_[idx[0]] for idx in indices])
 
 
 class HDBSCANConfig(AlgoConfig):

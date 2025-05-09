@@ -15,11 +15,10 @@ class BirchModel(ClusteringModel):
         self.subcluster_labels = subcluster_labels
         self.tree = tree
 
-    def predict(self, X):
-        X_gpu = cp.array(X)
+    def predict(self, X: DataFrameType) -> LabelsType:
         subclusters = [cf.centroid().get() for cf in self.tree.root.cfs]
         labels = []
-        for point in X_gpu:
+        for point in X:
             closest = np.argmin([np.linalg.norm(point.get() - sc) for sc in subclusters])
             labels.append(self.subcluster_labels[closest])
         return cp.array(labels, dtype=cp.int32)

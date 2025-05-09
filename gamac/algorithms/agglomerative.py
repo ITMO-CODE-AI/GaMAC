@@ -13,7 +13,9 @@ class AgglomerativeClusteringModel(ClusteringModel):
         super().__init__(labels_)
         self.labels_ = labels_
 
-    def predict(self, df: DataFrameType) -> LabelsType:
+    def predict(self, X: DataFrameType) -> LabelsType:
+        if self.labels_ is None:
+            raise Exception("Model has not been fitted yet.")
         return self.labels_
 
 
@@ -54,11 +56,6 @@ class AgglomerativeClustering(ClusteringAlgo):
             for point in points:
                 self.labels_[point] = cluster_id
         return AgglomerativeClusteringModel(labels_=self.labels_)
-
-    def predict(self, X):
-        if self.labels_ is None:
-            raise Exception("Model has not been fitted yet.")
-        return self.labels_
 
     def _compute_distances(self, X):
         sum_sq = cp.sum(X ** 2, axis=1)

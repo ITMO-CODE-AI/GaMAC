@@ -16,33 +16,33 @@ class DBSCANModel(ClusteringModel):
     def predict(self, df: DataFrameType) -> LabelsType:
         df = cp.asarray(df, dtype=cp.float32)
         X_train = self.X_
-        
+
         # Батчевый расчет расстояний для больших данных
         batch_size = 4096
         predictions = cp.empty(len(df), dtype=cp.int32)
-        
+
         for i in range(0, len(df), batch_size):
             batch = df[i:i + batch_size]
-            
+
             # Векторизованный расчет квадратов расстояний
             X_new_norm = cp.sum(batch**2, axis=1)[:, cp.newaxis]
             X_train_norm = cp.sum(X_train**2, axis=1)
             dists_sq = X_new_norm + X_train_norm - 2 * batch @ X_train.T
             dists_sq = cp.maximum(dists_sq, 0)
-            
+
             # Поиск ближайших соседей в eps-окрестности
             mask = dists_sq <= self.eps_sq
             has_neighbor = cp.any(mask, axis=1)
-            
+
             # Для точек без соседей - ближайший сосед
             nearest = cp.argmin(dists_sq, axis=1)
-            predictions[i:i+batch_size] = cp.where(
+            predictions[i:i + batch_size] = cp.where(
                 has_neighbor,
                 self.labels_[cp.argmax(mask, axis=1)],
                 self.labels_[nearest]
             )
-            
-        return predictions.get()
+
+        return predictions
 
 
 class DBSCAN(ClusteringAlgo):
@@ -65,28 +65,28 @@ class DBSCAN(ClusteringAlgo):
         """Обработка core-точки с пакетным поиском соседей"""
         if visited[idx] or not is_core[idx]:
             return None
-        
+
         cluster = []
         queue = cp.array([idx], dtype=cp.int32)
         visited[idx] = True
-        
+
         while queue.size > 0:
             current = queue[0]
             queue = queue[1:]
             cluster.append(int(current))
-            
+
             neighbors = self._get_neighbors(current)
             mask = ~visited[neighbors]
             new_points = neighbors[mask]
-            
+
             # Пометка core-точек заранее
             core_mask = is_core[new_points]
             queue = cp.concatenate((queue, new_points[core_mask]))
             visited[new_points] = True
-            
+
             # Добавление граничных точек
             cluster.extend(new_points[~core_mask].get().tolist())
-            
+
         return cluster
 
     def fit(self, X):
@@ -95,7 +95,7 @@ class DBSCAN(ClusteringAlgo):
         visited = cp.zeros(n, dtype=bool)
         is_core = cp.zeros(n, dtype=bool)
         self.labels_ = cp.full(n, -1, dtype=cp.int32)
-        
+
         # Предварительный расчет core-точек
         for i in range(n):
             if not visited[i]:
@@ -111,39 +111,8 @@ class DBSCAN(ClusteringAlgo):
                 if cluster:
                     self.labels_[cluster] = cluster_id
                     cluster_id += 1
-        
+
         return DBSCANModel(self.labels_, self.X, self.eps)
-    
-    def predict(self, df: DataFrameType) -> LabelsType:
-        df = cp.asarray(df, dtype=cp.float32)
-        X_train = self.X
-        
-        # Батчевый расчет расстояний для больших данных
-        batch_size = 4096
-        predictions = cp.empty(len(df), dtype=cp.int32)
-        
-        for i in range(0, len(df), batch_size):
-            batch = df[i:i + batch_size]
-            
-            # Векторизованный расчет квадратов расстояний
-            X_new_norm = cp.sum(batch**2, axis=1)[:, cp.newaxis]
-            X_train_norm = cp.sum(X_train**2, axis=1)
-            dists_sq = X_new_norm + X_train_norm - 2 * batch @ X_train.T
-            dists_sq = cp.maximum(dists_sq, 0)
-            
-            # Поиск ближайших соседей в eps-окрестности
-            mask = dists_sq <= self.eps_sq
-            has_neighbor = cp.any(mask, axis=1)
-            
-            # Для точек без соседей - ближайший сосед
-            nearest = cp.argmin(dists_sq, axis=1)
-            predictions[i:i+batch_size] = cp.where(
-                has_neighbor,
-                self.labels_[cp.argmax(mask, axis=1)],
-                self.labels_[nearest]
-            )
-            
-        return predictions.get()
 
 
 class DBSCANConfig(AlgoConfig):

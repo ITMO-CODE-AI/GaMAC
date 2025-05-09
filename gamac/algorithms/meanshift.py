@@ -12,18 +12,16 @@ class MeanShiftModel(ClusteringModel):
         super().__init__(labels_)
         self.centroids_ = centroids_
 
-    def predict(self, data):
-        data = cp.asarray(data, dtype=cp.float32)
+    def predict(self, X: DataFrameType) -> LabelsType:
         if self.centroids_ is None:
             raise ValueError("Модель еще не обучена!")
 
         # Оптимизированное вычисление квадратов расстояний
-        data_sq = cp.sum(data**2, axis=1, keepdims=True)
-        centroids_sq = cp.sum(self.centroids_**2, axis=1)
-        dot_product = cp.dot(data, self.centroids_.T)
-        distances_sq = data_sq + centroids_sq - 2 * dot_product
-
-        return cp.argmin(distances_sq, axis=1)
+        labels = cp.zeros(X.shape[0], dtype=cp.int32)
+        for i, x in enumerate(X):
+            distances = cp.linalg.norm(self.centroids_ - x, axis=1)
+            labels[i] = cp.argmin(distances)
+        return labels
 
 
 class MeanShift(ClusteringAlgo):
@@ -37,7 +35,7 @@ class MeanShift(ClusteringAlgo):
     def fit(self, X):
         X = cp.asarray(X)  # Конвертация в CuPy массив
         centroids = X.copy()
-        
+
         for _ in range(self.max_iter):
             max_shift = 0.0
             for i in range(len(centroids)):
@@ -52,7 +50,7 @@ class MeanShift(ClusteringAlgo):
                 max_shift = max(max_shift, shift)
             if max_shift < self.tol:
                 break
-        
+
         # Объединение центроидов
         unique_centroids = []
         for centroid in centroids:
@@ -62,22 +60,18 @@ class MeanShift(ClusteringAlgo):
             distances = cp.linalg.norm(cp.array(unique_centroids) - centroid, axis=1)
             if cp.min(distances) > self.bandwidth:
                 unique_centroids.append(centroid)
-        self.centroids = cp.array(unique_centroids)
-        
+        self.centroids = cp.array(unique_centroids, dtype=cp.float32)
+
         # Назначение меток
         self.labels = self._assign_labels(X)
         return MeanShiftModel(labels_=self.labels, centroids_=self.centroids)
-    
+
     def _assign_labels(self, X):
         labels = cp.zeros(X.shape[0], dtype=cp.int32)
         for i, x in enumerate(X):
             distances = cp.linalg.norm(self.centroids - x, axis=1)
             labels[i] = cp.argmin(distances)
         return labels
-    
-    def predict(self, X):
-        X = cp.asarray(X)  # Конвертация в CuPy массив
-        return self._assign_labels(X)
 
 
 class MeanShiftConfig(AlgoConfig):

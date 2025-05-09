@@ -4,7 +4,6 @@ import pylibraft.config
 
 from gamac.algorithms.base import ClusteringModel, ClusteringAlgo, AlgoConfig
 from gamac.data.data_pipeline import DataFrameType, LabelsType
-from gamac.utils.utils import gpu_distance
 
 pylibraft.config.set_output_as("cupy")
 
@@ -14,9 +13,13 @@ class KMeansModel(ClusteringModel):
         super().__init__(labels_)
         self.centroids_ = centroids_
 
-    def predict(self, df: DataFrameType) -> LabelsType:
-        diff = df[:, None] - self.centroids_
-        distances = cp.linalg.norm(diff, axis=2)
+    def predict(self, X: DataFrameType) -> LabelsType:
+        # Вычисление квадратов норм
+        x_squared = cp.sum(X**2, axis=1)[:, cp.newaxis]
+        centroids_squared = cp.sum(self.centroids_**2, axis=1)[cp.newaxis, :]
+
+        # Вычисление расстояний и определение меток
+        distances = x_squared + centroids_squared - 2 * X.dot(self.centroids_.T)
         return cp.argmin(distances, axis=1)
 
 
@@ -49,9 +52,6 @@ class KMeans(ClusteringAlgo):
         self.centroids = None
 
     def fit(self, X):
-        # Преобразование входных данных в массив CuPy
-        X = cp.asarray(X)
-
         # Установка случайного зерна для воспроизводимости
         if self.random_state is not None:
             cp.random.seed(self.random_state)
@@ -94,18 +94,6 @@ class KMeans(ClusteringAlgo):
             labels_=labels,
             centroids_=self.centroids
         )
-
-    def predict(self, X):
-        # Преобразование входных данных в массив CuPy
-        X = cp.asarray(X)
-
-        # Вычисление квадратов норм
-        x_squared = cp.sum(X**2, axis=1)[:, cp.newaxis]
-        centroids_squared = cp.sum(self.centroids**2, axis=1)[cp.newaxis, :]
-
-        # Вычисление расстояний и определение меток
-        distances = x_squared + centroids_squared - 2 * X.dot(self.centroids.T)
-        return cp.argmin(distances, axis=1)
 
 
 class KMeansConfig(AlgoConfig):
