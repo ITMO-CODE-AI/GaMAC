@@ -91,7 +91,7 @@ class MabSolver(ABC):
     def _std_norm(self, rewards):
         mean, std = np.mean(rewards), np.std(rewards)
         diff = np.array(rewards) - mean
-        return 0.0 if std < 1e-5 else diff / std
+        return np.zeros(self.arms) if std < 1e-5 else diff / std
 
     def _quality_rewards(self) -> List[float]:
         fake_estimation = self.evaluator.pivots

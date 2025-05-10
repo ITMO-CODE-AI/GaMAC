@@ -3,7 +3,7 @@ from abc import abstractmethod, ABC
 from enum import Enum
 from typing import List
 
-from gamac.algorithms.base import AlgoConf, ClusteringAlgo
+from gamac.algorithms.base import AlgoConfig, ClusteringAlgo
 from gamac.estimation.internal import InternalEvaluator, EstimationResult
 from gamac.data.data_pipeline import DataFrameType
 from gamac.pipeline.run_types import SuccessRun, HistoryRun, Optimal, FailedRun
@@ -15,14 +15,15 @@ class HyperOptimiser(ABC):
 
     def __init__(
         self,
-        algo_conf: AlgoConf,
+        algo_conf: AlgoConfig,
         df: DataFrameType,
         evaluator: InternalEvaluator
     ):
         self.algo_conf = algo_conf
         self.df = df
         self.evaluator = evaluator
-        self._runs, self.optimal = list(), None
+        self._runs = list()
+        self.optimal = None
 
     @property
     def success_runs(self) -> List[SuccessRun]:
@@ -38,8 +39,8 @@ class HyperOptimiser(ABC):
         algo = self.algo_conf.build(**config)
         step_result = self._eval_algo(algo)
 
-        self._post_step_hook(step_result)
         self._runs.append(step_result)
+        self._post_step_hook(step_result)
 
         return step_result
 
@@ -51,29 +52,44 @@ class HyperOptimiser(ABC):
         pass
 
     def _is_optimal(self, estimation: EstimationResult) -> bool:
-        return self.optimal is None or estimation > self.optimal.estimation
+        return (
+                self.optimal is None or
+                self.evaluator.is_better(estimation, self.optimal.estimation)
+        )
 
     def _eval_algo(self, algo: ClusteringAlgo) -> HistoryRun:
-        algo_start = time.time()
+        start_timestamp = time.time()
         try:
-            model, labeled_sdf = algo.fit_predict_with_model(self.df)
-            fit_time = time.time() - algo_start
-            estimation = self.evaluator.evaluate(labeled_sdf)
-            eval_time = time.time() - fit_time
+            print('ALGO', algo)
+            model = algo.fit(self.df)
+            labels = model.labels_
+            fit_timestamp = time.time()
+
+            estimation = self.evaluator.evaluate(labels)
+            eval_timestamp = time.time()
 
             if self._is_optimal(estimation):
-                self.optimal = Optimal(algo, model, labeled_sdf, estimation)
+                self.optimal = Optimal(algo, model, estimation)
 
-            return SuccessRun(algo.name, algo.params, fit_time, eval_time, estimation)
+            print(f"=== ALGO {fit_timestamp - start_timestamp} ===")
+            return SuccessRun(
+                algo_params=algo.__dict__,
+                fit_time=fit_timestamp - start_timestamp,
+                eval_time=eval_timestamp - fit_timestamp,
+                estimation=estimation
+            )
         except RuntimeError:
-            failed_time = time.time() - algo_start
-            return FailedRun(algo.name, algo.params, failed_time)
+            failed_time = time.time() - start_timestamp
+            return FailedRun(
+                algo_params=algo.__dict__,
+                consumed=failed_time
+            )
 
 
 class RandomOptimiser(HyperOptimiser):
     def __init__(
             self,
-            algo_conf: AlgoConf,
+            algo_conf: AlgoConfig,
             df: DataFrameType,
             evaluator: InternalEvaluator
     ):
@@ -86,7 +102,7 @@ class RandomOptimiser(HyperOptimiser):
 class OptunaOptimiser(HyperOptimiser):
     def __init__(
         self,
-        algo_conf: AlgoConf,
+        algo_conf: AlgoConfig,
         df: DataFrameType,
         evaluator: InternalEvaluator
     ):
@@ -123,6 +139,8 @@ class OptunaOptimiser(HyperOptimiser):
 
         trials = self._session.get_trials(deepcopy=False)
         values = list(map(self._value_for_run, self._runs))
+
+        assert len(trials) == len(values)
 
         recalculated_trials = [
             optuna.trial.create_trial(

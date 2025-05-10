@@ -1,10 +1,11 @@
 import cupy as cp
-import numpy as np
 
 from gamac.kernels import MIDDLEWARE, BATCH_SIZE
 
 
 class EstimationContainer:
+    NOISE_THRESHOLD = 0.1
+
     def __init__(self, data, labels, k):
         self.data = data
         self.labels = labels
@@ -17,21 +18,32 @@ class EstimationContainer:
         self._cent_matrix = None
 
     @staticmethod
-    def create(df, labels):
-        label_min = labels.min().get()
-        k = labels.max().get() + 1
+    def _denoise(df, labels):
+        denoised = labels != -1
+        denoised_labels = labels[denoised]
+        denoised_ratio = len(denoised_labels) / len(labels)
+        noise_ratio = 1.0 - denoised_ratio
+        if noise_ratio > EstimationContainer.NOISE_THRESHOLD:
+            noice_perc = int(noise_ratio * 100)
+            raise ValueError(f"Received {noice_perc}% objects with noise labels")
+        return df[denoised], denoised_labels
 
-        if label_min == -1:
+    @staticmethod
+    def create(df, labels):
+        uniq_labels = cp.unique(labels).get()
+
+        if -1 in uniq_labels:
+            _data, _labels = EstimationContainer._denoise(df, labels)
             return EstimationContainer(
-                data=df[labels != -1],
-                labels=labels[labels != -1],
-                k=k,
+                data=_data,
+                labels=_labels,
+                k=len(uniq_labels) - 1,
             )
         else:
             return EstimationContainer(
                 data=df,
                 labels=labels,
-                k=k,
+                k=len(uniq_labels),
             )
 
     @property
@@ -59,7 +71,7 @@ class EstimationContainer:
     @property
     def centroids(self) -> list:
         if self._centroids is None:
-            centroids = cp.empty(shape=(self.k, self.d), dtype=np.float32)
+            centroids = cp.empty(shape=(self.k, self.d), dtype=cp.float32)
             MIDDLEWARE.get_centroids(
                 data=self.data,
                 labels=self.labels,
@@ -81,7 +93,7 @@ class EstimationContainer:
             for k_idx in range(self.k):
                 cluster = self.clusters[k_idx]
                 cl_n = len(cluster)
-                cent_dists = cp.empty(shape=cl_n, dtype=np.float32)
+                cent_dists = cp.empty(shape=cl_n, dtype=cp.float32)
 
                 MIDDLEWARE.get_cent_dists(
                     cluster=cluster,
@@ -108,7 +120,7 @@ class EstimationContainer:
                 cent_dists = self.cent_dists[k_idx]
                 cl_n = len(cluster)
 
-                sym_data = cp.empty(shape=cluster.shape, dtype=np.float32)
+                sym_data = cp.empty(shape=cluster.shape, dtype=cp.float32)
                 MIDDLEWARE.get_sym_data(
                     cluster=cluster,
                     cl_n=cl_n,
@@ -121,7 +133,7 @@ class EstimationContainer:
                     blocks=(BATCH_SIZE, 1),
                 )
 
-                sym_dists = cp.empty(shape=cl_n, dtype=np.float32)
+                sym_dists = cp.empty(shape=cl_n, dtype=cp.float32)
                 MIDDLEWARE.get_sym_dists(
                     cluster=cluster,
                     cl_n=cl_n,
@@ -141,7 +153,7 @@ class EstimationContainer:
     @property
     def cent_matrix(self):
         if self._cent_matrix is None:
-            cent_matrix = cp.empty(shape=(self.k, self.k), dtype=np.float32)
+            cent_matrix = cp.empty(shape=(self.k, self.k), dtype=cp.float32)
             MIDDLEWARE.get_cent_matrix(
                 centroids=self.centroids,
                 K=self.k,

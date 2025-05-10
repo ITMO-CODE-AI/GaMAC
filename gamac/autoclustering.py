@@ -1,15 +1,26 @@
 """Основной скрипт класса Gamac"""
+import time
+import cupy as cp
 from typing import Optional, Set
 
 from PIL import Image
 from numpy import ndarray
 from pandas import DataFrame
 
-from gamac.estimation.internal import Internal, InternalEvaluator
+from gamac.algorithms.birch import BirchConfig
+from gamac.algorithms.affinity import AffinityPropagationConfig
+from gamac.algorithms.agglomerative import AgglomerativeClusteringConfig
+from gamac.algorithms.kmeans import KMeansConfig
+from gamac.algorithms.bisecting_kmeans import BisectingKMeansConfig
+from gamac.algorithms.meanshift import MeanShiftConfig
+from gamac.algorithms.dbscan import DBSCANConfig
+from gamac.algorithms.hdbscan import HDBSCANConfig
 from gamac.data.data_pipeline import DataHandler, DataFrameType, LabelsType
+from gamac.estimation.internal import Internal, InternalEvaluator
+from gamac.pipeline.cvi_predictor import CVIPredictor
 from gamac.pipeline.hyper_optimisers import HyperOptimisers
 from gamac.pipeline.mab_solvers import MabSolvers
-from gamac.pipeline.cvi_predictor import CVIPredictor
+from gamac.pipeline.run_types import Optimal
 
 
 class Gamac:
@@ -26,7 +37,9 @@ class Gamac:
         self._mab_arg = mab_solver
         self._hyper_arg = hyper_optimiser
         self._measures_arg = target_measures
-        self._algorithms = []
+        self._algorithms = [BisectingKMeansConfig(), MeanShiftConfig(), DBSCANConfig(),
+                            HDBSCANConfig(), BirchConfig(), AffinityPropagationConfig(),
+                            KMeansConfig()]
         self._time_limit_arg = time_limit
         self._iter_limit_arg = iter_limit
 
@@ -36,9 +49,9 @@ class Gamac:
             text: Optional[list[str]],
             image: Optional[list[Image]],
     ):
-        if not table and not text and not image:
+        if all([var is None for var in [text, image, table]]):
             assert "There is not data included"
-        if not table and (not text or not image):
+        if table is None and (text is None or image is None):
             assert "text and image must be specified"
 
     def run(
@@ -46,7 +59,7 @@ class Gamac:
             table: Optional[DataFrame],
             text: Optional[list[str]],
             image: Optional[list[Image]],
-    ) -> tuple[DataFrameType, LabelsType]:
+    ) -> tuple[DataFrameType, Optimal]:
         """
         Запуск пайплайна
 
@@ -58,9 +71,12 @@ class Gamac:
             tuple[ndarray, list[int]]: Кортеж датасет и список кластеров
         """
         self._check_input(table, text, image)
-
+        
         # Обработка данных в единый датасет
         df = self._data_handler(table, text, image)
+        # df = table
+
+        df = cp.array(df, dtype=cp.float32)
 
         # Получение рекомендации мер качества
         if self._measures_arg is None:
@@ -69,9 +85,9 @@ class Gamac:
             measures = self._measures_arg
 
         # Кластеризация датасета с применением рекомендованной меры качества
-        clusters = self._auto_clustering(df, measures)
+        optimal = self._auto_clustering(df, measures)
 
-        return df, clusters
+        return df, optimal
 
     def _data_handler(
             self,
@@ -101,14 +117,17 @@ class Gamac:
         Returns:
             str: Рекомендованная мера качества
         """
+        meta_start = time.time()
         single_prediction = CVIPredictor.run(df)
+        meta_time = time.time() - meta_start
+        print(f"Picked {single_prediction.name} in {meta_time}s")
         return {single_prediction}
 
     def _auto_clustering(
             self,
             df: DataFrameType,
             measures: Set[Internal],
-    ) -> LabelsType:
+    ) -> Optimal:
         """
         Кластеризация датасета с применением рекомендованной меры качества
 

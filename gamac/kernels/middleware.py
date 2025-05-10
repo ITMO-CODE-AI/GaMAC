@@ -26,6 +26,36 @@ class Middleware:
     def __init__(self):
         self._meta = load_module('meta-kernels.c')
         self._cvi = load_module('cvi-kernels.c')
+        self._kmeans = load_module('kmeans-kernels.c')
+
+    def meta_dist_sort(
+            self, *,
+            N: int,
+            D: int,
+            data: NDArray,
+            batch_start: int,
+            batch_size: int,
+            sorted_dists: NDArray,
+            max_dists: NDArray,
+    ) -> KernelInvocation:
+        return KernelInvocation(
+            kernel=self._meta.get_function('meta_dist_sort'),
+            args=(N, D, data, batch_start, batch_size, sorted_dists, max_dists),
+        )
+
+    def meta_dist_stat(
+            self, *,
+            Q: int,
+            R: int,
+            N: int,
+            sorted_dists: NDArray,
+            batch_size: int,
+            dist_stats: NDArray,
+    ) -> KernelInvocation:
+        return KernelInvocation(
+            kernel=self._meta.get_function('meta_dist_stat'),
+            args=(Q, R, N, sorted_dists, batch_size, dist_stats),
+        )
 
     def get_centroids(
             self, *,
@@ -115,7 +145,6 @@ class Middleware:
             N: int,
             D: int,
             pairs: int,
-            batch_start: int,
             labels: NDArray,
             s_min_idx: int,
             s_min: NDArray,
@@ -125,8 +154,27 @@ class Middleware:
     ) -> KernelInvocation:
         return KernelInvocation(
             kernel=self._cvi.get_function('c_index'),
-            args=(data, N, D, pairs, batch_start, labels, s_min_idx, s_min, s_max_idx, s_max, s_c),
+            args=(data, N, D, pairs, labels, s_min_idx, s_min, s_max_idx, s_max, s_c),
         )
+
+    # def c_index(
+    #         self, *,
+    #         data: NDArray,
+    #         N: int,
+    #         D: int,
+    #         pairs: int,
+    #         batch_start: int,
+    #         labels: NDArray,
+    #         s_min_idx: int,
+    #         s_min: NDArray,
+    #         s_max_idx: int,
+    #         s_max: NDArray,
+    #         s_c: NDArray,
+    # ) -> KernelInvocation:
+    #     return KernelInvocation(
+    #         kernel=self._cvi.get_function('c_index'),
+    #         args=(data, N, D, pairs, batch_start, labels, s_min_idx, s_min, s_max_idx, s_max, s_c),
+    #     )
 
     def crosstab(
             self, *,
@@ -140,6 +188,34 @@ class Middleware:
         return KernelInvocation(
             kernel=self._cvi.get_function('crosstab'),
             args=(N, classes, classes_k, labels, labels_k, crosstab_matrix),
+        )
+
+    def kmeans_labels(
+            self, *,
+            X: NDArray,
+            centers: NDArray,
+            N: int,
+            K: int,
+            D: int,
+            labels: NDArray,
+    ) -> KernelInvocation:
+        return KernelInvocation(
+            kernel=self._kmeans.get_function('kmeans_labels'),
+            args=(X, centers, N, K, D, labels)
+        )
+
+    def kmeans_sse(
+            self, *,
+            X: NDArray,
+            centers: NDArray,
+            labels: NDArray,
+            sse: NDArray,
+            N: int,
+            D: int,
+    ) -> KernelInvocation:
+        return KernelInvocation(
+            kernel=self._kmeans.get_function('kmeans_sse'),
+            args=(X, centers, labels, sse, N, D)
         )
 
 MIDDLEWARE = Middleware()

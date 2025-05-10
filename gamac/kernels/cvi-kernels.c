@@ -172,12 +172,12 @@ extern "C" {
         return make_uint2(l, lin_idx - lower);
     }
 
+
     __global__ void c_index(
         float* data,
         unsigned int N,
         unsigned int D,
         unsigned int pairs,
-        unsigned int batch_start,
         int* labels,
         unsigned int s_min_idx,
         float* s_min,
@@ -185,29 +185,28 @@ extern "C" {
         float* s_max,
         float* s_c
     ) {
-        unsigned int t_idx = blockDim.x * blockIdx.x + threadIdx.x;
-        unsigned int lin_idx = batch_start + t_idx;
-        if (lin_idx < pairs) {
-            bool is_reducer = lin_idx == 0;
-            uint2 pair_idx = get_pair_indices(N, lin_idx);
+        unsigned int x_idx = blockDim.x * blockIdx.x + threadIdx.x;
+        unsigned int y_idx = blockDim.y * blockIdx.y + threadIdx.y;
+        if (x_idx < N && y_idx < x_idx) {
+            bool is_reducer = x_idx == 1 && y_idx == 0;
+            // uint2 pair_idx = get_pair_indices(N, lin_idx);
 
-            float* x_obj = data + pair_idx.x * D;
-            float* y_obj = data + pair_idx.y * D;
+            float* x_obj = data + x_idx * D;
+            float* y_obj = data + y_idx * D;
             float xy_dist = mm_dist(x_obj, y_obj, D);
 
             unsigned int gt_count = 0;
-            unsigned int p_count = 0;
             float intra_dist_acc = 0.0f;
 
             for (unsigned int o1_idx = 1; o1_idx < N; ++o1_idx) {
                 float* o1_obj = data + o1_idx * D;
 
-                for (unsigned int o2_idx = 0; o2_idx < o1_idx; ++o2_idx, ++p_count) {
+                for (unsigned int o2_idx = 0; o2_idx < o1_idx; ++o2_idx) {
                     float* o2_obj = data + o2_idx * D;
                     float o_dist = mm_dist(o1_obj, o2_obj, D);
                     if (o_dist < xy_dist) {
                         gt_count++;
-                    } else if (p_count < lin_idx && o_dist == xy_dist) {
+                    } else if (o_dist == xy_dist) {
                         gt_count++;
                     }
                    if (is_reducer) {
@@ -221,16 +220,76 @@ extern "C" {
             }
 
             if (gt_count < s_min_idx) {
-                s_min[t_idx] = xy_dist;
+                s_min[gt_count] = xy_dist;
             }
             if (gt_count >= s_max_idx) {
-                s_max[t_idx] = xy_dist;
+                s_max[gt_count - s_max_idx] = xy_dist;
             }
             if (is_reducer) {
                 s_c[0] = intra_dist_acc;
             }
         }
     }
+
+//    __global__ void c_index(
+//        float* data,
+//        unsigned int N,
+//        unsigned int D,
+//        unsigned int pairs,
+//        unsigned int batch_start,
+//        int* labels,
+//        unsigned int s_min_idx,
+//        float* s_min,
+//        unsigned int s_max_idx,
+//        float* s_max,
+//        float* s_c
+//    ) {
+//        unsigned int t_idx = blockDim.x * blockIdx.x + threadIdx.x;
+//        unsigned int lin_idx = batch_start + t_idx;
+//        if (lin_idx < pairs) {
+//            bool is_reducer = lin_idx == 0;
+//            uint2 pair_idx = get_pair_indices(N, lin_idx);
+//
+//            float* x_obj = data + pair_idx.x * D;
+//            float* y_obj = data + pair_idx.y * D;
+//            float xy_dist = mm_dist(x_obj, y_obj, D);
+//
+//            unsigned int gt_count = 0;
+//            unsigned int p_count = 0;
+//            float intra_dist_acc = 0.0f;
+//
+//            for (unsigned int o1_idx = 1; o1_idx < N; ++o1_idx) {
+//                float* o1_obj = data + o1_idx * D;
+//
+//                for (unsigned int o2_idx = 0; o2_idx < o1_idx; ++o2_idx, ++p_count) {
+//                    float* o2_obj = data + o2_idx * D;
+//                    float o_dist = mm_dist(o1_obj, o2_obj, D);
+//                    if (o_dist < xy_dist) {
+//                        gt_count++;
+//                    } else if (p_count < lin_idx && o_dist == xy_dist) {
+//                        gt_count++;
+//                    }
+//                   if (is_reducer) {
+//                        int o1_label = labels[o1_idx];
+//                        int o2_label = labels[o2_idx];
+//                        if (o1_label == o2_label) {
+//                            intra_dist_acc += o_dist;
+//                        }
+//                   }
+//                }
+//            }
+//
+//            if (gt_count < s_min_idx) {
+//                s_min[t_idx] = xy_dist;
+//            }
+//            if (gt_count >= s_max_idx) {
+//                s_max[t_idx] = xy_dist;
+//            }
+//            if (is_reducer) {
+//                s_c[0] = intra_dist_acc;
+//            }
+//        }
+//    }
 
     __global__ void crosstab(
         unsigned int N,
