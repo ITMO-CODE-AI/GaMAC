@@ -8,109 +8,98 @@ pylibraft.config.set_output_as("cupy")
 
 
 class AffinityPropagationModel(ClusteringModel):
-    def __init__(self, labels_, centroids_):
+    def __init__(self, labels_, cluster_centers_):
         super().__init__(labels_)
-        self.centroids_ = centroids_
+        self.cluster_centers_ = cluster_centers_
 
-    def predict(self, df: DataFrameType) -> LabelsType:
-        diff = df[:, cp.newaxis] - self.centroids_
-        distances = cp.linalg.norm(diff, axis=2)
+    def predict(self, X: DataFrameType) -> LabelsType:
+        # Вычисление квадратов норм
+        x_squared = cp.sum(X**2, axis=1)[:, cp.newaxis]
+        centroids_squared = cp.sum(self.cluster_centers_**2, axis=1)[cp.newaxis, :]
+
+        # Вычисление расстояний и определение меток
+        distances = x_squared + centroids_squared - 2 * X.dot(self.cluster_centers_.T)
         return cp.argmin(distances, axis=1)
 
 
 class AffinityPropagation(ClusteringAlgo):
-    def __init__(
-            self,
-            preference=None,
-            max_iter=100,
-            convergence_iter=15,
-            tol=1e-6
-    ):
-        super().__init__(
-            preference=preference,
-            max_iter=max_iter,
-            convergence_iter=convergence_iter,
-            tol=tol,
-        )
-        self.preference = preference
+    def __init__(self, damping=0.5, max_iter=200, convergence_iter=15, preference=None):
+        self.damping = damping
         self.max_iter = max_iter
         self.convergence_iter = convergence_iter
-        self.tol = tol
+        self.preference = preference
+        self.cluster_centers_indices_ = None
+        self.cluster_centers_ = None
 
-    def fit(self, df: DataFrameType):
-        N, D = df.shape
+    def fit(self, X):
+        n_samples = X.shape[0]
 
-        distance_matrix = self._compute_distance_matrix(df)
+        # Вычисление матрицы схожести (negative squared Euclidean distance)
+        S = -cp.sum((X[:, cp.newaxis, :] - X[cp.newaxis, :, :]) ** 2, axis=2)
 
+        # Установка предпочтений
         if self.preference is None:
-            preference = cp.median(distance_matrix).item()
+            cp.fill_diagonal(S, cp.median(S))
         else:
-            preference = self.preference
+            cp.fill_diagonal(S, self.preference)
 
-        R = cp.zeros((N, N), dtype=cp.float32)
-        A = cp.zeros((N, N), dtype=cp.float32)
-        cp.fill_diagonal(R, preference)
+        # Инициализация матриц
+        R = cp.zeros((n_samples, n_samples))  # Responsibility
+        A = cp.zeros((n_samples, n_samples))  # Availability
 
-        for iteration in range(self.max_iter):
-            R_old = R.copy()
+        # Главный цикл
+        for _ in range(self.max_iter):
+            # 1. Обновление Responsibility (R)
+            AS = A + S
+            max_indices = cp.argmax(AS, axis=1)
+            max_values = AS[cp.arange(n_samples), max_indices]
 
-            AS = A + distance_matrix
-            max_AS = cp.max(AS, axis=1, keepdims=True)
-            max_AS_idx = cp.argmax(AS, axis=1)
+            # Маска для замены максимальных значений
+            mask = cp.zeros_like(AS, dtype=bool)
+            mask[cp.arange(n_samples), max_indices] = True
+            AS_masked = cp.where(mask, -cp.inf, AS)
+            second_max_values = cp.max(AS_masked, axis=1)
 
-            for i in range(N):
-                for k in range(N):
-                    if k == max_AS_idx[i]:
-                        AS_row = AS[i].copy()
-                        AS_row[k] = -cp.inf
-                        second_max = cp.max(AS_row)
-                        R[i, k] = distance_matrix[i, k] - second_max
-                    else:
-                        R[i, k] = distance_matrix[i, k] - max_AS[i]
+            new_R = S - max_values[:, cp.newaxis]
+            new_R[cp.arange(n_samples), max_indices] = S[cp.arange(n_samples), max_indices] - second_max_values
+            R = self.damping * R + (1 - self.damping) * new_R
 
-            for k in range(N):
-                Rp = cp.maximum(R[k], 0)
-                Rp[k] = R[k, k]
-                sum_Rp = cp.sum(Rp) - Rp[k]
-                for i in range(N):
-                    if i == k:
-                        A[k, i] = sum_Rp
-                    else:
-                        A[k, i] = min(0, R[k, k] + sum_Rp - max(0, R[k, i]))
+            # 2. Обновление Availability (A)
+            Rp = cp.maximum(R, 0)
+            cp.fill_diagonal(Rp, 0)
+            sum_Rp = cp.sum(Rp, axis=0)
 
-            diff = cp.abs(R - R_old)
-            if cp.all(diff < self.tol):
-                break
+            # Обновление недиагональных элементов
+            new_A = cp.minimum(0, R + sum_Rp[:, cp.newaxis] - Rp)
+            cp.fill_diagonal(new_A, sum_Rp)
+            A = self.damping * A + (1 - self.damping) * new_A
 
-        S = R + A
-        labels_ = cp.argmax(S, axis=1)
+        # Определение экземпляров
+        exemplar_criteria = (A + R).diagonal() > 0
+        self.cluster_centers_indices_ = cp.where(exemplar_criteria)[0]
 
-        # Определяем индексы центров кластеров (экземпляров)
-        exemplars_idx = cp.unique(labels_)
-        centroids_ = df[exemplars_idx]
+        # Назначение меток
+        if len(self.cluster_centers_indices_) > 0:
+            distances = -S[:, self.cluster_centers_indices_]
+            labels_ = cp.argmax(distances, axis=1)
+            self.cluster_centers_ = X[self.cluster_centers_indices_]
+        else:
+            labels_ = cp.zeros(n_samples, dtype=cp.int32)
+            self.cluster_centers_ = cp.array([])
 
-        return AffinityPropagationModel(
-            labels_=labels_,
-            centroids_=centroids_,
-        )
-
-    def _compute_distance_matrix(self, X):
-        diff = X[:, cp.newaxis, :] - X[cp.newaxis, :, :]
-        return cp.linalg.norm(diff, axis=2)
+        return AffinityPropagationModel(labels_=labels_, cluster_centers_=self.cluster_centers_)
 
 
 class AffinityPropagationConfig(AlgoConfig):
     def __init__(
             self, *,
-            preference=(0.0, 1.0),
-            max_iter=100,
-            convergence_iter=15,
-            tol=1e-6
+            damping=(0.3, 0.5),
+            max_iter=(50, 300),
+            convergence_iter=(5, 10)
     ):
         super().__init__(
             AffinityPropagation,
-            preference=preference,
+            damping=damping,
             max_iter=max_iter,
-            convergence_iter=convergence_iter,
-            tol=tol,
+            convergence_iter=convergence_iter
         )

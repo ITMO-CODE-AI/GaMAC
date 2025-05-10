@@ -1,34 +1,88 @@
-import numpy as np
+import cupy as cp
+import pylibraft.config
 
-class MeanShift:
-    def __init__(self, radius=4):
-        self.radius = radius
-        self.centroids = {}
+from gamac.algorithms.base import ClusteringModel, ClusteringAlgo, AlgoConfig
+from gamac.data.data_pipeline import DataFrameType, LabelsType
 
-    def fit(self, data):
-        centroids = {i: data[i] for i in range(len(data))}
-        optimized = False
+pylibraft.config.set_output_as("cupy")
 
-        while not optimized:
-            new_centroids = []
-            for i in centroids:
-                in_bandwidth = []
+
+class MeanShiftModel(ClusteringModel):
+    def __init__(self, labels_, centroids_):
+        super().__init__(labels_)
+        self.centroids_ = centroids_
+
+    def predict(self, X: DataFrameType) -> LabelsType:
+        if self.centroids_ is None:
+            raise ValueError("Модель еще не обучена!")
+
+        # Оптимизированное вычисление квадратов расстояний
+        labels = cp.zeros(X.shape[0], dtype=cp.int32)
+        for i, x in enumerate(X):
+            distances = cp.linalg.norm(self.centroids_ - x, axis=1)
+            labels[i] = cp.argmin(distances)
+        return labels
+
+
+class MeanShift(ClusteringAlgo):
+    def __init__(self, bandwidth=1.0, max_iter=300, tol=1e-3):
+        self.bandwidth = bandwidth
+        self.max_iter = max_iter
+        self.tol = tol
+        self.centroids = None
+
+    def fit(self, X):
+        X = cp.asarray(X)  # Конвертация в CuPy массив
+        centroids = X.copy()
+
+        for _ in range(self.max_iter):
+            max_shift = 0.0
+            for i in range(len(centroids)):
                 centroid = centroids[i]
-                for featureset in data:
-                    if np.linalg.norm(featureset - centroid) < self.radius:
-                        in_bandwidth.append(featureset)
-                new_centroid = np.mean(in_bandwidth, axis=0)
-                new_centroids.append(tuple(new_centroid))
-            uniques = sorted(list(set(new_centroids)))
-            optimized = len(uniques) == len(centroids)
-            centroids = {i: uniques[i] for i in range(len(uniques))}
+                distances = cp.linalg.norm(X - centroid, axis=1)
+                in_window = distances <= self.bandwidth
+                if not cp.any(in_window):
+                    continue
+                new_centroid = cp.mean(X[in_window], axis=0)
+                shift = cp.linalg.norm(new_centroid - centroid)
+                centroids[i] = new_centroid
+                max_shift = max(max_shift, shift)
+            if max_shift < self.tol:
+                break
 
-        self.centroids = centroids
+        # Объединение центроидов
+        unique_centroids = []
+        for centroid in centroids:
+            if not unique_centroids:
+                unique_centroids.append(centroid)
+                continue
+            distances = cp.linalg.norm(cp.array(unique_centroids) - centroid, axis=1)
+            if cp.min(distances) > self.bandwidth:
+                unique_centroids.append(centroid)
+        self.centroids = cp.array(unique_centroids, dtype=cp.float32)
 
-    def predict(self, data):
-        predictions = []
-        for featureset in data:
-            distances = [np.linalg.norm(featureset - centroid) for centroid in self.centroids.values()]
-            closest_centroid = np.argmin(distances)
-            predictions.append(closest_centroid)
-        return predictions
+        # Назначение меток
+        labels = self._assign_labels(X)
+        return MeanShiftModel(labels_=labels, centroids_=self.centroids)
+
+    def _assign_labels(self, X):
+        labels = cp.empty(X.shape[0], dtype=cp.int32)
+        for i, x in enumerate(X):
+            distances = cp.linalg.norm(self.centroids - x, axis=1)
+            labels[i] = cp.argmin(distances)
+        return labels
+
+
+class MeanShiftConfig(AlgoConfig):
+    def __init__(
+            self, *,
+            bandwidth=(1e-4, 1.0),
+            max_iter=(50, 300),
+            tol=(1e-5, 1e-4)
+    ):
+        super().__init__(
+            MeanShift,
+            bandwidth=bandwidth,
+            max_iter=max_iter,
+            tol=tol
+        )
