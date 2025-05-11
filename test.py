@@ -1,14 +1,12 @@
 import time
 
-import cupy as cp
 import pandas as pd
 
 from gamac.autoclustering import Gamac
 
 
 def main():
-    data = pd.read_csv('test-data/gen.csv')
-    data = data.head(1000)
+    data = pd.read_csv('test-data/gen.csv').head(1000)
     df, optimal = Gamac().run(table=data, text=None, image=None)
 
     print(f'optimal.model: {optimal.model}')

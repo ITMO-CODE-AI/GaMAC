@@ -7,8 +7,8 @@ from gamac.kernels import MIDDLEWARE, BATCH_SIZE
 
 
 def mcr(container: EstimationContainer) -> float:
-    gpu_s_w = cp.empty(shape=container.n, dtype=np.float32)
-    gpu_s_b = cp.empty(shape=container.n, dtype=np.float32)
+    gpu_s_w = cp.empty(shape=container.n, dtype=cp.float32)
+    gpu_s_b = cp.empty(shape=container.n, dtype=cp.float32)
 
     MIDDLEWARE.mcr(
         data=container.data,
@@ -48,69 +48,17 @@ def sym(container: EstimationContainer) -> float:
     d_k = np.max(container.cent_matrix)
     e_k = np.mean([
         cl_sym.sum().item() for cl_sym in container.sym_dists
-    ])
+    ]).__float__()
     return d_k / e_k
-
-
-# def c_index(container: EstimationContainer) -> float:
-#     print("start")
-#     pairs, n_w = container.n * (container.n - 1) // 2, container.n_w
-#     s_min_idx, s_max_idx = n_w, pairs - n_w
-#
-#     alloc_size = container.n * BATCH_SIZE
-#     gpu_s_c = cp.empty(shape=(1,), dtype=np.float32)
-#     gpu_s_min = cp.empty(shape=alloc_size, dtype=np.float32)
-#     gpu_s_max = cp.empty(shape=alloc_size, dtype=np.float32)
-#
-#     q, r = divmod(pairs, alloc_size)
-#     iterations = q + (0 if r == 0 else 1)
-#     s_min_acc, s_max_acc = 0.0, 0.0
-#
-#     for iter_idx in range(iterations):
-#         print(f"{iter_idx} / {iterations}")
-#         gpu_s_min.fill(0.0)
-#         gpu_s_max.fill(0.0)
-#
-#         batch_start = iter_idx * alloc_size
-#         rest_pairs = pairs - batch_start
-#
-#         if alloc_size <= rest_pairs:
-#             blocks = container.n
-#         else:
-#             blocks = rest_pairs // BATCH_SIZE + 1
-#
-#         MIDDLEWARE.c_index(
-#             data=container.data,
-#             N=container.n,
-#             D=container.d,
-#             pairs=pairs,
-#             batch_start=batch_start,
-#             labels=container.labels,
-#             s_min_idx=s_min_idx,
-#             s_min=gpu_s_min,
-#             s_max_idx=s_max_idx,
-#             s_max=gpu_s_max,
-#             s_c=gpu_s_c,
-#         ).invoke(
-#             grid=(blocks,),
-#             blocks=(BATCH_SIZE,),
-#         )
-#
-#         s_min_acc += gpu_s_min.sum()
-#         s_max_acc += gpu_s_max.sum()
-#
-#     s_c = gpu_s_c[0]
-#     result = (s_c - s_min_acc) / (s_max_acc - s_min_acc)
-#     return -result
 
 
 def c_index(container: EstimationContainer) -> float:
     pairs, n_w = container.n * (container.n - 1) // 2, container.n_w
     s_min_idx, s_max_idx = n_w, pairs - n_w
 
-    gpu_s_c = cp.empty(shape=(1,), dtype=np.float32)
-    gpu_s_min = cp.empty(shape=n_w, dtype=np.float32)
-    gpu_s_max = cp.empty(shape=n_w, dtype=np.float32)
+    gpu_s_c = cp.empty(shape=(1,), dtype=cp.float32)
+    gpu_s_min = cp.empty(shape=n_w, dtype=cp.float32)
+    gpu_s_max = cp.empty(shape=n_w, dtype=cp.float32)
 
     MIDDLEWARE.c_index(
         data=container.data,
@@ -135,18 +83,58 @@ def c_index(container: EstimationContainer) -> float:
     return -result
 
 
+def os(container: EstimationContainer):
+    o_val_gpu = cp.empty(shape=container.n, dtype=cp.float32)
+
+    MIDDLEWARE.os(
+        data=container.data,
+        N=container.n,
+        D=container.d,
+        centroids=container.centroids,
+        K=container.k,
+        labels=container.labels,
+        uniq_labels=container.uniq_labels_gpu,
+        o_val=o_val_gpu,
+    ).invoke(
+        grid=(container.n // BATCH_SIZE + 1,),
+        blocks=(BATCH_SIZE,),
+    )
+
+    o_val = o_val_gpu.sum().item()
+
+    s_val = 0.0
+    for x_idx, x_row in enumerate(container.cent_matrix):
+        s_x = float('inf')
+        for y_idx, y in enumerate(x_row):
+            if x_idx == y_idx:
+                continue
+            s_x = min(s_x, y)
+        s_val += s_x
+
+    result = o_val / s_val
+    return -result
+
+
 def f1(
         classes: NDArray,
-        classes_k: int,
         labels: NDArray,
-        labels_k: int,
 ) -> float:
-    N = len(labels)
-    gpu_crosstab = cp.empty(shape=(classes_k, labels_k), dtype=np.uint32)
+    N = len(classes)
+    assert N == len(labels)
+    uniq_classes = cp.unique(classes)
+    classes_k = len(uniq_classes)
+
+    uniq_labels = cp.unique(labels)
+    labels_k = len(uniq_labels)
+
+    gpu_crosstab = cp.empty(shape=(classes_k, labels_k), dtype=cp.uint32)
+
     MIDDLEWARE.crosstab(
         N=N,
+        uniq_classes=uniq_classes,
         classes=classes,
         classes_k=classes_k,
+        uniq_labels=uniq_labels,
         labels=labels,
         labels_k=labels_k,
         crosstab_matrix=gpu_crosstab

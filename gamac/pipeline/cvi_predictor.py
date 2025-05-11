@@ -23,7 +23,7 @@ class CVIPredictor:
 
     BUCKETS = 128
     MEASURES_BY_INDEX = [
-        Internal.C_INDEX,
+        Internal.OS,
         Internal.SYM,
         Internal.BR,
         Internal.MCR
@@ -51,6 +51,7 @@ class CVIPredictor:
         iterations = n // BATCH_SIZE + (0 if n % BATCH_SIZE == 0 else 1)
 
         for iter_idx in range(iterations):
+            print(f'=== CVI prediction iteration {iter_idx + 1}/{iterations} ====')
             batch_start = iter_idx * BATCH_SIZE
             batch_size = min(BATCH_SIZE, n - batch_start)
 

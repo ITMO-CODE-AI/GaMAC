@@ -1,4 +1,6 @@
 import cupy as cp
+import numpy as np
+from cupy.typing import NDArray
 
 from gamac.kernels import MIDDLEWARE, BATCH_SIZE
 
@@ -6,10 +8,17 @@ from gamac.kernels import MIDDLEWARE, BATCH_SIZE
 class EstimationContainer:
     NOISE_THRESHOLD = 0.1
 
-    def __init__(self, data, labels, k):
+    def __init__(
+            self,
+            data: NDArray,
+            labels: NDArray,
+            uniq_labels_gpu: NDArray,
+            uniq_labels_arr: np.ndarray,
+    ):
         self.data = data
         self.labels = labels
-        self.k = k
+        self.uniq_labels_gpu = uniq_labels_gpu
+        self.uniq_labels_arr = uniq_labels_arr
         self.n, self.d = data.shape
         self._clusters = None
         self._centroids = None
@@ -30,21 +39,30 @@ class EstimationContainer:
 
     @staticmethod
     def create(df, labels):
-        uniq_labels = cp.unique(labels).get()
+        uniq_labels_gpu = cp.unique(labels)
+        uniq_labels_arr = uniq_labels_gpu.get()
 
-        if -1 in uniq_labels:
+        if -1 in uniq_labels_arr:
             _data, _labels = EstimationContainer._denoise(df, labels)
+            _uniq_labels_arr = uniq_labels_arr[uniq_labels_arr != -1]
+            _uniq_labels_gpu = cp.asarray(_uniq_labels_arr, dtype=cp.int32)
             return EstimationContainer(
                 data=_data,
                 labels=_labels,
-                k=len(uniq_labels) - 1,
+                uniq_labels_gpu=_uniq_labels_gpu,
+                uniq_labels_arr=_uniq_labels_arr,
             )
         else:
             return EstimationContainer(
                 data=df,
                 labels=labels,
-                k=len(uniq_labels),
+                uniq_labels_gpu=uniq_labels_gpu,
+                uniq_labels_arr=uniq_labels_arr,
             )
+
+    @property
+    def k(self) -> int:
+        return len(self.uniq_labels_arr)
 
     @property
     def n_w(self) -> int:
@@ -64,7 +82,7 @@ class EstimationContainer:
         if self._clusters is None:
             self._clusters = [
                 self.data[self.labels == label]
-                for label in range(self.k)
+                for label in self.uniq_labels_arr
             ]
         return self._clusters
 
@@ -78,6 +96,7 @@ class EstimationContainer:
                 N=self.n,
                 D=self.d,
                 K=self.k,
+                uniq_labels=self.uniq_labels_gpu,
                 centroids=centroids
             ).invoke(
                 grid=(self.k // 16 + 1, self.d // 16 + 1),
@@ -90,8 +109,7 @@ class EstimationContainer:
     def cent_dists(self) -> list:
         if self._cent_dists is None:
             cent_dists_list = list()
-            for k_idx in range(self.k):
-                cluster = self.clusters[k_idx]
+            for k_idx, cluster in enumerate(self.clusters):
                 cl_n = len(cluster)
                 cent_dists = cp.empty(shape=cl_n, dtype=cp.float32)
 
