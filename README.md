@@ -4,7 +4,7 @@
 	<img src="https://img.shields.io/github/license/CTLab-ITMO/CoolPrompt?style=BadgeStyleOptions.DEFAULT&logo=opensourceinitiative&logoColor=white&color=blue" alt="license">
 </p>
 <p align="center">
-	</p>
+</p>
 <br>
 
 
@@ -40,10 +40,6 @@ df, optimal = Gamac().run(table=data, text=text, image=image)
 print(f'optimal.model: {optimal.model}')
 print(f'clusters: {optimal.model.labels_}')
 ```
-
-## Data
-
-
 ---
 
 ## License
