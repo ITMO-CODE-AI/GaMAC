@@ -22,11 +22,24 @@ GaMAC is a Python module for automated machine learning on clustering tasks. The
 - Install all project requirements
     <code>pip install -r requirements.txt</code>
 
-- Run
-    <code>python main.py</code>
-
-
+- Run Gamac
+1. With table, text and image data
 ---
+```
+from gamac.autoclustering import Gamac
+
+import pandas as pd
+from PIL import Image
+
+data: pd.DataFrame = ...
+image: list[Image] = ...
+text: list[str] = ...
+
+df, optimal = Gamac().run(table=data, text=text, image=image)
+
+print(f'optimal.model: {optimal.model}')
+print(f'clusters: {optimal.model.labels_}')
+```
 
 ## Data
 
