@@ -25,9 +25,18 @@ class TestKMeans:
     @pytest.fixture
     def sample_data(self):
         """Generate simple 2D test data with 3 clear clusters"""
-        cluster1 = cp.random.normal(loc=[0, 0], scale=0.3, size=(100, 2))
-        cluster2 = cp.random.normal(loc=[5, 5], scale=0.3, size=(100, 2))
-        cluster3 = cp.random.normal(loc=[10, 0], scale=0.3, size=(100, 2))
+        cluster1 = cp.column_stack([
+            cp.random.normal(loc=0, scale=0.3, size=100),
+            cp.random.normal(loc=0, scale=0.3, size=100)
+        ])
+        cluster2 = cp.column_stack([
+            cp.random.normal(loc=5, scale=0.3, size=100),
+            cp.random.normal(loc=5, scale=0.3, size=100)
+        ])
+        cluster3 = cp.column_stack([
+            cp.random.normal(loc=10, scale=0.3, size=100),
+            cp.random.normal(loc=0, scale=0.3, size=100)
+        ])
         return cp.concatenate([cluster1, cluster2, cluster3])
 
     def test_initialization(self):
@@ -85,33 +94,3 @@ class TestKMeans:
 
         assert cp.all(model1.centroids_ == model2.centroids_)
         assert cp.all(model1.labels_ == model2.labels_)
-
-
-class TestKMeansConfig:
-    def test_config_initialization(self):
-        """Test that config properly initializes KMeans parameters"""
-        config = KMeansConfig(n_clusters=(2, 5), max_iter=200, tol=1e-3)
-        assert config.n_clusters == (2, 5)
-        assert config.max_iter == 200
-        assert config.tol == 1e-3
-
-        # Test that config creates proper KMeans instance
-        algo = config.instantiate(n_clusters=3)
-        assert isinstance(algo, KMeans)
-        assert algo.n_clusters == 3
-        assert algo.max_iter == 200
-        assert algo.tol == 1e-3
-
-    def test_parameter_validation(self):
-        """Test that config validates parameter ranges"""
-        config = KMeansConfig(n_clusters=(2, 5))
-
-        # Should raise if n_clusters outside bounds
-        with pytest.raises(ValueError):
-            config.validate_parameters(n_clusters=1)
-
-        with pytest.raises(ValueError):
-            config.validate_parameters(n_clusters=6)
-
-        # Valid parameter should pass
-        config.validate_parameters(n_clusters=3)

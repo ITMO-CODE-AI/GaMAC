@@ -107,6 +107,7 @@ python-dateutil==2.9.0.post0
 pytz==2025.1
 PyYAML==6.0.2
 pyzmq==26.2.0
+pytest==8.3.5
 raft-dask-cu12==25.2.0
 rapids-dask-dependency==25.2.0
 regex==2024.7.24
