@@ -44,7 +44,7 @@ print(f'clusters: {optimal.model.labels_}')
 
 ## License
 
-This project is protected under the Apache 2.0 License. For more details, refer to the [LICENSE]() file.
+This project is protected under the Apache 2.0 License. For more details, refer to the [LICENSE](https://github.com/ITMO-CODE-AI/GaMAC/blob/feature/unit_test_algo/LICENSE) file.
 
 ---
 
