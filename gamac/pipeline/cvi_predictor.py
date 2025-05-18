@@ -94,11 +94,11 @@ class CVIPredictor:
 
     @staticmethod
     def _transform(meta_features: np.ndarray) -> np.ndarray:
-        extractor = load_pickle('classifier-extractor.pkl')
+        extractor = load_pickle('extractor.pkl')
         return extractor.transform([meta_features])[0]
 
     @staticmethod
     def _predict(transformed: np.ndarray) -> Internal:
-        model = load_pickle('classifier-model.pkl')
+        model = load_pickle('classifier.pkl')
         cvi_index = model.predict([transformed])[0]
         return CVIPredictor.MEASURES_BY_INDEX[cvi_index]

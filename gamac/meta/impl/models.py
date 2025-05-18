@@ -18,19 +18,8 @@ class ModelProvider:
         ]
 
     @staticmethod
-    def get_best_classifier_extractor():
-        return UMAP(
-            n_components=10,
-            n_neighbors=3,
-            min_dist=0.07,
-            low_memory=False,
-            random_state=42,
-        )
-
-
-    @staticmethod
     def get_best_xgb_classifier():
-        # f1 0.911420147502174
+        # f1 0.8905854736122091
         return XGBClassifier(
             n_estimators=80,
             learning_rate=0.2,
@@ -43,9 +32,9 @@ class ModelProvider:
 
     @staticmethod
     def get_best_knn_classifier():
-        # f1 0.9077918234847665
+        # f1 0.8761862233586349
         return KNeighborsClassifier(
-            n_neighbors=3,
+            n_neighbors=4,
             weights=ModelProvider._knn_weighted_dist
         )
 
@@ -98,18 +87,8 @@ class ModelProvider:
         ]
 
     @staticmethod
-    def get_best_regressor_extractor():
-        return UMAP(
-            n_components=12,
-            n_neighbors=7,
-            min_dist=0.03,
-            low_memory=False,
-            random_state=42,
-        )
-
-    @staticmethod
     def get_best_xgb_regressor():
-        # smape -0.0970943151852698
+        # smape -0.09764114177690192
         return XGBRegressor(
             n_estimators=50,
             learning_rate=0.05,
@@ -123,7 +102,7 @@ class ModelProvider:
 
     @staticmethod
     def get_best_knn_regressor():
-        # smape -0.10144033819068903
+        # smape -0.09974208947386524
         return KNeighborsRegressor(
             n_neighbors=12,
             weights=ModelProvider._knn_weighted_dist
@@ -172,6 +151,16 @@ class ModelProvider:
         return [
             *ModelProvider._umap_extractor(),
         ]
+
+    @staticmethod
+    def get_best_extractor():
+        return UMAP(
+            n_components=15,
+            n_neighbors=4,
+            min_dist=0.03,
+            low_memory=False,
+            random_state=42,
+        )
 
     @staticmethod
     def _umap_extractor():
