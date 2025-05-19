@@ -9,58 +9,64 @@ from transformers import (
 )
 
 
-def get_clip_embeddings(
-    model: CLIPModel,
-    processor: CLIPProcessor,
-    img_inputs: List[Image],
-    txt_inputs: List[str],
-    batch: int = 1,
-    device: str = "cuda",
-):
-    """
-    Получение эмбеддингов image+text
+def get_clip_embeddings(model_name: str, img_inputs: List[Image], txt_inputs: List[str], batch_size: int = 32):
+    """Получение CLIP эмбеддингов
 
     Args:
-        model (CLIPModel): модель CLIP
-        processor (CLIPProcessor): процессор CLIP
-            Пример: "openai/clip-vit-large-patch14", "openai/clip-vit-base-patch32", "../models/CLIP-GmP-ViT-L-14"
-        img_inputs (List[Image]) - image inputs
-        txt_inputs (List[str]) - text inputs
-        batch (int, optional): Defaults to 1.
-        device (str, optional): Defaults to "cuda".
-
-    Returns:
-        np.array: возврат эмбеддингов картинка+текст
+        model_name (str): название модели: "openai/clip-vit-large-patch14", "openai/clip-vit-base-patch32", "../models/CLIP-GmP-ViT-L-14"
+        img_inputs: список изображений
+        txt_inputs: список текстовых описаний
+        batch_size (int): размер батча для обработки
     """
-    for i in range(0, len(txt_inputs), batch):
-        inputs = processor(
-            text=txt_inputs[i : i + batch],
-            images=img_inputs[i : i + batch],
-            return_tensors="pt",
-        )
-        model.to(device)
-        inputs = inputs.to(device)
+    # Проверка на совпадение длины входных данных
+    if len(img_inputs) != len(txt_inputs):
+        raise ValueError("Количество изображений и текстовых описаний должно совпадать")
 
-        outputs = model(**inputs)
+    # Загрузка модели и процессора
+    device = "cuda" if torch.cuda.is_available() else "cpu"
+    model = CLIPModel.from_pretrained(model_name).to(device)
+    processor = CLIPProcessor.from_pretrained(model_name)
 
-        # Проверка на len в img_inputs/txt_inputs
-        if i == 0:
-            embeds = np.zeros(
-                (
-                    len(img_inputs),
-                    outputs.text_embeds.shape[1] + outputs.image_embeds.shape[1],
-                )
-            )
+    # Предварительное выделение памяти для эмбеддингов
+    with torch.no_grad():
+        # Получаем размерность эмбеддингов на тестовом батче
+        test_inputs = processor(
+            text=txt_inputs[:1],
+            images=img_inputs[:1],
+            return_tensors="pt"
+        ).to(device)
+        test_outputs = model(**test_inputs)
 
-        for k in range(0, batch):
-            embeds[i + k] = list(outputs.text_embeds[k].detach().cpu().numpy()) + list(
-                outputs.image_embeds[k].detach().cpu().numpy()
-            )
+        text_embed_dim = test_outputs.text_embeds.shape[1]
+        image_embed_dim = test_outputs.image_embeds.shape[1]
+        total_embed_dim = text_embed_dim + image_embed_dim
+        embeds = np.zeros((len(txt_inputs), total_embed_dim))
 
-        torch.cuda.empty_cache()
+        # Обработка батчами
+        for i in range(0, len(txt_inputs), batch_size):
+            batch_text = txt_inputs[i:i+batch_size]
+            batch_images = img_inputs[i:i+batch_size]
 
-    # очистка памяти GPU
-    del model, processor, inputs
+            inputs = processor(
+                text=batch_text,
+                images=batch_images,
+                return_tensors="pt",
+                padding=True,
+                truncation=True
+            ).to(device)
+
+            outputs = model(**inputs)
+
+            # Конкатенация и сохранение эмбеддингов
+            batch_embeds = torch.cat(
+                (outputs.text_embeds, outputs.image_embeds),
+                dim=1
+            ).cpu().numpy()
+
+            embeds[i:i+batch_size] = batch_embeds
+
+    # Очистка памяти
+    del model, processor
     torch.cuda.empty_cache()
 
     return embeds
