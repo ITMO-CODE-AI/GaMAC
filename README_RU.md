@@ -20,7 +20,7 @@ GaMAC это модуль на языке Python для автоматизиро
 
 При поддержке [Фонда Содействия Инновации](https://fasie.ru/).
 
-![fasie-icon](info/fasie.svg)
+![fasie-icon](docs/fasie.svg)
 
 
 
