@@ -27,11 +27,11 @@ Sponsored by [Foundation for Promotion of Innovation](https://fasie.ru/).
 
 ## Contents
 
-* [Description](info/OVERVIEW.md)
-* [Deploy](info/DEPLOY.md)
-* [Quick Start](info/QUICK_START.md)
-* [Glossary](info/GLOSSARY.md)
-* [Use Case](info/CASE.md)
+* [Description](docs/OVERVIEW.md)
+* [Deploy](docs/DEPLOY.md)
+* [Quick Start](docs/QUICK_START.md)
+* [Glossary](docs/GLOSSARY.md)
+* [Use Case](docs/CASE.md)
 
 
 ---
@@ -45,7 +45,7 @@ Sponsored by [Foundation for Promotion of Innovation](https://fasie.ru/).
 
 ### Python dependencies
 
-List of dependencies can be found in [requirements.txt](../requirements.txt).
+List of dependencies can be found in [requirements.txt](requirements.txt).
 
 ### Installation and dependencies setup
 
