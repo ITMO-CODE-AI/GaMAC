@@ -32,12 +32,12 @@ class DataHandler:
         torch.set_default_device(self.device)
 
         # Проверка на len в img_inputs/txt_inputs
-        self.modal_model = CLIPModel.from_pretrained(
-            "openai/clip-vit-base-patch32", device_map=device
-        )
-        self.modal_processor = CLIPProcessor.from_pretrained(
-            "openai/clip-vit-base-patch32", device_map=device
-        )
+        # self.modal_model = CLIPModel.from_pretrained(
+        #     "openai/clip-vit-base-patch32", device_map=device
+        # )
+        # self.modal_processor = CLIPProcessor.from_pretrained(
+        #     "openai/clip-vit-base-patch32", device_map=device
+        # )
 
     def table_preprocess(self, table: DataFrame) -> ndarray:
         """

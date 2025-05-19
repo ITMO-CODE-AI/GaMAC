@@ -6,13 +6,9 @@ from gamac.estimation.internal import EstimationResult
 
 
 class HistoryRun(ABC):
-    def __init__(self, algo_params: Dict[str, Any]):
+    def __init__(self, algo_params: Dict[str, Any], elapsed: float):
         self.algo_params = algo_params
-
-    @abstractmethod
-    def elapsed(self) -> float:
-        pass
-
+        self.elapsed = elapsed
 
 class FailedRun(HistoryRun):
     def __init__(
@@ -20,11 +16,7 @@ class FailedRun(HistoryRun):
         algo_params: Dict[str, Any],
         consumed: float,
     ):
-        super().__init__(algo_params)
-        self.consumed = consumed
-
-    def elapsed(self) -> float:
-        return self.consumed
+        super().__init__(algo_params, consumed)
 
 
 class SuccessRun(HistoryRun):
@@ -35,13 +27,9 @@ class SuccessRun(HistoryRun):
         eval_time: float,
         estimation: EstimationResult
     ):
-        super().__init__(algo_params)
+        super().__init__(algo_params, fit_time + eval_time)
         self.fit_time, self.eval_time = fit_time, eval_time
         self.estimation = estimation
-
-    def elapsed(self) -> float:
-        return self.fit_time + self.eval_time
-
 
 class Optimal:
     def __init__(

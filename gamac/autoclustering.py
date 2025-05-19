@@ -71,12 +71,12 @@ class Gamac:
             tuple[ndarray, list[int]]: Кортеж датасет и список кластеров
         """
         self._check_input(table, text, image)
-        
+
         # Обработка данных в единый датасет
         df = self._data_handler(table, text, image)
         # df = table
 
-        df = cp.array(df, dtype=cp.float32)
+        df = cp.array(df, dtype=cp.float32, order='C')
 
         # Получение рекомендации мер качества
         if self._measures_arg is None:
@@ -118,9 +118,10 @@ class Gamac:
             str: Рекомендованная мера качества
         """
         meta_start = time.time()
+        print("=== Started CVI prediction ===")
         single_prediction = CVIPredictor.run(df)
         meta_time = time.time() - meta_start
-        print(f"Picked {single_prediction.name} in {meta_time}s")
+        print(f"=== Picked {single_prediction.name} in {meta_time}s ===")
         return {single_prediction}
 
     def _auto_clustering(

@@ -23,7 +23,7 @@ class CVIPredictor:
 
     BUCKETS = 128
     MEASURES_BY_INDEX = [
-        Internal.C_INDEX,
+        Internal.OS,
         Internal.SYM,
         Internal.BR,
         Internal.MCR
@@ -51,6 +51,7 @@ class CVIPredictor:
         iterations = n // BATCH_SIZE + (0 if n % BATCH_SIZE == 0 else 1)
 
         for iter_idx in range(iterations):
+            print(f'=== CVI prediction iteration {iter_idx + 1}/{iterations} ====')
             batch_start = iter_idx * BATCH_SIZE
             batch_size = min(BATCH_SIZE, n - batch_start)
 
@@ -93,11 +94,11 @@ class CVIPredictor:
 
     @staticmethod
     def _transform(meta_features: np.ndarray) -> np.ndarray:
-        extractor = load_pickle('classifier-extractor.pkl')
+        extractor = load_pickle('extractor.pkl')
         return extractor.transform([meta_features])[0]
 
     @staticmethod
     def _predict(transformed: np.ndarray) -> Internal:
-        model = load_pickle('classifier-model.pkl')
+        model = load_pickle('classifier.pkl')
         cvi_index = model.predict([transformed])[0]
         return CVIPredictor.MEASURES_BY_INDEX[cvi_index]

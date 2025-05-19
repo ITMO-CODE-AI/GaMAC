@@ -1,18 +1,19 @@
 import time
 from enum import Enum
-from typing import Dict, Set, List
+from typing import Set, List
 
-import numpy as np
 import cupy as cp
+import numpy as np
 
-from gamac.estimation.container import EstimationContainer
-from gamac.estimation.functions import br, c_index, mcr, sym
 from gamac.data.data_pipeline import DataFrameType, LabelsType
+from gamac.estimation.container import EstimationContainer
+from gamac.estimation.functions import br, mcr, sym, os
 
 
 class Internal(Enum):
     BR = ('banfield_raftery', br)
-    C_INDEX = ('c_index', c_index)
+    # C_INDEX = ('c_index', c_index)
+    OS = ('os', os)
     MCR = ('mc_clain_rao', mcr)
     SYM = ('sym', sym)
 
@@ -27,7 +28,7 @@ class InternalEvaluator:
     @staticmethod
     def create(df: DataFrameType, measures: Set[Internal]):
         random_labels = cp.random.randint(low=0, high=2, size=len(df), dtype=np.int32)
-        pivots = InternalEvaluator._eval_internal(df, measures, random_labels)
+        pivots = InternalEvaluator.eval_internal(df, measures, random_labels)
         return InternalEvaluator(df, pivots)
 
     @staticmethod
@@ -36,7 +37,7 @@ class InternalEvaluator:
 
     def evaluate(self, labels: LabelsType) -> EstimationResult:
         measures = set(self.pivots.keys())
-        return self._eval_internal(self.df, measures, labels)
+        return self.eval_internal(self.df, measures, labels)
 
     def rewards(self, estimates: List[EstimationResult]) -> List[float]:
         return [
@@ -60,12 +61,13 @@ class InternalEvaluator:
         return (x - y) / (max(x, y) - pivot)
 
     @staticmethod
-    def _eval_internal(df: DataFrameType, measures: Set[Internal], labels: LabelsType) -> EstimationResult:
+    def eval_internal(df: DataFrameType, measures: Set[Internal], labels: LabelsType) -> EstimationResult:
         t_start = time.time()
         container = EstimationContainer.create(df, labels)
         values = {
             measure: measure.value[1](container) for measure in measures
         }
-        print(f"=== MEASURE {time.time() - t_start}, {values.values()} ===")
+        serialised = {m.name: float(v) for m, v in values.items()}
+        print(f"=== MEASURES {time.time() - t_start}s, {serialised} ===")
         return EstimationResult(values)
 

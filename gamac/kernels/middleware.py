@@ -64,11 +64,12 @@ class Middleware:
             N: int,
             D: int,
             K: int,
+            uniq_labels: NDArray,
             centroids: NDArray,
     ) -> KernelInvocation:
         return KernelInvocation(
             kernel=self._cvi.get_function('get_centroids'),
-            args=(data, labels, N, D, K, centroids),
+            args=(data, labels, N, D, K, uniq_labels, centroids),
         )
 
     def get_cent_dists(
@@ -157,37 +158,37 @@ class Middleware:
             args=(data, N, D, pairs, labels, s_min_idx, s_min, s_max_idx, s_max, s_c),
         )
 
-    # def c_index(
-    #         self, *,
-    #         data: NDArray,
-    #         N: int,
-    #         D: int,
-    #         pairs: int,
-    #         batch_start: int,
-    #         labels: NDArray,
-    #         s_min_idx: int,
-    #         s_min: NDArray,
-    #         s_max_idx: int,
-    #         s_max: NDArray,
-    #         s_c: NDArray,
-    # ) -> KernelInvocation:
-    #     return KernelInvocation(
-    #         kernel=self._cvi.get_function('c_index'),
-    #         args=(data, N, D, pairs, batch_start, labels, s_min_idx, s_min, s_max_idx, s_max, s_c),
-    #     )
+    def os(
+            self, *,
+            data: NDArray,
+            N: int,
+            D: int,
+            centroids: NDArray,
+            K: int,
+            labels: NDArray,
+            uniq_labels: NDArray,
+            o_val: NDArray,
+    ) -> KernelInvocation:
+        return KernelInvocation(
+            kernel=self._cvi.get_function('os'),
+            args=(data, N, D, centroids, K, labels, uniq_labels, o_val),
+        )
+
 
     def crosstab(
             self, *,
             N: int,
+            uniq_classes: NDArray,
             classes: NDArray,
             classes_k: int,
+            uniq_labels: NDArray,
             labels: NDArray,
             labels_k: int,
             crosstab_matrix: NDArray,
     ) -> KernelInvocation:
         return KernelInvocation(
             kernel=self._cvi.get_function('crosstab'),
-            args=(N, classes, classes_k, labels, labels_k, crosstab_matrix),
+            args=(N, uniq_classes, classes, classes_k, uniq_labels, labels, labels_k, crosstab_matrix),
         )
 
     def kmeans_labels(

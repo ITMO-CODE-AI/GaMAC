@@ -16,7 +16,7 @@ class ClusteringModel(ABC):
 
 class ClusteringAlgo(ABC):
     def __init__(self, **kwargs):
-        self.name, self.params = self.__class__.__name__, kwargs
+        self.name = self.__class__.__name__
 
     @abstractmethod
     def fit(self, df: DataFrameType) -> ClusteringModel:

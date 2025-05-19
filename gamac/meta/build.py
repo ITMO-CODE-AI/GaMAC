@@ -55,44 +55,46 @@ def collect_raw_meta_dataset() -> Tuple[List[str], np.ndarray, np.ndarray, np.nd
         vals = np.array(data_item.values)
         xs.append(mfs), ys.append(vals)
         ws.append(data_item.weight)
-    return pre_meta_dataset._measures_arg, np.array(xs), np.array(ys), np.array(ws)
+    return pre_meta_dataset.measures, np.array(xs), np.array(ys), np.array(ws)
 
+def build_extractor(xs):
+    extractor = ModelProvider.get_best_extractor()
+    fitted_extractor = extractor.fit(xs)
+    BINARIES.write_extractor(fitted_extractor)
+    return fitted_extractor
 
-def build_classifier(ms, xs, ys, ws):
-    extractor = ModelProvider.get_best_classifier_extractor()
+def build_classifier(extractor, ms, xs, ys, ws):
     classifier = ModelProvider.get_best_xgb_classifier()
 
-    fitted_extractor = extractor.fit(xs)
-
-    x_reduced = fitted_extractor.transform(xs)
+    x_reduced = extractor.transform(xs)
     z_smooth = get_smooth_labels(x_reduced, ys, ws)
     x, z = shuffle_data(x_reduced, z_smooth)
 
     fitted_classifier = classifier.fit(x, z)
 
     GATHERED.write_classifier_dataset(ms, x, z)
-    BINARIES.write_classifier(fitted_extractor, fitted_classifier)
+    BINARIES.write_classifier(fitted_classifier)
 
 
-def build_regressor(ms, xs, ys):
-    extractor = ModelProvider.get_best_regressor_extractor()
+def build_regressor(extractor, ms, xs, ys):
     regressor = ModelProvider.get_best_xgb_regressor()
 
-    fitted_extractor = extractor.fit(xs)
-
-    x_reduced = fitted_extractor.transform(xs)
+    x_reduced = extractor.transform(xs)
     x, y = shuffle_data(x_reduced, ys)
 
     fitted_regressor = regressor.fit(x, y)
 
     GATHERED.write_regressor_dataset(ms, x, y)
-    BINARIES.write_regressor(fitted_extractor, fitted_regressor)
+    BINARIES.write_regressor(fitted_regressor)
 
 
 def build_binaries():
     ms, xs, ys, ws = collect_raw_meta_dataset()
-    build_classifier(ms, xs, ys, ws)
-    build_regressor(ms, xs, ys)
+
+    extractor = build_extractor(xs)
+
+    build_classifier(extractor, ms, xs, ys, ws)
+    build_regressor(extractor, ms, xs, ys)
 
 
 if __name__ == '__main__':

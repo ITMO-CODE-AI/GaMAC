@@ -38,6 +38,7 @@ class HyperOptimiser(ABC):
 
         algo = self.algo_conf.build(**config)
         step_result = self._eval_algo(algo)
+        print(f"=== ALGO {step_result.elapsed}s, {step_result.__class__.__name__}, {step_result.algo_params} ===")
 
         self._runs.append(step_result)
         self._post_step_hook(step_result)
@@ -60,7 +61,6 @@ class HyperOptimiser(ABC):
     def _eval_algo(self, algo: ClusteringAlgo) -> HistoryRun:
         start_timestamp = time.time()
         try:
-            print('ALGO', algo)
             model = algo.fit(self.df)
             labels = model.labels_
             fit_timestamp = time.time()
@@ -71,14 +71,13 @@ class HyperOptimiser(ABC):
             if self._is_optimal(estimation):
                 self.optimal = Optimal(algo, model, estimation)
 
-            print(f"=== ALGO {fit_timestamp - start_timestamp} ===")
             return SuccessRun(
                 algo_params=algo.__dict__,
                 fit_time=fit_timestamp - start_timestamp,
                 eval_time=eval_timestamp - fit_timestamp,
                 estimation=estimation
             )
-        except RuntimeError:
+        except ValueError:
             failed_time = time.time() - start_timestamp
             return FailedRun(
                 algo_params=algo.__dict__,
