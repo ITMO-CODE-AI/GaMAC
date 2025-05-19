@@ -7,42 +7,66 @@
 </p>
 <br>
 
-[![ru](https://img.shields.io/badge/lang-en-red.svg)](README_RU.md)
-[![en](https://img.shields.io/badge/lang-pt--br-green.svg)](README.md)
+[![ru](https://img.shields.io/badge/lang-ru-red.svg)](README_RU.md)
+[![en](https://img.shields.io/badge/lang-en-blue.svg)](README.md)
 
 
 ---
-## Overview
+## Интро
 
 <overview>
-GaMAC is a Python module for automated machine learning on clustering tasks. The project was started in 2024 by ITMO AI Laboratory of Information Technologies and Programming Faculty, and since then we are currently working on this project. 
+GaMAC это модуль на языке Python для автоматизированного машинного обучения задачам кластеризации. Проект был запущен в 2024 году Лабораторией Искусственного Интеллекта Факультета Информационных Технологий и Программирования Университета ИТМО, с тех пор в настоящее время ведется работа над проектом.
 </overview>
 
-Sponsored by [Foundation for Promotion of Innovation](https://fasie.ru/).
 
-![fasie-icon](info/fasie.svg)
+При поддержке [Фонда Содействия Инновациям](https://fasie.ru/).
+
+![fasie-icon](docs/fasie.svg)
 
 
 
 ## Содержание
 
-* [Description](info/OVERVIEW.md)
+* [Описание](info/OVERVIEW.md)
+* [Установка](info/DEPLOY.md)
 * [Quick Start](info/QUICK_START.md)
-* [Гайд по развертыванию](info/DEPLOY.md)
-* [API-спецификация](info/API.md)
-* [Glossary](info/GLOSSARY.md)
-* [Use Case](info/CASE.md)
+* [Глоссарий](info/GLOSSARY.md)
+* [Применение](info/CASE.md)
+
 
 
 ---
 
-## Quick Start
+### Минимальные требования
 
-- Install all project requirements
+* Ubuntu 22.04 / WSL
+* 4 CPU cores, 16 GB RAM;
+* GPU: NVIDIA, CUDA 12.6 support, GPU memory size: 10 Gb
+* Python>=3.12
+
+### Python зависимости
+
+Список зависимостей находится в [requirements.txt](../requirements.txt).
+
+### Установка и настройка зависимостей
+
+```bash
+git clone https://github.com/ITMO-CODE-AI/GaMAC.git
+cd GaMAC
+
+pip install -r requirements.txt
+```
+
+---
+
+## Быстрый старт
+
+1. Установка зависимостей
     <code>pip install -r requirements.txt</code>
 
-- Run Gamac
-1. Autoclustering with table, text and image data
+2. Запуск Gamac
+---
+2.1. Автоматическая кластеризация табличных, визуальных и текстовых данных
 ---
 ```
 import pandas as pd
@@ -60,21 +84,42 @@ print(f'optimal.model: {optimal.model}')
 print(f'clusters: {optimal.model.labels_}')
 ```
 ---
+2.2. Автоматическая кластеризация табличных данных
+---
+```
+import pandas as pd
+from PIL import Image
+from gamac.autoclustering import Gamac
 
-## License
+# Import data
+data: pd.DataFrame = ... # table data
 
-This project is protected under the Apache 2.0 License. For more details, refer to the [LICENSE](https://github.com/ITMO-CODE-AI/GaMAC/blob/feature/unit_test_algo/LICENSE) file.
+df, optimal = Gamac().run(table=data, text=None, image=None)
 
+print(f'optimal.model: {optimal.model}')
+print(f'clusters: {optimal.model.labels_}')
+```
+---
+2.3. Автоматическая кластеризация визуальных и текстовых данных
+---
+```
+import pandas as pd
+from PIL import Image
+from gamac.autoclustering import Gamac
+
+# Import data
+image: list[Image] = ... # image data
+text: list[str] = ... # text data
+
+df, optimal = Gamac().run(table=None, text=text, image=image)
+
+print(f'optimal.model: {optimal.model}')
+print(f'clusters: {optimal.model.labels_}')
+```
 ---
 
+## Лицензия
 
-## Contacts
-
-**WIP**
-
-## Citation
-
-**WIP**
+Данный проект находится под лицензией Apache 2.0. Подробнее можно ознакомиться в [LICENSE](https://github.com/ITMO-CODE-AI/GaMAC/blob/feature/unit_test_algo/LICENSE).
 
 ---
-

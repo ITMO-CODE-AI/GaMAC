@@ -8,8 +8,8 @@
 </p>
 <br>
 
-[![ru](https://img.shields.io/badge/lang-en-red.svg)](README_RU.md)
-[![en](https://img.shields.io/badge/lang-pt--br-green.svg)](README.md)
+[![ru](https://img.shields.io/badge/lang-ru-red.svg)](README_RU.md)
+[![en](https://img.shields.io/badge/lang-en-blue.svg)](README.md)
 
 
 ---
@@ -21,29 +21,50 @@ GaMAC is a Python module for automated machine learning on clustering tasks. The
 
 Sponsored by [Foundation for Promotion of Innovation](https://fasie.ru/).
 
-![fasie-icon](info/fasie.svg)
+![fasie-icon](docs/fasie.svg)
 
 
 
-## Содержание
+## Contents
 
 * [Description](info/OVERVIEW.md)
+* [Deploy](info/DEPLOY.md)
 * [Quick Start](info/QUICK_START.md)
-* [Гайд по развертыванию](info/DEPLOY.md)
-* [API-спецификация](info/API.md)
 * [Glossary](info/GLOSSARY.md)
 * [Use Case](info/CASE.md)
 
 
 ---
 
+### Minimal requirements
+
+* Ubuntu 22.04 / WSL
+* 4 CPU cores, 16 GB RAM;
+* GPU: NVIDIA, CUDA 12.6 support, GPU memory size: 10 Gb
+* Python>=3.12
+
+### Python dependencies
+
+List of dependencies can be found in [requirements.txt](../requirements.txt).
+
+### Installation and dependencies setup
+
+```bash
+git clone https://github.com/ITMO-CODE-AI/GaMAC.git
+cd GaMAC
+
+pip install -r requirements.txt
+```
+
+---
+
 ## Quick Start
 
-- Install all project requirements
+1. Install all project requirements
     <code>pip install -r requirements.txt</code>
 
-- Run Gamac
-1. Autoclustering with table, text and image data
+2. Run Gamac
+2.1. Autoclustering with table, text and image data
 ---
 ```
 import pandas as pd
@@ -61,21 +82,42 @@ print(f'optimal.model: {optimal.model}')
 print(f'clusters: {optimal.model.labels_}')
 ```
 ---
+2.2. Autoclustering with only table data
+---
+```
+import pandas as pd
+from PIL import Image
+from gamac.autoclustering import Gamac
+
+# Import data
+data: pd.DataFrame = ... # table data
+
+df, optimal = Gamac().run(table=data, text=None, image=None)
+
+print(f'optimal.model: {optimal.model}')
+print(f'clusters: {optimal.model.labels_}')
+```
+---
+2.3. Autoclustering with only text and image data
+---
+```
+import pandas as pd
+from PIL import Image
+from gamac.autoclustering import Gamac
+
+# Import data
+image: list[Image] = ... # image data
+text: list[str] = ... # text data
+
+df, optimal = Gamac().run(table=None, text=text, image=image)
+
+print(f'optimal.model: {optimal.model}')
+print(f'clusters: {optimal.model.labels_}')
+```
+---
 
 ## License
 
 This project is protected under the Apache 2.0 License. For more details, refer to the [LICENSE](https://github.com/ITMO-CODE-AI/GaMAC/blob/feature/unit_test_algo/LICENSE) file.
 
 ---
-
-
-## Contacts
-
-**WIP**
-
-## Citation
-
-**WIP**
-
----
-
