@@ -1,4 +1,4 @@
-<p align="center"><h1 align="center">GaMAC</h1></p>
+<p align="center"><h1 align="center">GaMAC   <img src="docs/gamac_itmo.jpg" width="44px" height="44px"></h1></p>
 <p align="center">
 	<a href="https://itmo.ru/"><img src="https://raw.githubusercontent.com/aimclub/open-source-ops/43bb283758b43d75ec1df0a6bb4ae3eb20066323/badges/ITMO_badge.svg"></a>
 	<img src="https://img.shields.io/github/license/CTLab-ITMO/CoolPrompt?style=BadgeStyleOptions.DEFAULT&logo=opensourceinitiative&logoColor=white&color=blue" alt="license">
@@ -12,7 +12,7 @@
 
 
 ---
-## Интро
+## GaMAC
 
 <overview>
 GaMAC это модуль на языке Python для автоматизированного машинного обучения задачам кластеризации. Проект был запущен в 2024 году Лабораторией Искусственного Интеллекта Факультета Информационных Технологий и Программирования Университета ИТМО, с тех пор в настоящее время ведется работа над проектом.
