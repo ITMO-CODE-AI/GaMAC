@@ -8,7 +8,7 @@
 <br>
 
 [![ru](https://img.shields.io/badge/lang-en-red.svg)](README_RU.md)
-[![en](https://img.shields.io/badge/lang-pt--br-green.svg)](README.md)
+[![en](https://img.shields.io/badge/lang-en-blue.svg)](README.md)
 
 
 ---
@@ -20,7 +20,7 @@ GaMAC is a Python module for automated machine learning on clustering tasks. The
 
 Sponsored by [Foundation for Promotion of Innovation](https://fasie.ru/).
 
-![fasie-icon](info/fasie.svg)
+![fasie-icon](docs/fasie.svg)
 
 
 
