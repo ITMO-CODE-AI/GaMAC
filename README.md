@@ -7,7 +7,7 @@
 </p>
 <br>
 
-[![ru](https://img.shields.io/badge/lang-en-red.svg)](README_RU.md)
+[![ru](https://img.shields.io/badge/lang-ru-red.svg)](README_RU.md)
 [![en](https://img.shields.io/badge/lang-en-blue.svg)](README.md)
 
 
@@ -44,7 +44,7 @@ Sponsored by [Foundation for Promotion of Innovation](https://fasie.ru/).
 
 ### Python dependencies
 
-List of dependencies can be found in [requirements](../requirements.txt) directory.
+List of dependencies can be found in [requirements.txt](../requirements.txt).
 
 ### Installation and dependencies setup
 
