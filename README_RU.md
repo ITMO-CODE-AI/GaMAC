@@ -27,11 +27,11 @@ GaMAC это модуль на языке Python для автоматизиро
 
 ## Содержание
 
-* [Описание](info/OVERVIEW.md)
-* [Установка](info/DEPLOY.md)
-* [Quick Start](info/QUICK_START.md)
-* [Глоссарий](info/GLOSSARY.md)
-* [Применение](info/CASE.md)
+* [Описание](docs/OVERVIEW.md)
+* [Установка](docs/DEPLOY.md)
+* [Quick Start](docs/QUICK_START.md)
+* [Глоссарий](docs/GLOSSARY.md)
+* [Применение](docs/CASE.md)
 
 
 
@@ -46,7 +46,7 @@ GaMAC это модуль на языке Python для автоматизиро
 
 ### Python зависимости
 
-Список зависимостей находится в [requirements.txt](../requirements.txt).
+Список зависимостей находится в [requirements.txt](requirements.txt).
 
 ### Установка и настройка зависимостей
 
