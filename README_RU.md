@@ -65,6 +65,7 @@ pip install -r requirements.txt
     <code>pip install -r requirements.txt</code>
 
 2. Запуск Gamac
+---
 2.1. Автоматическая кластеризация табличных, визуальных и текстовых данных
 ---
 ```
