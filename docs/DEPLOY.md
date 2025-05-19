@@ -1,0 +1,19 @@
+### Minimal requirements
+
+* Ubuntu 22.04 / WSL
+* 4 CPU cores, 16 GB RAM;
+* GPU: NVIDIA, CUDA 12.6 support, GPU memory size: 10 Gb
+* Python>=3.12
+
+### Python dependencies
+
+List of dependencies can be found in [requirements](../requirements.txt) directory.
+
+### Installation and dependencies setup
+
+```bash
+git clone https://github.com/ITMO-CODE-AI/GaMAC.git
+cd GaMAC
+
+pip install -r requirements.txt
+```
