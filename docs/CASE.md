@@ -1,4 +1,4 @@
-[![README](https://img.shields.io/badge/README-md-red.svg)](README.md)
+[![README](https://img.shields.io/badge/README-md-blue.svg)](../README.md)
 [![ru](https://img.shields.io/badge/lang-ru-red.svg)](CASE_RU.md)
 [![en](https://img.shields.io/badge/lang-en-blue.svg)](CASE.md)
 
