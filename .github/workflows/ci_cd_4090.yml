@@ -31,4 +31,4 @@ jobs:
         file: ./Dockerfile
         push: true
         platforms: linux/arm64
-        tags: "altairzero/gamac:${{env.NOW}}"
+        tags: "${{ secrets.DOCKER_USER }}/gamac:${{env.NOW}}"
