@@ -1,3 +1,6 @@
+[![ru](https://img.shields.io/badge/lang-ru-red.svg)](CASE_RU.md)
+[![en](https://img.shields.io/badge/lang-en-blue.svg)](CASE.md)
+
 ### ITMO authors
 
 It was necessary to group university professors whose vector representations of 
@@ -7,6 +10,3 @@ Clustering was required to assess the effectiveness of vectorization: the author
 the methodology believed that only in an acceptable vector representation clustering 
 algorithms will be able to group university employees in such a way that employees working 
 in the same field of knowledge with similar research directions would end up in the same groups. 
-
-Repository contains [code for this problem](../examples/local/itmo_authors.py) 
-and [original dataset](../examples/data/itmo-authors.csv).
