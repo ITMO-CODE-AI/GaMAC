@@ -65,6 +65,7 @@ pip install -r requirements.txt
     <code>pip install -r requirements.txt</code>
 
 2. Run Gamac
+   
 2.1. Autoclustering with table, text and image data
 ---
 ```
