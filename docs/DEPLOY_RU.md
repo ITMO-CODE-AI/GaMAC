@@ -1,3 +1,6 @@
+[![ru](https://img.shields.io/badge/lang-ru-red.svg)](DEPLOY_RU.md)
+[![en](https://img.shields.io/badge/lang-en-blue.svg)](DEPLOY.md)
+
 ### Минимальные требования
 
 * Ubuntu 22.04 / WSL
