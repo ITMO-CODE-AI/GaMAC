@@ -1,3 +1,4 @@
+[![README](https://img.shields.io/badge/README-md-red.svg)](../README_RU.md)
 [![ru](https://img.shields.io/badge/lang-ru-red.svg)](GLOSSARY_RU.md.md)
 [![en](https://img.shields.io/badge/lang-en-blue.svg)](GLOSSARY.md)
 
