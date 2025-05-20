@@ -1,3 +1,6 @@
+[![ru](https://img.shields.io/badge/lang-ru-red.svg)](OVERVIEW_RU.md.md)
+[![en](https://img.shields.io/badge/lang-en-blue.svg)](OVERVIEW.md)
+
 ## Overview
 
 ### Preprocessing pipeline
@@ -23,7 +26,7 @@ Future work: develop an embedder customisation for users.
 
 At this stage, the quality measure classifier is used for the clustering task. 
 This classifier allows you to select the optimal measure of quality for a specific dataset. 
-At the output of the pipeline, a specific measure is given, which will be used in the search for the best optimization algorithm.
+At the output of the pipeline, a specific measure is given, which will be used in the search for the best optimization clustering algorithm.
 
 ### Optimisation pipeline
 
