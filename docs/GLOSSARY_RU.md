@@ -1,6 +1,8 @@
 [![ru](https://img.shields.io/badge/lang-ru-red.svg)](GLOSSARY_RU.md.md)
 [![en](https://img.shields.io/badge/lang-en-blue.svg)](GLOSSARY.md)
 
+## Глоссарий
+
 #### Препроцессинг данных
 
 Набор трансформаций исходного датафрейма, возвращают numpy массив,
