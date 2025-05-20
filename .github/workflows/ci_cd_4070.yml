@@ -1,4 +1,4 @@
-name: CI/CD job for 4090
+name: CI/CD job for 4070
 
 on:
   push:
