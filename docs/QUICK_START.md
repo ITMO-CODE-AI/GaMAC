@@ -1,3 +1,6 @@
+[![ru](https://img.shields.io/badge/lang-ru-red.svg)](QUICK_START_RU.md)
+[![en](https://img.shields.io/badge/lang-en-blue.svg)](QUICK_START.md)
+
 ## Quick Start
 
 1. Install all project requirements
