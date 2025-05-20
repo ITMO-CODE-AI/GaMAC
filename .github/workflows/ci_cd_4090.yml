@@ -28,4 +28,4 @@ jobs:
         file: ./Dockerfile
         push: true
         platforms: linux/arm64
-        tags: "altairzero/gamac:$(date +%s)"
+        tags: "altairzero/gamac:${date +%s}"
