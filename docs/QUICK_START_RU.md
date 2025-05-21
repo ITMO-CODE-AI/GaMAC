@@ -5,7 +5,7 @@
 ## Быстрый старт
 
 1. Установка зависимостей
-    <codepip install -r requirements.txt --extra-index-url https://download.pytorch.org/whl/cu126</code>
+    <code>pip install -r requirements.txt --extra-index-url https://download.pytorch.org/whl/cu126</code>
 
 2. Запуск Gamac
 ---
