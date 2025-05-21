@@ -60,7 +60,8 @@ Mako==1.3.10
 MarkupSafe==2.1.5
 matplotlib==3.9.2
 matplotlib-inline==0.1.7
-mkl==2021.4.0
+#mkl==2021.4.0
+mkl
 mpmath==1.3.0
 msgpack==1.1.0
 multidict==6.0.5
