@@ -1,4 +1,4 @@
-name: CI/CD job for 3060
+name: CD job for 3060
 
 on:
   push:
@@ -8,7 +8,7 @@ on:
 
 jobs:
 
-  push_to_registry_3060:
+  run_on_3060:
 
     runs-on: RTX 3060 Mobile
 

@@ -1,4 +1,4 @@
-name: CI/CD job for 3070
+name: CD job for 4070
 
 on:
   push:
@@ -8,9 +8,9 @@ on:
 
 jobs:
 
-  push_to_registry_3070:
+  run_on_4070:
 
-    runs-on: RTX 3070Ti Mobile
+    runs-on: RTX-4070TiS
 
     steps:
     - uses: actions/checkout@v4
