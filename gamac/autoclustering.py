@@ -38,8 +38,7 @@ class Gamac:
         self._hyper_arg = hyper_optimiser
         self._measures_arg = target_measures
         self._algorithms = [BisectingKMeansConfig(), MeanShiftConfig(), DBSCANConfig(),
-                            HDBSCANConfig(), BirchConfig(), AffinityPropagationConfig(),
-                            KMeansConfig()]
+                            HDBSCANConfig(), BirchConfig(), KMeansConfig()]
         self._time_limit_arg = time_limit
         self._iter_limit_arg = iter_limit
 

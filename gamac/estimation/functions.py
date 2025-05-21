@@ -83,6 +83,59 @@ def c_index(container: EstimationContainer) -> float:
     return -result
 
 
+def f1(
+        classes: NDArray,
+        labels: NDArray,
+) -> float:
+    """Реализация F1 меры
+
+    Args:
+        classes: NDArray
+        labels: NDArray
+    Returns:
+        float
+    """
+    N = len(classes)
+    assert N == len(labels)
+    uniq_classes = cp.unique(classes)
+    classes_k = len(uniq_classes)
+
+    uniq_labels = cp.unique(labels)
+    labels_k = len(uniq_labels)
+
+    gpu_crosstab = cp.empty(shape=(classes_k, labels_k), dtype=cp.uint32)
+
+    MIDDLEWARE.crosstab(
+        N=N,
+        uniq_classes=uniq_classes,
+        classes=classes,
+        classes_k=classes_k,
+        uniq_labels=uniq_labels,
+        labels=labels,
+        labels_k=labels_k,
+        crosstab_matrix=gpu_crosstab
+    ).invoke(
+        grid=(classes_k // 16 + 1, labels_k // 16 + 1),
+        blocks=(16, 16),
+    )
+    crosstab_matrix = cp.asnumpy(gpu_crosstab)
+
+    a_arr, b_arr = crosstab_matrix.sum(axis=1), crosstab_matrix.sum(axis=0)
+
+    f1_val = 0.0
+    for j, nj in enumerate(b_arr):
+        a_max_val = 0.0
+        for i, ni in enumerate(a_arr):
+            nij = crosstab_matrix[i, j]
+            precision, recall = nij / ni, nij / nj
+            div = precision + recall
+            if div > 1e-6:
+                ij_val = 2 * precision * recall / div
+                a_max_val = max(a_max_val, ij_val)
+        f1_val += nj / N * a_max_val
+    return f1_val
+
+
 def os(container: EstimationContainer):
     o_val_gpu = cp.empty(shape=container.n, dtype=cp.float32)
 
@@ -113,49 +166,3 @@ def os(container: EstimationContainer):
 
     result = o_val / s_val
     return -result
-
-
-def f1(
-        classes: NDArray,
-        labels: NDArray,
-) -> float:
-    N = len(classes)
-    assert N == len(labels)
-    uniq_classes = cp.unique(classes)
-    classes_k = len(uniq_classes)
-
-    uniq_labels = cp.unique(labels)
-    labels_k = len(uniq_labels)
-
-    gpu_crosstab = cp.empty(shape=(classes_k, labels_k), dtype=cp.uint32)
-
-    MIDDLEWARE.crosstab(
-        N=N,
-        uniq_classes=uniq_classes,
-        classes=classes,
-        classes_k=classes_k,
-        uniq_labels=uniq_labels,
-        labels=labels,
-        labels_k=labels_k,
-        crosstab_matrix=gpu_crosstab
-    ).invoke(
-        grid=(classes_k // 16 + 1, labels_k // 16 + 1),
-        blocks=(16, 16),
-    )
-    crosstab_matrix = cp.asnumpy(gpu_crosstab)
-
-    a_arr = crosstab_matrix.sum(axis=1)
-    b_arr = crosstab_matrix.sum(axis=0)
-
-    f1_val = 0.0
-    for j, nj in enumerate(b_arr):
-        a_max_val = 0.0
-        for i, ni in enumerate(a_arr):
-            nij = crosstab_matrix[i, j]
-            precision, recall = nij / ni, nij / nj
-            div = precision + recall
-            if div > 1e-6:
-                ij_val = 2 * precision * recall / div
-                a_max_val = max(a_max_val, ij_val)
-        f1_val += nj / N * a_max_val
-    return f1_val

@@ -54,7 +54,7 @@ List of dependencies can be found in [requirements.txt](requirements.txt).
 git clone https://github.com/ITMO-CODE-AI/GaMAC.git
 cd GaMAC
 
-pip install -r requirements.txt
+pip install -r requirements.txt --extra-index-url https://download.pytorch.org/whl/cu126
 ```
 
 ---
