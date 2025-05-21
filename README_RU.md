@@ -28,11 +28,11 @@ GaMAC это модуль на языке Python для автоматизиро
 
 ## Содержание
 
-* [Описание](docs/OVERVIEW.md)
-* [Установка](docs/DEPLOY.md)
-* [Quick Start](docs/QUICK_START.md)
-* [Глоссарий](docs/GLOSSARY.md)
-* [Применение](docs/CASE.md)
+* [Описание](docs/OVERVIEW_RU.md)
+* [Установка](docs/DEPLOY_RU.md)
+* [Quick Start](docs/QUICK_START_RU.md)
+* [Глоссарий](docs/GLOSSARY_RU.md)
+* [Применение](docs/CASE_RU.md)
 
 
 
