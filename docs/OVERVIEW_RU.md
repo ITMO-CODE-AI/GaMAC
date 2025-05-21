@@ -2,7 +2,7 @@
 [![ru](https://img.shields.io/badge/lang-ru-red.svg)](OVERVIEW_RU.md)
 [![en](https://img.shields.io/badge/lang-en-blue.svg)](OVERVIEW.md)
 
-## Обзор
+## Описание проекта
 
 ### Пайплайн предварительной обработки
 
