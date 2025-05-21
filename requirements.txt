@@ -80,7 +80,7 @@ nvidia-cusolver-cu12==11.7.1.2
 nvidia-cusparse-cu12==12.5.4.2
 nvidia-cusparselt-cu12==0.6.3
 nvidia-ml-py==12.570.86
-nvidia-nccl-cu12==2.21.5
+nvidia-nccl-cu12==2.23.4
 nvidia-nvjitlink-cu12==12.6.85
 nvidia-nvtx-cu12==12.6.77
 optuna==4.3.0
