@@ -227,28 +227,30 @@ def table_preprocessing(
         if verbose:
             print(f"{datetime.datetime.now()}: Filled NaN values with column means.")
 
-    # Preprocessing numerical cols
-    if numeric_scaling == "standard":
-        scaler = StandardScaler()
-    elif numeric_scaling == "minmax":
-        scaler = MinMaxScaler()
-    df[numeric_columns] = scaler.fit_transform(df[numeric_columns])
-    if verbose:
-        print(
-            f"{datetime.datetime.now()}: Scaled numeric columns using {numeric_scaling} scaling."
-        )
+        # Preprocessing numerical cols
+    if numeric_columns:
+        if numeric_scaling == "standard":
+            scaler = StandardScaler()
+        elif numeric_scaling == "minmax":
+            scaler = MinMaxScaler()
+        df[numeric_columns] = scaler.fit_transform(df[numeric_columns])
+        if verbose:
+            print(
+                f"{datetime.datetime.now()}: Scaled numeric columns using {numeric_scaling} scaling."
+            )
 
     # Preprocessing cat cols
-    if categorical_encoding == "one-hot":
-        df = pd.get_dummies(df, columns=categorical_columns)
-    elif categorical_encoding == "label":
-        encoder = LabelEncoder()
-        for col in categorical_columns:
-            df[col] = encoder.fit_transform(df[col])
-    if verbose:
-        print(
-            f"{datetime.datetime.now()}: Encoded categorical columns using {categorical_encoding} encoding."
-        )
+    if categorical_columns:
+        if categorical_encoding == "one-hot":
+            df = pd.get_dummies(df, columns=categorical_columns)
+        elif categorical_encoding == "label":
+            encoder = LabelEncoder()
+            for col in categorical_columns:
+                df[col] = encoder.fit_transform(df[col])
+        if verbose:
+            print(
+                f"{datetime.datetime.now()}: Encoded categorical columns using {categorical_encoding} encoding."
+            )
 
     print(df.shape, df.dtypes)
 
