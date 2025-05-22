@@ -121,7 +121,7 @@ six==1.16.0
 sortedcontainers==2.4.0
 SQLAlchemy==2.0.40
 stack-data==0.6.3
-sympy==1.13.1
+sympy==1.13.3
 # tbb==2022.1.0
 tblib==3.1.0
 threadpoolctl==3.5.0
