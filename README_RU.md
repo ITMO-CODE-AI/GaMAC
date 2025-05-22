@@ -9,6 +9,7 @@
 
 [![ru](https://img.shields.io/badge/lang-ru-red.svg)](README_RU.md)
 [![en](https://img.shields.io/badge/lang-en-blue.svg)](README.md)
+[![CI/CD job for 4090](https://github.com/ITMO-CODE-AI/GaMAC/actions/workflows/ci_cd_4090.yml/badge.svg)](https://github.com/ITMO-CODE-AI/GaMAC/actions/workflows/ci_cd_4090.yml)
 
 
 ---
