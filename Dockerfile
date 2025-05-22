@@ -8,7 +8,7 @@ COPY requirements.txt requirements.txt
 
 RUN python3 -m venv .venv && \
     . .venv/bin/activate && \
-    python3 -m pip install --extra-index-url=https://pypi.nvidia.com --extra-index-url https://download.pytorch.org/whl/cu126 -r requirements.txt
+    python3 -m pip install --extra-index-url=https://pypi.nvidia.com --extra-index-url https://download.pytorch.org/whl/cu128 -r requirements.txt
 
 COPY gamac gamac
 COPY test.py test.py
