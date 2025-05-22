@@ -73,7 +73,7 @@ nvidia-cublas-cu12==12.6.4.1
 nvidia-cuda-cupti-cu12==12.8.57
 nvidia-cuda-nvrtc-cu12==12.8.61
 nvidia-cuda-runtime-cu12==12.8.57
-nvidia-cudnn-cu12==9.5.1.17
+nvidia-cudnn-cu12==9.7.1.26
 nvidia-cufft-cu12==11.3.0.4
 nvidia-curand-cu12==10.3.7.77
 nvidia-cusolver-cu12==11.7.1.2
@@ -127,7 +127,7 @@ tblib==3.1.0
 threadpoolctl==3.5.0
 tokenizers==0.19.1
 toolz==1.0.0
-torch==2.7.0
+torch==2.7.0+cu128
 torchaudio==2.7.0
 torchvision==0.22.0
 tornado==6.4.1
