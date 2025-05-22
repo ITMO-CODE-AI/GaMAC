@@ -41,7 +41,7 @@ Sponsored by [Foundation for Promotion of Innovation](https://fasie.ru/).
 
 * Ubuntu 22.04 / WSL
 * 4 CPU cores, 16 GB RAM;
-* GPU: NVIDIA, CUDA 12.6 support, GPU memory size: 10 Gb
+* GPU: NVIDIA, CUDA 12.8 support, GPU memory size: 10 Gb
 * Python>=3.12
 
 ### Python dependencies
@@ -54,7 +54,7 @@ List of dependencies can be found in [requirements.txt](requirements.txt).
 git clone https://github.com/ITMO-CODE-AI/GaMAC.git
 cd GaMAC
 
-pip install -r requirements.txt --extra-index-url https://download.pytorch.org/whl/cu126
+pip install -r requirements.txt --extra-index-url https://download.pytorch.org/whl/cu128
 ```
 
 ---
