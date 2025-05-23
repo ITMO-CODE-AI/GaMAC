@@ -8,8 +8,8 @@ from numpy import ndarray
 from pandas import DataFrame
 
 from gamac.algorithms.birch import BirchConfig
-from gamac.algorithms.affinity import AffinityPropagationConfig
-from gamac.algorithms.agglomerative import AgglomerativeClusteringConfig
+# from gamac.algorithms.affinity import AffinityPropagationConfig
+# from gamac.algorithms.agglomerative import AgglomerativeClusteringConfig
 from gamac.algorithms.kmeans import KMeansConfig
 from gamac.algorithms.bisecting_kmeans import BisectingKMeansConfig
 from gamac.algorithms.meanshift import MeanShiftConfig
