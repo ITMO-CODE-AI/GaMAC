@@ -11,9 +11,9 @@
 
 ### Python зависимости
 
-Список зависимостей находится в папке [requirements](../requirements.txt).
+Список зависимостей находится в папке [requirements](../requirements.txt)
 
-### Установка и настройка зависимостей
+### Установка и настройка зависимостей библиотеки
 
 ```bash
 git clone https://github.com/ITMO-CODE-AI/GaMAC.git

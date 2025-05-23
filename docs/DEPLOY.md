@@ -13,7 +13,7 @@
 
 List of dependencies can be found in [requirements](../requirements.txt) directory.
 
-### Installation and dependencies setup
+### Installation and dependencies setup of the library
 
 ```bash
 git clone https://github.com/ITMO-CODE-AI/GaMAC.git

@@ -33,9 +33,9 @@ so that it maximises [target measure]().
 Sequence of clustering algorithms choice, their hyperparameters configurations, fitted clustering model 
 on input dataframe, it's quality estimation via [target measure]() and consumed time budget.
 
-#### Optuna backend
+#### HPO backend
 
-Third-party realisations of Optuna, usually based on Bayes optimisation.
+Third-party implemrntations of Optuna, or others usually based on Bayes optimisation.
 
 #### Deep learning model
 

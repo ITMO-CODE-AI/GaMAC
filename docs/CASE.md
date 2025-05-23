@@ -2,12 +2,6 @@
 [![ru](https://img.shields.io/badge/lang-ru-red.svg)](CASE_RU.md)
 [![en](https://img.shields.io/badge/lang-en-blue.svg)](CASE.md)
 
-### Clustering of ITMO Research Staff  
-
-The clustering of staff aims to group university faculty members whose vector representations of research interests were obtained in a specific way. Each researcher is represented as the sum of achievements in their field. This sum is calculated using Scopus data on the articles of each faculty member, which includes not only article citations but also certain heuristics collected by Scopus itself. At this stage, each faculty member is represented as a vector, where each number reflects their contribution to a specific field of knowledge as defined by Scopus. Next, normalization was applied to each "research topic": the final number representing a researcher's contribution to a field relative to other researchers is calculated as the logarithm of the cumulative distribution function of all faculty members' contributions to that field.  
-
-Clustering was required to evaluate the effectiveness of vectorization: the authors of the methodology believed that only with an adequate vector representation could clustering algorithms group university staff in such a way that members of the same clusters would belong to the same field of knowledge and work on research with similar thematic focus.  
-
 ### Clustering for Industrial Log Analysis  
 
 Log clustering aims to automatically group log entries associated with common event sources, such as application processes, system events, or runtime environments. The primary goal is to uncover hidden patterns in the data that indirectly reveal the nature of log generation, even if the log format does not explicitly indicate the source. For example, logs from three different applications running in two environments (development and production) should be separated into clusters corresponding to these applications and environments. A key challenge is assessing algorithm relevance: how accurately they identify real existing groups rather than creating artificial divisions.  

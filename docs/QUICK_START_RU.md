@@ -7,7 +7,7 @@
 1. Установка зависимостей
     <code>pip install -r requirements.txt --extra-index-url https://download.pytorch.org/whl/cu128</code>
 
-2. Запуск Gamac
+2. Запуск GaMAC
 ---
 2.1. Автоматическая кластеризация табличных, визуальных и текстовых данных
 ---

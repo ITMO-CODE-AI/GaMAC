@@ -7,7 +7,7 @@
 1. Install all project requirements
     <code>pip install -r requirements.txt --extra-index-url https://download.pytorch.org/whl/cu128</code>
 
-2. Run Gamac
+2. Run GaMAC
    
 2.1. Autoclustering with table, text and image data
 ---
