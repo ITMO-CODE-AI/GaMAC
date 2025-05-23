@@ -5,7 +5,7 @@
 ## Quick Start
 
 1. Install all project requirements
-    <code>pip install -r requirements.txt --extra-index-url https://download.pytorch.org/whl/cu126</code>
+    <code>pip install -r requirements.txt --extra-index-url https://download.pytorch.org/whl/cu128</code>
 
 2. Run Gamac
    
