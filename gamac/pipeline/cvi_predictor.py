@@ -29,24 +29,24 @@ class CVIPredictor:
         Internal.MCR
     ]
 
-    @staticmethod
-    def run(df: DataFrameType) -> Internal:
-        meta_features = CVIPredictor._meta_features(df)
-        transformed = CVIPredictor._transform(meta_features)
-        return CVIPredictor._predict(transformed)
+    def __init__(self):
+        self.extractor = load_pickle('extractor.pkl')
+        self.model = load_pickle('classifier.pkl')
 
-    @staticmethod
-    def _meta_features(df: DataFrameType) -> np.ndarray:
+    def run(self, df: DataFrameType) -> Internal:
+        meta_features = self._meta_features(df)
+        transformed = self._transform(meta_features)
+        return self._predict(transformed)
+
+    def _meta_features(self, df: DataFrameType) -> np.ndarray:
         n, dims = df.shape
         d_max = float('-inf')
-        buckets = CVIPredictor.BUCKETS
-        quotient, remainder = divmod(n, buckets)
+        quotient, remainder = divmod(n, self.BUCKETS)
 
-        gpu_d_max_arr = cp.empty(shape=(BATCH_SIZE,), dtype=np.float32)
-        gpu_sorted_arr = cp.empty(shape=(BATCH_SIZE, n), dtype=np.float32)
-        gpu_stats_arr = cp.empty(shape=(BATCH_SIZE, buckets, 4), dtype=np.float32)
+        gpu_partial_arr = cp.empty(shape=(BATCH_SIZE, n), dtype=np.float32)
+        gpu_stats_arr = cp.empty(shape=(BATCH_SIZE, self.BUCKETS, 4), dtype=np.float32)
 
-        mfs_accumulator = np.zeros(shape=(buckets, 4), dtype=np.float32)
+        mfs_accumulator = np.zeros(shape=(self.BUCKETS, 4), dtype=np.float32)
 
         iterations = n // BATCH_SIZE + (0 if n % BATCH_SIZE == 0 else 1)
 
@@ -55,32 +55,31 @@ class CVIPredictor:
             batch_start = iter_idx * BATCH_SIZE
             batch_size = min(BATCH_SIZE, n - batch_start)
 
-            MIDDLEWARE.meta_dist_sort(
+            MIDDLEWARE.meta_dist_partial(
                 N=n,
                 D=dims,
                 data=df,
                 batch_start=batch_start,
                 batch_size=batch_size,
-                sorted_dists=gpu_sorted_arr,
-                max_dists=gpu_d_max_arr
+                partial_dists=gpu_partial_arr,
             ).invoke(
                 grid=(1, n),
                 blocks=(batch_size, 1),
             )
 
-            cpu_d_max_arr = cp.asnumpy(gpu_d_max_arr)
-            batch_max = max(cpu_d_max_arr[:batch_size])
-            d_max = max(d_max, batch_max)
+            gpu_partial_arr.sort(axis=1)
+            cpu_d_max_arr = cp.asnumpy(gpu_partial_arr[:, -1])
+            d_max = max(d_max, *cpu_d_max_arr[:batch_size])
 
             MIDDLEWARE.meta_dist_stat(
                 Q=quotient,
                 R=remainder,
                 N=n,
-                sorted_dists=gpu_sorted_arr,
+                sorted_dists=gpu_partial_arr,
                 batch_size=batch_size,
                 dist_stats=gpu_stats_arr,
             ).invoke(
-                grid=(1, buckets),
+                grid=(1, self.BUCKETS),
                 blocks=(batch_size, 1),
             )
 
@@ -92,13 +91,9 @@ class CVIPredictor:
 
         return mfs_accumulator.flatten(order='F') / d_max / n
 
-    @staticmethod
-    def _transform(meta_features: np.ndarray) -> np.ndarray:
-        extractor = load_pickle('extractor.pkl')
-        return extractor.transform([meta_features])[0]
+    def _transform(self, meta_features: np.ndarray) -> np.ndarray:
+        return self.extractor.transform([meta_features])[0]
 
-    @staticmethod
-    def _predict(transformed: np.ndarray) -> Internal:
-        model = load_pickle('classifier.pkl')
-        cvi_index = model.predict([transformed])[0]
-        return CVIPredictor.MEASURES_BY_INDEX[cvi_index]
+    def _predict(self, transformed: np.ndarray) -> Internal:
+        cvi_index = self.model.predict([transformed])[0]
+        return self.MEASURES_BY_INDEX[cvi_index]

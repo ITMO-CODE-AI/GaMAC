@@ -15,14 +15,13 @@ extern "C" {
         return sqrt(d_acc);
     }
 
-    __global__ void meta_dist_sort(
+    __global__ void meta_dist_partial(
         unsigned int N,
         unsigned int D,
         float* data,
         unsigned int batch_start,
         unsigned int batch_size,
-        float* sorted_dists,
-        float* max_dists
+        float* partial_dists
     ) {
         unsigned int b_idx = blockDim.x * blockIdx.x + threadIdx.x;
         unsigned int x_idx = batch_start + b_idx;
@@ -32,23 +31,7 @@ extern "C" {
             float* x_obj = data + x_idx * D;
             float* y_obj = data + y_idx * D;
             float xy_dist = mm_dist(x_obj, y_obj, D);
-
-            unsigned int gt_count = 0;
-            float d_max = 0.0f;
-
-            for (unsigned int o_idx = 0; o_idx < N; ++o_idx) {
-                float* o_obj = data + o_idx * D;
-                float o_dist = mm_dist(x_obj, o_obj, D);
-                d_max = max(d_max, o_dist);
-                if (o_dist < xy_dist) {
-                    gt_count++;
-                } else if (o_idx < y_idx && o_dist == xy_dist) {
-                    gt_count++;
-                }
-            }
-
-            sorted_dists[b_idx * N + gt_count] = xy_dist;
-            max_dists[b_idx] = d_max;
+            partial_dists[b_idx * N + y_idx] = xy_dist;
         }
     }
 
