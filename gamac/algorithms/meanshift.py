@@ -32,7 +32,6 @@ class MeanShift(ClusteringAlgo):
         self.centroids = None
 
     def fit(self, X):
-        X = cp.asarray(X)  # Конвертация в CuPy массив
         centroids = X.copy()
 
         for _ in range(self.max_iter):
@@ -69,7 +68,7 @@ class MeanShift(ClusteringAlgo):
         labels = cp.empty(X.shape[0], dtype=cp.int32)
         for i, x in enumerate(X):
             distances = cp.linalg.norm(self.centroids - x, axis=1)
-            labels[i] = cp.argmin(distances)
+            labels[i] = cp.argmin(distances, dtype=cp.int32)
         return labels
 
 
