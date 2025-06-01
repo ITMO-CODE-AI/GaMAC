@@ -58,7 +58,10 @@ class InternalEvaluator:
 
     @staticmethod
     def _compare_sym(x: float, y: float, pivot: float) -> float:
-        return (x - y) / (max(x, y) - pivot)
+        normaliser = max(x, y) - pivot
+        if normaliser < 1e-6:
+            return 0.0
+        return (x - y) / normaliser
 
     @staticmethod
     def eval_internal(df: DataFrameType, measures: Set[Internal], labels: LabelsType) -> EstimationResult:
