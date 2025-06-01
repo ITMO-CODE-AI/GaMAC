@@ -28,19 +28,18 @@ class Middleware:
         self._cvi = load_module('cvi-kernels.c')
         self._kmeans = load_module('kmeans-kernels.c')
 
-    def meta_dist_sort(
+    def meta_dist_partial(
             self, *,
             N: int,
             D: int,
             data: NDArray,
             batch_start: int,
             batch_size: int,
-            sorted_dists: NDArray,
-            max_dists: NDArray,
+            partial_dists: NDArray,
     ) -> KernelInvocation:
         return KernelInvocation(
-            kernel=self._meta.get_function('meta_dist_sort'),
-            args=(N, D, data, batch_start, batch_size, sorted_dists, max_dists),
+            kernel=self._meta.get_function('meta_dist_partial'),
+            args=(N, D, data, batch_start, batch_size, partial_dists),
         )
 
     def meta_dist_stat(

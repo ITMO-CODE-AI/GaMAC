@@ -27,6 +27,7 @@ class TestMiddleware:
         # Create some sample arrays for testing
         return {
             'data': cp.array([[1.0, 2.0], [3.0, 4.0]]),
+            'partial_dists': cp.array([2.0, 3.0, 1.0]),
             'sorted_dists': cp.array([1.0, 2.0, 3.0]),
             'max_dists': cp.array([1.0, 2.0]),
             'dist_stats': cp.array([0.0, 0.0]),
@@ -52,20 +53,19 @@ class TestMiddleware:
         assert hasattr(middleware, '_cvi')
         assert hasattr(middleware, '_kmeans')
 
-    def test_meta_dist_sort(self, middleware, sample_arrays):
-        invocation = middleware.meta_dist_sort(
+    def test_meta_dist_partial(self, middleware, sample_arrays):
+        invocation = middleware.meta_dist_partial(
             N=2,
             D=2,
             data=sample_arrays['data'],
             batch_start=0,
             batch_size=2,
-            sorted_dists=sample_arrays['sorted_dists'],
-            max_dists=sample_arrays['max_dists']
+            partial_dists=sample_arrays['sorted_dists'],
         )
 
         assert isinstance(invocation, KernelInvocation)
-        assert invocation.kernel == "mock_kernel_meta_dist_sort"
-        assert len(invocation.args) == 7
+        assert invocation.kernel == "mock_kernel_meta_dist_partial"
+        assert len(invocation.args) == 6
         assert invocation.args[0] == 2  # N
         assert invocation.args[1] == 2  # D
         assert cp.array_equal(invocation.args[2], sample_arrays['data'])
