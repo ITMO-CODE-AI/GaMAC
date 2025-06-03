@@ -38,6 +38,13 @@ class EstimationContainer:
         return df[denoised], denoised_labels
 
     @staticmethod
+    def _check_max_clusters(data, uniq_labels):
+        n, k = len(data), len(uniq_labels)
+        max_clusters = int(np.cbrt(2 * n)) + 1
+        if k > max_clusters:
+            raise ValueError(f"Received too many ({k}) clusters for dataset of {n} objects")
+
+    @staticmethod
     def create(df, labels):
         uniq_labels_gpu = cp.unique(labels)
         uniq_labels_arr = uniq_labels_gpu.get()
@@ -45,6 +52,7 @@ class EstimationContainer:
         if -1 in uniq_labels_arr:
             _data, _labels = EstimationContainer._denoise(df, labels)
             _uniq_labels_arr = uniq_labels_arr[uniq_labels_arr != -1]
+            EstimationContainer._check_max_clusters(_data, _uniq_labels_arr)
             _uniq_labels_gpu = cp.asarray(_uniq_labels_arr, dtype=cp.int32)
             return EstimationContainer(
                 data=_data,
@@ -53,6 +61,7 @@ class EstimationContainer:
                 uniq_labels_arr=_uniq_labels_arr,
             )
         else:
+            EstimationContainer._check_max_clusters(df, uniq_labels_arr)
             return EstimationContainer(
                 data=df,
                 labels=labels,

@@ -70,7 +70,7 @@ class KMeans(ClusteringAlgo):
             distances = x_squared + centroids_squared - 2 * X.dot(self.centroids.T)
 
             # Назначение меток: индекс ближайшего центроида для каждой точки
-            labels = cp.argmin(distances, axis=1)
+            labels = cp.argmin(distances, axis=1, dtype=cp.int32)
 
             # Обновление центроидов
             new_centroids = cp.zeros_like(self.centroids)

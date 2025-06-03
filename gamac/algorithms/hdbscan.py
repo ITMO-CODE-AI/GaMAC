@@ -46,7 +46,7 @@ class HDBSCAN(ClusteringAlgo):
         )
 
     def _cluster(self, distances, indices):
-        labels = cp.full(distances.shape[0], -1)
+        labels = cp.full(distances.shape[0], -1, dtype=cp.int32)
         cluster_id = 0
 
         for i in range(distances.shape[0]):
@@ -59,7 +59,7 @@ class HDBSCAN(ClusteringAlgo):
                 self._expand_cluster(i, indices, labels, cluster_id)
                 cluster_id += 1
 
-        return cp.array(labels, dtype=cp.int32)  # Преобразование обратно в numpy массив
+        return labels  # Преобразование обратно в numpy массив
 
     def _expand_cluster(self, point_index, indices, labels, cluster_id):
         stack = [point_index]
