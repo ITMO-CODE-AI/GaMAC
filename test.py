@@ -10,8 +10,8 @@ def main():
     # data = pd.read_csv('test-data/gen.csv').head(1000)
     data = pd.read_csv('test-data/OpenML_100-plants-margin_orig.csv')
     data = data.drop("class", axis=1)
-    df, optimal = Gamac(target_measures=(Internal.SYM, Internal.BR, Internal.OS)).run(table=data, text=None, image=None)
-    # df, optimal = Gamac().run(table=data, text=None, image=None)
+    # df, optimal = Gamac(target_measures=(Internal.SYM, Internal.BR, Internal.OS)).run(table=data, text=None, image=None)
+    df, optimal = Gamac().run(table=data, text=None, image=None)
 
     print(f'optimal.model: {optimal.model}')
     print(f'clusters: {optimal.model.labels_}')
