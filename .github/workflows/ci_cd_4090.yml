@@ -12,7 +12,7 @@ jobs:
 
     runs-on: RTX 4090
     outputs:
-      tag: ${{ steps.get-date.outputs.tag }}
+      date_tag: ${{ steps.get-date.outputs.tag }}
     steps:
     - uses: actions/checkout@v4
 
@@ -44,9 +44,11 @@ jobs:
 
     steps:
     - uses: actions/checkout@v4
+    - env:
+          date_tag: ${{ needs.push_to_registry_4090.outputs.date_tag }}
 
     - name: Check tag
-      run: echo "${{ needs.push_to_registry_4090.outputs.tag }}"
+      run: echo "$date_tag"
 
     - name: Run docker container
       run: >-
