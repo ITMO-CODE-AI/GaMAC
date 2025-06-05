@@ -42,7 +42,7 @@ jobs:
     steps:
 
     - name: Run docker container
-      shell: cmd
+      shell: bash
       run: >-
           winpty docker.exe run
           --rm
