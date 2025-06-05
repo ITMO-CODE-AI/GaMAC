@@ -1,4 +1,4 @@
-name: CD job for 4070
+name: CI/CD job for 4070
 
 on:
   push:
