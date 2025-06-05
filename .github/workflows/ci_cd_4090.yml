@@ -11,12 +11,14 @@ jobs:
   push_to_registry_4090:
 
     runs-on: RTX 4090
-
+    outputs:
+      tag: ${{ steps.get-date.outputs.NOW }}
     steps:
     - uses: actions/checkout@v4
 
     - name: Put current date into a variable
-      run:  $NOW=& Get-Date -format yyyy.MM.dd.hh.ss; echo "NOW=$NOW" >> $env:GITHUB_ENV
+      id: get-date
+      run:  $NOW=& Get-Date -format yyyy.MM.dd.hh.ss; echo "NOW=$NOW" >> $env:GITHUB_ENV; echo "NOW=$NOW" >> $GITHUB_OUTPUT
 
     - name: Log in to Docker Hub
       uses: docker/login-action@v3.0.0
@@ -34,15 +36,15 @@ jobs:
         tags: "${{ secrets.DOCKER_USER }}/gamac:${{env.NOW}}"
 
   run_on_4090:
-
+    needs: [push_to_registry_4090]
     runs-on: RTX 4090
 
     steps:
 
     - name: Run docker container
       run: >-
-          docker run
+          winpty docker run
           --rm
           -it
           --gpus=all
-          "${{ secrets.DOCKER_USER }}/gamac:${{env.NOW}}"
+          "${{ secrets.DOCKER_USER }}/gamac:${{ needs.push_to_registry_4090.outputs.tag }}"
