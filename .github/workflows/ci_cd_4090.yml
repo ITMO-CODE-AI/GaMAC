@@ -34,6 +34,11 @@ jobs:
         tags: "${{ secrets.DOCKER_USER }}/gamac:${{env.NOW}}"
 
   run_on_4090:
+
+    runs-on: RTX 4090
+
+    steps:
+
     - name: Run docker container
       uses: addnab/docker-run-action@v3
       with:
