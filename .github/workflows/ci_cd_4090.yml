@@ -42,7 +42,6 @@ jobs:
     steps:
 
     - name: Run docker container
-      shell: pwsh
       run: >-
           docker run
           --rm
