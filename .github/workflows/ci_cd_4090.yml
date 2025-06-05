@@ -40,7 +40,9 @@ jobs:
     steps:
 
     - name: Run docker container
-      uses: addnab/docker-run-action@v3
-      with:
-        image: "${{ secrets.DOCKER_USER }}/gamac:${{env.NOW}}"
-        options: --rm -it --gpus=all
+      run: >-
+          docker run
+          --rm
+          -it
+          --gpus=all
+          "${{ secrets.DOCKER_USER }}/gamac:${{env.NOW}}"
