@@ -44,13 +44,10 @@ jobs:
 
     steps:
     - uses: actions/checkout@v4
-    - env:
-          date_tag: ${{ needs.push_to_registry_4090.outputs.date_tag }}
-      run: echo "$date_tag"
 
     - name: Run docker container
       run: >-
           docker run
           --rm
           --gpus=all
-          "${{ secrets.DOCKER_USER }}/gamac:$date_tag"
+          "${{ secrets.DOCKER_USER }}/gamac:${{ needs.push_to_registry_4090.outputs.date_tag }}"
