@@ -12,13 +12,16 @@ jobs:
 
     runs-on: RTX 4090
     outputs:
-      tag: ${{ steps.get-date.outputs.NOW }}
+      tag: ${{ steps.get-date.outputs.tag }}
     steps:
     - uses: actions/checkout@v4
 
     - name: Put current date into a variable
+      run:  $NOW=& Get-Date -format yyyy.MM.dd.hh.ss; echo "NOW=$NOW" >> $env:GITHUB_ENV
+
+    - name: Save tag
       id: get-date
-      run:  $NOW=& Get-Date -format yyyy.MM.dd.hh.ss; echo "NOW=$NOW" >> $env:GITHUB_ENV; echo "NOW=$NOW" >> "$GITHUB_OUTPUT"
+      run: echo "tag=${{env.NOW}}" >> "$GITHUB_OUTPUT"
 
     - name: Log in to Docker Hub
       uses: docker/login-action@v3.0.0
