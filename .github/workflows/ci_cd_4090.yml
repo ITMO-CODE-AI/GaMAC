@@ -21,7 +21,7 @@ jobs:
 
     - name: Save tag
       id: get-date
-      run: echo "date_tag=${{env.NOW}}" >> "$env:GITHUB_OUTPUT"
+      run: echo "date_tag=${{env.NOW}}" >> $env:GITHUB_OUTPUT
 
     - name: Log in to Docker Hub
       uses: docker/login-action@v3.0.0
@@ -49,6 +49,9 @@ jobs:
       env:
           date_tag: ${{ needs.push_to_registry_4090.outputs.date_tag }}
       run:  echo $date_tag
+
+    - name: Check date tag
+      run: echo "${{ needs.push_to_registry_4090.outputs.date_tag }}"
 
     - name: Run docker container
       env:
