@@ -21,7 +21,7 @@ jobs:
 
     - name: Save tag
       id: get-date
-      run: echo "date_tag=${{env.NOW}}" >> "$GITHUB_OUTPUT"
+      run: echo "date_tag=${{env.NOW}}" >> "$env:GITHUB_OUTPUT"
 
     - name: Log in to Docker Hub
       uses: docker/login-action@v3.0.0
@@ -45,9 +45,16 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
+    - name: Retreive Env
+      env:
+          date_tag: ${{ needs.push_to_registry_4090.outputs.date_tag }}
+      run:  echo $date_tag
+
     - name: Run docker container
+      env:
+          date_tag: ${{ needs.push_to_registry_4090.outputs.date_tag }}
       run: >-
           docker run
           --rm
           --gpus=all
-          "${{ secrets.DOCKER_USER }}/gamac:${{ needs.push_to_registry_4090.outputs.date_tag }}"
+          "${{ secrets.DOCKER_USER }}/gamac:$date_tag"
