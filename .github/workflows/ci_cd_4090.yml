@@ -18,7 +18,7 @@ jobs:
 
     - name: Put current date into a variable
       id: get-date
-      run:  $NOW=& Get-Date -format yyyy.MM.dd.hh.ss; echo "NOW=$NOW" >> $env:GITHUB_ENV; echo "NOW=$NOW" >> $GITHUB_OUTPUT
+      run:  $NOW=& Get-Date -format yyyy.MM.dd.hh.ss; echo "NOW=$NOW" >> $env:GITHUB_ENV; echo "NOW=$NOW" >> "$GITHUB_OUTPUT"
 
     - name: Log in to Docker Hub
       uses: docker/login-action@v3.0.0
