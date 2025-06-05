@@ -8,7 +8,7 @@ on:
 
 jobs:
 
-  run_on_4070:
+  push_to_registry_4070:
 
     runs-on: RTX-4070TiS
 

@@ -32,3 +32,9 @@ jobs:
         push: true
         platforms: linux/amd64
         tags: "${{ secrets.DOCKER_USER }}/gamac:${{env.NOW}}"
+
+  run_on_4090:
+    - uses: addnab/docker-run-action@v3
+      with:
+        image: "${{ secrets.DOCKER_USER }}/gamac:${{env.NOW}}"
+        options: --rm -it --gpus=all

@@ -13,7 +13,6 @@
 [![CI/CD job for 4070](https://github.com/ITMO-CODE-AI/GaMAC/actions/workflows/ci_cd_4070.yml/badge.svg)](https://github.com/ITMO-CODE-AI/GaMAC/actions/workflows/ci_cd_4070.yml)
 [![CI/CD job for 3070](https://github.com/ITMO-CODE-AI/GaMAC/actions/workflows/ci_cd_3070.yml/badge.svg)](https://github.com/ITMO-CODE-AI/GaMAC/actions/workflows/ci_cd_3070.yml)
 
-
 ---
 ## GaMAC
 
