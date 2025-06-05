@@ -46,7 +46,7 @@ jobs:
     - uses: actions/checkout@v4
 
     - name: Check tag
-      run: echo ${{ needs.push_to_registry_4090.outputs.tag }}
+      run: echo "${{ needs.push_to_registry_4090.outputs.tag }}"
 
     - name: Run docker container
       run: >-
