@@ -42,8 +42,9 @@ jobs:
     steps:
 
     - name: Run docker container
+      shell: cmd
       run: >-
-          winpty docker run
+          docker run
           --rm
           -it
           --gpus=all
