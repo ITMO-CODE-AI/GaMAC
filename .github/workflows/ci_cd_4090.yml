@@ -7,7 +7,7 @@ on:
     branches: [ "develop" ]
 
 env:
-  DATA: gen.csv
+  DATA: OpenML_100-plants-margin_orig.csv
   TARGET_MEASURES: BR,OS,MCR,SYM
 
 jobs:
