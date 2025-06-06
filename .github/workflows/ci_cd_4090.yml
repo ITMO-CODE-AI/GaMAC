@@ -32,6 +32,7 @@ jobs:
         $env:MINIO_CERT_PATH="${{ secrets.MINIO_CERT_PATH }}";
         $env:MINIO_ENDPOINT="${{ secrets.MINIO_ENDPOINT }}";
         $env:DATA="${{ env.DATA }}";
+        dir;
         pip install minio;
         python download_minio.py
 
