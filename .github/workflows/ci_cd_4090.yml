@@ -58,6 +58,6 @@ jobs:
           --rm
           -i
           --gpus=all
-          -e DATA="$DATA"
-          -e TARGET_MEASURES="$TARGET_MEASURES"
+          -e DATA="${{ env.DATA }}"
+          -e TARGET_MEASURES="${{ env.TARGET_MEASURES }}"
           "${{ secrets.DOCKER_USER }}/gamac:${{ needs.push_to_registry_4090.outputs.date_tag }}"
