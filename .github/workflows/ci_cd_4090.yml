@@ -35,8 +35,7 @@ jobs:
 
     - name: Download data from MinIO
       run: >-
-        .\.minio_venv\Scripts\activate;
-        python download_minio.py
+        .\.minio_venv\Scripts\activate && python download_minio.py
 
     - name: Save tag
       id: get-date
