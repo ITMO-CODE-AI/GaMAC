@@ -27,6 +27,20 @@ jobs:
       id: get-date
       run: echo "date_tag=${{env.NOW}}" >> $env:GITHUB_OUTPUT
 
+    - name: Download from MinIO
+      uses: ActiveChooN/minio-download-action@v1
+      with:
+        endpoint: ${{ secrets.MINIO_ENDPOINT }}
+        access_key: ${{ secrets.MINIO_ACCESS_KEY }}
+        secret_key: ${{ secrets.MINIO_SECRET_KEY }}
+        bucket: datasets
+        remote_path: /data/"${{ env.DATA }}"
+        local_path: '.\test-data\'
+        insecure: true
+
+    - name: Check data
+      run: cd test-data; dir
+
     - name: Log in to Docker Hub
       uses: docker/login-action@v3.0.0
       with:
@@ -51,20 +65,6 @@ jobs:
 
     - name: Check date tag
       run: echo "${{ needs.push_to_registry_4090.outputs.date_tag }}"
-
-    - name: Download from MinIO
-      uses: yakubique/minio-download@v1.1.1
-      with:
-        endpoint: ${{ secrets.MINIO_ENDPOINT }}
-        access_key: ${{ secrets.MINIO_ACCESS_KEY }}
-        secret_key: ${{ secrets.MINIO_SECRET_KEY }}
-        bucket: datasets
-        source: /data/"${{ env.DATA }}"
-        target: '.\test-data\'
-        insecure: true
-
-    - name: Check data
-      run: cd test-data; dir
 
     - name: Run docker container
       run: >-
