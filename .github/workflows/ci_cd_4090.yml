@@ -25,11 +25,12 @@ jobs:
 
     - name: Put MinIO vars to env and download data from MinIO
       run: >-
+        $path = (Get-Item .).FullName;
         $cert = "${{ secrets.MINIO_CERT }}";
         $cert | Out-File "${{ secrets.MINIO_CERT_PATH }}";
         $env:MINIO_ACCESS_KEY="${{ secrets.MINIO_ACCESS_KEY }}";
         $env:MINIO_SECRET_KEY="${{ secrets.MINIO_SECRET_KEY }}";
-        $env:SSL_CERT_FILE="${{ secrets.MINIO_CERT_PATH }}";
+        $env:SSL_CERT_FILE=$path + \"${{ secrets.MINIO_CERT_PATH }}";
         $env:MINIO_ENDPOINT="${{ secrets.MINIO_ENDPOINT }}";
         $env:DATA="${{ env.DATA }}";
         dir;
