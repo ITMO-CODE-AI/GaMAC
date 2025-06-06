@@ -6,6 +6,10 @@ on:
   pull_request:
     branches: [ "develop" ]
 
+env:
+  DATA: gen.csv
+  TARGET_MEASURES: BR,OS,MCR,SYM
+
 jobs:
 
   push_to_registry_4090:
@@ -49,11 +53,11 @@ jobs:
       run: echo "${{ needs.push_to_registry_4090.outputs.date_tag }}"
 
     - name: Run docker container
-      env:
-          date_tag: ${{ needs.push_to_registry_4090.outputs.date_tag }}
       run: >-
           docker run
           --rm
           -i
           --gpus=all
+          -e DATA="$DATA"
+          -e TARGET_MEASURES="$TARGET_MEASURES"
           "${{ secrets.DOCKER_USER }}/gamac:${{ needs.push_to_registry_4090.outputs.date_tag }}"
