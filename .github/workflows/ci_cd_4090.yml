@@ -18,7 +18,7 @@ jobs:
     outputs:
       date_tag: ${{ steps.get-date.outputs.date_tag }}
     steps:
-    - uses: actions/checkout@v4
+    #- uses: actions/checkout@v4
 
     - name: Put current date into a variable
       run:  $NOW=& Get-Date -format yyyy.MM.dd.hh.ss; echo "NOW=$NOW" >> $env:GITHUB_ENV
