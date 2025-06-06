@@ -33,6 +33,10 @@ jobs:
         $env:MINIO_ENDPOINT="${{ secrets.MINIO_ENDPOINT }}";
         $env:DATA="${{ env.DATA }}"
 
+    - name: Download data from MinIO
+      run: >-
+        .\.minio_venv\Scripts\activate;
+        python download_minio.py
 
     - name: Save tag
       id: get-date
