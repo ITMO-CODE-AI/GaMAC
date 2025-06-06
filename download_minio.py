@@ -15,7 +15,7 @@ def download_data():
         access_key=MINIO_ACCESS_KEY,
         secret_key=MINIO_SECRET_KEY,
         secure=True,
-        cert_check=True
+        cert_check=False
     )
     data = client.fget_object(
         BUCKET,
