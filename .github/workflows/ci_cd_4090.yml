@@ -52,6 +52,20 @@ jobs:
     - name: Check date tag
       run: echo "${{ needs.push_to_registry_4090.outputs.date_tag }}"
 
+    - name: Download from MinIO
+      uses: yakubique/minio-download@v1.1.1
+      with:
+        endpoint: ${{ secrets.MINIO_ENDPOINT }}
+        access_key: ${{ secrets.MINIO_ACCESS_KEY }}
+        secret_key: ${{ secrets.MINIO_SECRET_KEY }}
+        bucket: datasets
+        source: /data/"${{ env.DATA }}"
+        target: '.\test-data\'
+        insecure: true
+
+    - name: Check data
+      run: cd test-data; dir
+
     - name: Run docker container
       run: >-
           docker run
