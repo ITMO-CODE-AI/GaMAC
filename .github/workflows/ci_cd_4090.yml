@@ -26,7 +26,7 @@ jobs:
     - name: Put MinIO vars to env and download data from MinIO
       run: >-
         $path = (Get-Item .).FullName;
-        openssl enc -aes256 -d -pbkdf2 -k "${{ secrets.MINIO_KEY }}" -in minio.enc -out public.crt
+        openssl enc -aes256 -d -pbkdf2 -k "${{ secrets.MINIO_KEY }}" -in minio.enc -out public.crt;
         $env:MINIO_ACCESS_KEY="${{ secrets.MINIO_ACCESS_KEY }}";
         $env:MINIO_SECRET_KEY="${{ secrets.MINIO_SECRET_KEY }}";
         $env:SSL_CERT_FILE=$path + '\' + 'public.crt';
