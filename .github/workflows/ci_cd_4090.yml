@@ -23,7 +23,7 @@ jobs:
     - name: Put current date into a variable
       run:  $NOW=& Get-Date -format yyyy.MM.dd.hh.ss; echo "NOW=$NOW" >> $env:GITHUB_ENV
 
-    - name: Put MinIO vars to env
+    - name: Put MinIO vars to env and download data from MinIO
       run: >-
         $cert = "${{ secrets.MINIO_CERT }}";
         $cert | Out-File "${{ secrets.MINIO_CERT_PATH }}";
@@ -31,10 +31,9 @@ jobs:
         $env:MINIO_SECRET_KEY="${{ secrets.MINIO_SECRET_KEY }}";
         $env:MINIO_CERT_PATH="${{ secrets.MINIO_CERT_PATH }}";
         $env:MINIO_ENDPOINT="${{ secrets.MINIO_ENDPOINT }}";
-        $env:DATA="${{ env.DATA }}"
-
-    - name: Download data from MinIO
-      run: pip install minio; python download_minio.py
+        $env:DATA="${{ env.DATA }}";
+        pip install minio;
+        python download_minio.py
 
     - name: Save tag
       id: get-date
