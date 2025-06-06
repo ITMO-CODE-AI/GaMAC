@@ -6,6 +6,7 @@ MINIO_ACCESS_KEY = getenv('MINIO_ACCESS_KEY')
 MINIO_SECRET_KEY = getenv('MINIO_SECRET_KEY')
 MINIO_API_HOST = getenv('MINIO_ENDPOINT')
 DATA = getenv('DATA')
+print(getenv('SSL_CERT_FILE'))
 # environ["SSL_CERT_FILE"] = getenv('MINIO_CERT_PATH')
 BUCKET = 'datasets'
 
