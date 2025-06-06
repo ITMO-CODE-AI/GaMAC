@@ -172,3 +172,4 @@ cython_debug/
 
 *.csv
 *.parquet
+*.crt
