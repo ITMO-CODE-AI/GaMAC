@@ -34,7 +34,7 @@ jobs:
         $env:DATA="${{ env.DATA }}"
 
     - name: Download data from MinIO
-      run: .\.minio_venv\Scripts\activate; python download_minio.py
+      run: pip install minio; python download_minio.py
 
     - name: Save tag
       id: get-date
