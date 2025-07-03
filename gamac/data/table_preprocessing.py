@@ -64,7 +64,8 @@ def table_preprocessing(
     if verbose:
         print("Предобработка")
 
-    print(df.shape, df.dtypes)
+    if verbose:
+        print(df.shape, df.dtypes)
 
     # Checking target_columns
     if target_columns is not None:
@@ -198,7 +199,6 @@ def table_preprocessing(
         for target in unique_targets:
             n_target = df[df[target_col_name] == target].shape[0]
             print(f"\t{target}: {n_target / N_col * 100}%")
-    print("--------------------------\nEnd of the report.")
 
     # NaNs
     if nan_action == "drop row":
@@ -252,6 +252,7 @@ def table_preprocessing(
                 f"{datetime.datetime.now()}: Encoded categorical columns using {categorical_encoding} encoding."
             )
 
-    print(df.shape, df.dtypes)
+    if verbose:
+        print(df.shape, df.dtypes)
 
     return df.to_numpy()

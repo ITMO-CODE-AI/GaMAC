@@ -20,24 +20,18 @@ LabelsType = NDArray
 class DataHandler:
     """Класс обработчика данных для дальнейшей кластеризации"""
 
-    def __init__(self, device: str = "cuda"):
+    def __init__(self, clip_model, clip_processor, device, batch_size: int = 32, verbose: bool = False):
         """
         Инициализация класса
 
         Args:
-            device (str, optional): Defaults to "cuda".
+            batch_size (int): размер батча для обработки
         """
+        self.clip_model = clip_model
+        self.clip_processor = clip_processor
         self.device = device
-
-        torch.set_default_device(self.device)
-
-        # Проверка на len в img_inputs/txt_inputs
-        # self.modal_model = CLIPModel.from_pretrained(
-        #     "openai/clip-vit-base-patch32", device_map=device
-        # )
-        # self.modal_processor = CLIPProcessor.from_pretrained(
-        #     "openai/clip-vit-base-patch32", device_map=device
-        # )
+        self.batch_size = batch_size
+        self.verbose = verbose
 
     def table_preprocess(self, table: DataFrame) -> ndarray:
         """
@@ -48,7 +42,7 @@ class DataHandler:
         Returns:
             ndarray
         """
-        return table_preprocessing(df=table)
+        return table_preprocessing(df=table, verbose=self.verbose)
 
     def text_image_preprocess(self, text: list[str], image: list[Image]) -> ndarray:
         """
@@ -61,12 +55,12 @@ class DataHandler:
             ndarray
         """
         return get_clip_embeddings(
-            model=self.modal_model,
-            processor=self.modal_processor,
+            model=self.clip_model,
+            processor=self.clip_processor,
             img_inputs=image,
             txt_inputs=text,
-            batch=1,
-            device=self.device,
+            batch_size=self.batch_size,
+            device=self.device
         )
 
     def concat_dataset(self, table_dataset: ndarray, img_txt_dataset: ndarray) -> ndarray:

@@ -3,9 +3,14 @@ import time
 import cupy as cp
 from typing import Optional, Set
 
+import torch
 from PIL import Image
 from numpy import ndarray
 from pandas import DataFrame
+from transformers import (
+    CLIPProcessor,
+    CLIPModel,
+)
 
 from gamac.algorithms.birch import BirchConfig
 from gamac.algorithms.kmeans import KMeansConfig
@@ -28,23 +33,55 @@ class Gamac:
             self,
             mab_solver: MabSolvers = MabSolvers.SOFTMAX,
             hyper_optimiser: HyperOptimisers = HyperOptimisers.OPTUNA,
-            target_measures: Optional[Set[Internal]] = None,
+            target_measures: Optional[list[str]] = None,
             time_limit: Optional[int] = None,
             iter_limit: Optional[int] = 50,
+            batch_size: int = 32, 
+            model_name: str = "openai/clip-vit-large-patch14",
+            verbose: bool = False
     ):
+        self.measures = {"BR": Internal.BR, "OS": Internal.OS, "MCR": Internal.MCR, "SYM": Internal.SYM}
+
         self._mab_arg = mab_solver
         self._hyper_arg = hyper_optimiser
-        self._measures_arg = target_measures
         self._algorithms = [BisectingKMeansConfig(), MeanShiftConfig(), DBSCANConfig(),
                             HDBSCANConfig(), BirchConfig(), KMeansConfig()]
         self._time_limit_arg = time_limit
         self._iter_limit_arg = iter_limit
 
+        self.batch_size = batch_size
+        self.model_name = model_name
+        self.verbose = verbose
+
+        self._init_clip_model()
+        if target_measures:
+            self._define_measures_arg(target_measures)
+
+    def _define_measures_arg(self, target_measures):
+        valid_measures = [measure for measure in target_measures if measure in self.measures]
+        if len(valid_measures)==0:
+            raise ValueError('No valid measures')
+
+        used_measures = [self.measures[x] for x in valid_measures]
+        # Проверка на уникальность
+        used_measures = list(set(used_measures))
+
+        print(f'Detected measures: {used_measures}')
+        
+        target_measures=tuple(used_measures)
+        self._measures_arg = target_measures
+
+    def _init_clip_model(self):
+        # Загрузка модели и процессора
+        self.device = "cuda" if torch.cuda.is_available() else "cpu"
+        self.clip_model = CLIPModel.from_pretrained(self.model_name).to(self.device)
+        self.clip_processor = CLIPProcessor.from_pretrained(self.model_name)
+
     def _check_input(
             self,
-            table: Optional[DataFrame],
-            text: Optional[list[str]],
-            image: Optional[list[Image]],
+            table: Optional[DataFrame] = None,
+            text: Optional[list[str]] = None,
+            image: Optional[list[Image]] = None,
     ):
         if all([var is None for var in [text, image, table]]):
             assert "There is not data included"
@@ -53,9 +90,10 @@ class Gamac:
 
     def run(
             self,
-            table: Optional[DataFrame],
-            text: Optional[list[str]],
-            image: Optional[list[Image]],
+            table: Optional[DataFrame] = None,
+            text: Optional[list[str]] = None,
+            image: Optional[list[Image]] = None,
+            target_measures: list = None
     ) -> tuple[DataFrameType, Optimal]:
         """
         Запуск пайплайна
@@ -71,11 +109,13 @@ class Gamac:
 
         # Обработка данных в единый датасет
         df = self._data_handler(table, text, image)
-        # df = table
 
         df = cp.array(df, dtype=cp.float32, order='C')
 
         # Получение рекомендации мер качества
+        if target_measures:
+            self._define_measures_arg(target_measures)
+        
         if self._measures_arg is None:
             measures = self._cvi_predictor(df)
         else:
@@ -102,7 +142,13 @@ class Gamac:
         Returns:
             ndarray: Данные для обработки
         """
-        handler = DataHandler()
+        handler = DataHandler(
+            clip_model=self.clip_model,
+            clip_processor=self.clip_processor,
+            batch_size=self.batch_size,
+            verbose=self.verbose,
+            device=self.device
+        )
         return handler.run(table, text, image)
 
     def _cvi_predictor(self, df: DataFrameType) -> Set[Internal]:

@@ -99,7 +99,6 @@ def br(container: EstimationContainer) -> float:
     # Нормализация результата общим числом объектов
     if container.n:
         result = result_acc / container.n
-        print(result_acc, container.n)
         return -result
     return -100000
 
