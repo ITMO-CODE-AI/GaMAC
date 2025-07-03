@@ -9,11 +9,13 @@ from transformers import (
 )
 
 
-def get_clip_embeddings(model_name: str, img_inputs: List[Image], txt_inputs: List[str], batch_size: int = 32):
+def get_clip_embeddings(model: CLIPModel, processor: CLIPProcessor, device,
+                        img_inputs: List[Image], txt_inputs: List[str], batch_size: int = 32):
     """Получение CLIP эмбеддингов
 
     Args:
-        model_name (str): название модели: "openai/clip-vit-large-patch14", "openai/clip-vit-base-patch32", "../models/CLIP-GmP-ViT-L-14"
+        model (CLIPModel)
+        processor (CLIPProcessor)
         img_inputs: список изображений
         txt_inputs: список текстовых описаний
         batch_size (int): размер батча для обработки
@@ -21,11 +23,6 @@ def get_clip_embeddings(model_name: str, img_inputs: List[Image], txt_inputs: Li
     # Проверка на совпадение длины входных данных
     if len(img_inputs) != len(txt_inputs):
         raise ValueError("Количество изображений и текстовых описаний должно совпадать")
-
-    # Загрузка модели и процессора
-    device = "cuda" if torch.cuda.is_available() else "cpu"
-    model = CLIPModel.from_pretrained(model_name).to(device)
-    processor = CLIPProcessor.from_pretrained(model_name)
 
     # Предварительное выделение памяти для эмбеддингов
     with torch.no_grad():
@@ -66,7 +63,6 @@ def get_clip_embeddings(model_name: str, img_inputs: List[Image], txt_inputs: Li
             embeds[i:i+batch_size] = batch_embeds
 
     # Очистка памяти
-    del model, processor
     torch.cuda.empty_cache()
 
     return embeds
