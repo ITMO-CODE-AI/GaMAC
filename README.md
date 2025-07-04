@@ -64,7 +64,7 @@ pip install -r requirements.txt --extra-index-url https://download.pytorch.org/w
 ## Quick Start
 
 1. Install all project requirements
-    <code>pip install -r requirements.txt</code>
+    <code>pip install -r requirements.txt --extra-index-url https://download.pytorch.org/whl/cu128</code>
 
 2. Run Gamac
 Check examples in `notebooks`
