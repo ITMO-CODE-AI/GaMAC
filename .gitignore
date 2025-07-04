@@ -3,7 +3,6 @@ dataset
 .venv
 notebooks/results
 models
-data/*
 gamac/src/utils/__pycache__
 
 # Byte-compiled / optimized / DLL files
@@ -170,6 +169,5 @@ cython_debug/
 #  option (not recommended) you can uncomment the following to ignore the entire idea folder.
 #.idea/
 
-*.csv
 *.parquet
 *.crt

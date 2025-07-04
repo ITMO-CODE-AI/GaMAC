@@ -5,7 +5,6 @@ from typing import Optional, Set
 
 import torch
 from PIL import Image
-from numpy import ndarray
 from pandas import DataFrame
 from transformers import (
     CLIPProcessor,
@@ -49,6 +48,8 @@ class Gamac:
         self._time_limit_arg = time_limit
         self._iter_limit_arg = iter_limit
 
+        self._measures_arg = None
+
         self.batch_size = batch_size
         self.model_name = model_name
         self.verbose = verbose
@@ -67,8 +68,8 @@ class Gamac:
         used_measures = list(set(used_measures))
 
         print(f'Detected measures: {used_measures}')
-        
-        target_measures=tuple(used_measures)
+   
+        target_measures = tuple(used_measures)
         self._measures_arg = target_measures
 
     def _init_clip_model(self):
