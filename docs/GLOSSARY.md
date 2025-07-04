@@ -49,4 +49,4 @@ modalities in [preprocessed dataframe]().
 #### Search space
 
 Set of clustering algorithms and set of possible values for their hyperparameters, that will be exploited by
-[optimisation pipeline]() to find configuration, which maximises [target measure]().
+[optimisation pipeline](#### Optimisation pipeline) to find configuration, which maximises [target measure]().
