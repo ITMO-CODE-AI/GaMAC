@@ -65,7 +65,7 @@ pip install -r requirements.txt --extra-index-url https://download.pytorch.org/w
 ## Быстрый старт
 
 1. Установка зависимостей
-    <code>pip install -r requirements.txt</code>
+    <code>pip install -r requirements.txt --extra-index-url https://download.pytorch.org/whl/cu128</code>
 
 2. Запуск Gamac
 Основные примеры лежат в `notebooks`
