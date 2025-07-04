@@ -38,7 +38,9 @@ class HyperOptimiser(ABC):
 
         algo = self.algo_conf.build(**config)
         step_result = self._eval_algo(algo)
-        print(f"=== ALGO {step_result.elapsed}s, {step_result.__class__.__name__}, {step_result.algo_params} ===")
+
+        printed_algo_params = str({k: v for k, v in step_result.algo_params.items() if k not in ['centroids', 'X', 'subcluster_labels', 'tree']})
+        print(f"=== ALGO {step_result.elapsed}s, {step_result.__class__.__name__}, {printed_algo_params} ===")
 
         self._runs.append(step_result)
         self._post_step_hook(step_result)
