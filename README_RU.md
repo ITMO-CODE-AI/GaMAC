@@ -69,7 +69,7 @@ pip install -r requirements.txt --extra-index-url https://download.pytorch.org/w
 
 2. Запуск Gamac
 
-Основные примеры лежат в [notebooks](notebooks/)
+Основные примеры лежат в [ноутбуке](notebooks/basic_example.ipynb)
 
 2.1. Автоматическая кластеризация табличных, визуальных и текстовых данных
 ---
