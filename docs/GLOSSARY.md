@@ -14,28 +14,28 @@ that contains a transformed dataframe of multimodal data.
 #### CVI predictor
 
 Pretrained metaclassifier, which picks 
-target measure for any dataframe based on it's meta-features.
+[target measure](GLOSSARY.md#target-measure) for any dataframe based on it's meta-features.
 
 #### Target measure
 
 Internal measure (or CVI, Cluster Validity Index), that will be used in 
-optimisation pipeline as optimisation function for Optuna.
+[optimisation pipeline](GLOSSARY.md#optimisation-pipeline) as optimisation function for [Optuna](https://optuna.org/).
 
 #### Optimisation pipeline
 
 Choice of clustering algorithms and their hyperparameters configurations based on 
 optimisation history, fitting clustering model on input dataframe,
 and estimating it quality. The aim is find clustering algorithm and it's configuration,
-so that it maximises target measure.
+so that it maximises [target measure](GLOSSARY.md#target-measure).
 
 #### Optimisation history
 
 Sequence of clustering algorithms choice, their hyperparameters configurations, fitted clustering model 
-on input dataframe, it's quality estimation via target measure and consumed time budget.
+on input dataframe, it's quality estimation via [target measure](GLOSSARY.md#target-measure) and consumed time budget.
 
 #### HPO backend
 
-Third-party implemrntations of Optuna, or others usually based on Bayes optimisation.
+Third-party implementations of [Optuna](https://optuna.org/), or others usually based on Bayes optimisation.
 
 #### Deep learning model
 
@@ -49,4 +49,4 @@ modalities in preprocessed dataframe.
 #### Search space
 
 Set of clustering algorithms and set of possible values for their hyperparameters, that will be exploited by
-optimisation pipeline to find configuration, which maximises target measure.
+optimisation pipeline to find configuration, which maximises [target measure](GLOSSARY.md#target-measure).
