@@ -12,7 +12,7 @@ TARGET_MEASURES = os.getenv('TARGET_MEASURES', "BR,OS,MCR,SYM")
 def main():
     # measures = {"BR": Internal.BR, "OS": Internal.OS, "MCR": Internal.MCR, "SYM": Internal.SYM}
     # used_measures = [measures[x] for x in TARGET_MEASURES.split(sep=',')]
-    used_measures = [TARGET_MEASURES]
+    used_measures = TARGET_MEASURES.split(sep=',')
     if '.csv' in DATA:
         data = pd.read_csv(f'test-data/{DATA}')
     elif '.parquet':
