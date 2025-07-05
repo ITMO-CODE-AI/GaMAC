@@ -10,11 +10,12 @@ DATA = os.getenv('DATA', "gen.csv")
 TARGET_MEASURES = os.getenv('TARGET_MEASURES', "BR,OS,MCR,SYM")
 
 def main():
-    measures = {"BR": Internal.BR, "OS": Internal.OS, "MCR": Internal.MCR, "SYM": Internal.SYM}
-    used_measures = [measures[x] for x in TARGET_MEASURES.split(sep=',')]
+    # measures = {"BR": Internal.BR, "OS": Internal.OS, "MCR": Internal.MCR, "SYM": Internal.SYM}
+    # used_measures = [measures[x] for x in TARGET_MEASURES.split(sep=',')]
+    used_measures = [TARGET_MEASURES]
     if '.csv' in DATA:
         data = pd.read_csv(f'test-data/{DATA}')
-    else:
+    elif '.parquet':
         pd.read_parquet(f'test-data/{DATA}')
     data = data.drop("class", errors='ignore', axis=1)
     print(f'used data: {DATA}')
