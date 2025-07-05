@@ -32,15 +32,13 @@ class Gamac:
             self,
             mab_solver: MabSolvers = MabSolvers.SOFTMAX,
             hyper_optimiser: HyperOptimisers = HyperOptimisers.OPTUNA,
-            target_measures: Optional[list[str]] = None,
+            target_measures: Optional[Set[Internal]] = None,
             time_limit: Optional[int] = None,
             iter_limit: Optional[int] = 50,
             batch_size: int = 32, 
             model_name: str = "openai/clip-vit-large-patch14",
             verbose: bool = False
     ):
-        self.measures = {"BR": Internal.BR, "OS": Internal.OS, "MCR": Internal.MCR, "SYM": Internal.SYM}
-
         self._mab_arg = mab_solver
         self._hyper_arg = hyper_optimiser
         self._algorithms = [BisectingKMeansConfig(), MeanShiftConfig(), DBSCANConfig(),
@@ -48,29 +46,13 @@ class Gamac:
         self._time_limit_arg = time_limit
         self._iter_limit_arg = iter_limit
 
-        self._measures_arg = None
+        self._measures_arg = target_measures
 
         self.batch_size = batch_size
         self.model_name = model_name
         self.verbose = verbose
 
         self._init_clip_model()
-        if target_measures:
-            self._define_measures_arg(target_measures)
-
-    def _define_measures_arg(self, target_measures):
-        valid_measures = [measure for measure in target_measures if measure in self.measures]
-        if len(valid_measures)==0:
-            raise ValueError('No valid measures')
-
-        used_measures = [self.measures[x] for x in valid_measures]
-        # Проверка на уникальность
-        used_measures = list(set(used_measures))
-
-        print(f'Detected measures: {used_measures}')
-   
-        target_measures = tuple(used_measures)
-        self._measures_arg = target_measures
 
     def _init_clip_model(self):
         # Загрузка модели и процессора
@@ -94,7 +76,6 @@ class Gamac:
             table: Optional[DataFrame] = None,
             text: Optional[list[str]] = None,
             image: Optional[list[Image]] = None,
-            target_measures: list = None
     ) -> tuple[DataFrameType, Optimal]:
         """
         Запуск пайплайна
@@ -113,10 +94,6 @@ class Gamac:
 
         df = cp.array(df, dtype=cp.float32, order='C')
 
-        # Получение рекомендации мер качества
-        if target_measures:
-            self._define_measures_arg(target_measures)
-        
         if self._measures_arg is None:
             measures = self._cvi_predictor(df)
         else:

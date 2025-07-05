@@ -32,8 +32,8 @@ def _read_features(data_path) -> np.ndarray:
     return np.array(features_list)
 
 def traverse_data():
-    for data_name in sorted(os.listdir('data')):
-        data_path = f'data/{data_name}'
+    for data_name in sorted(os.listdir('../data')):
+        data_path = f'../data/{data_name}'
         yield {
             "name": data_name,
             "data": _read_data(data_path),
