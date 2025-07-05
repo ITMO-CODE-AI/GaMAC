@@ -67,8 +67,9 @@ pip install -r requirements.txt --extra-index-url https://download.pytorch.org/w
     <code>pip install -r requirements.txt --extra-index-url https://download.pytorch.org/whl/cu128</code>
 
 2. Run Gamac
-Check examples in `notebooks`
----   
+
+Check examples in [notebooks](notebooks/)
+
 2.1. Autoclustering with table, text and image data
 ---
 ```
