@@ -2,6 +2,8 @@
 [![ru](https://img.shields.io/badge/lang-ru-red.svg)](CASE_RU.md)
 [![en](https://img.shields.io/badge/lang-en-blue.svg)](CASE.md)
 
+Applications are provided in [notebooks](../notebooks/example_on_realdata.ipynb)
+
 ### Clustering for Industrial Log Analysis  
 
 Log clustering aims to automatically group log entries associated with common event sources, such as application processes, system events, or runtime environments. The primary goal is to uncover hidden patterns in the data that indirectly reveal the nature of log generation, even if the log format does not explicitly indicate the source. For example, logs from three different applications running in two environments (development and production) should be separated into clusters corresponding to these applications and environments. A key challenge is assessing algorithm relevance: how accurately they identify real existing groups rather than creating artificial divisions.  
