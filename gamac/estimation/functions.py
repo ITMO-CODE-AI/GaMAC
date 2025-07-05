@@ -9,7 +9,6 @@ from gamac.kernels import MIDDLEWARE, BATCH_SIZE
 def mcr(container: EstimationContainer) -> float:
     """
     Вычисляет метрику межклассовой дисперсии (MCR), используя GPU вычисления.
-    Значение меры инвертируется для придания монотонно возрастающего характера
 
     Параметры:
     ----------
@@ -35,7 +34,7 @@ def mcr(container: EstimationContainer) -> float:
     """
 
     if container.n_w == 0 or container.n_b == 0:
-        return 0.0
+        raise ValueError("Got incorrect partition")
 
     # Аллокация временных буферов на GPU
     gpu_s_w = cp.empty(shape=container.n, dtype=cp.float32)
@@ -59,11 +58,11 @@ def mcr(container: EstimationContainer) -> float:
     s_b = gpu_s_b.sum().item()
 
     if s_w < 1e-8 or s_b < 1e-8:
-        return 0.0
+        raise ValueError("Incorrect values for s_w and s_b")
 
     # Формула расчета метрики MCR
     result = (s_w / container.n_w) / (s_b / container.n_b)
-    return 1.0 / result
+    return -result
 
 
 def br(container: EstimationContainer) -> float:

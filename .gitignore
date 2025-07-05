@@ -172,3 +172,4 @@ cython_debug/
 *.parquet
 *.crt
 *.csv
+!gamac/tests/data
