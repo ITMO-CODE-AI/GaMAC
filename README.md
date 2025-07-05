@@ -124,6 +124,33 @@ print(f'clusters: {best_model.model.labels_}')
 ```
 ---
 
+## Practical applications
+1. Computer Vision and Image Analysis
+- Image analysis based on specific parameters (colors, brightness, contrast, etc.).
+- Automatic product categorization by visual features (e-commerce).
+
+2. Natural Language Processing (NLP)
+- Pattern detection in social media (sentiment analysis, thematic trends).
+
+3. Bioinformatics and Medical Diagnostics
+- Identification of different cell and tissue types (e.g., in histology).
+- Genomic data analysis for mutation pattern detection.
+
+4. Finance and Fintech
+- Bank customer segmentation to identify groups of related borrowers.
+- Anomaly detection in transactions (fraud, money laundering).
+
+5. Recommender Systems
+- Content clustering (movies, music, products) to improve recommendations.
+
+6. Marketing and Behavioral Analytics
+- Audience segmentation for targeted advertising.
+
+7. Geospatial Analysis
+- Clustering points of interest (POI) for urban planning and logistics.
+
+
+
 ## License
 
 This project is protected under the Apache 2.0 License. For more details, refer to the [LICENSE](https://github.com/ITMO-CODE-AI/GaMAC/blob/feature/unit_test_algo/LICENSE) file.
