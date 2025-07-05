@@ -6,7 +6,7 @@
 
 * Ubuntu 22.04 / WSL
 * Четырехядерный центральный процессор, 16 Гб оперативной памяти
-* GPU: NVIDIA, поддержка cuda 12.6, минимальный размер графической памяти 10 ГБ\
+* GPU: NVIDIA, поддержка cuda 12.8, минимальный размер графической памяти 10 ГБ
 * Python>=3.12
 
 ### Python зависимости
@@ -19,5 +19,5 @@
 git clone https://github.com/ITMO-CODE-AI/GaMAC.git
 cd GaMAC
 
-pip install -r requirements.txt --extra-index-url https://download.pytorch.org/whl/cu126
+pip install -r requirements.txt --extra-index-url https://download.pytorch.org/whl/cu128
 ```

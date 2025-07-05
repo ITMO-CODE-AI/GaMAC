@@ -9,6 +9,7 @@ from gamac.kernels import MIDDLEWARE, BATCH_SIZE
 def mcr(container: EstimationContainer) -> float:
     """
     Вычисляет метрику межклассовой дисперсии (MCR), используя GPU вычисления.
+    Значение меры инвертируется для придания монотонно возрастающего характера
 
     Параметры:
     ----------
@@ -33,6 +34,9 @@ def mcr(container: EstimationContainer) -> float:
     Результат представляет собой отношение средних значений внутриклассовых и межклассовых дисперсий, умноженное на минус единицу для удобства интерпретации.
     """
 
+    if container.n_w == 0 or container.n_b == 0:
+        return 0.0
+
     # Аллокация временных буферов на GPU
     gpu_s_w = cp.empty(shape=container.n, dtype=cp.float32)
     gpu_s_b = cp.empty(shape=container.n, dtype=cp.float32)
@@ -54,9 +58,12 @@ def mcr(container: EstimationContainer) -> float:
     s_w = gpu_s_w.sum().item()
     s_b = gpu_s_b.sum().item()
 
+    if s_w < 1e-8 or s_b < 1e-8:
+        return 0.0
+
     # Формула расчета метрики MCR
     result = (s_w / container.n_w) / (s_b / container.n_b)
-    return -result
+    return 1.0 / result
 
 
 def br(container: EstimationContainer) -> float:
@@ -81,7 +88,6 @@ def br(container: EstimationContainer) -> float:
     -----------
     Для каждого кластера рассчитывается среднее квадратичное отклонение от центра кластера (вариация).
     Затем суммируются взвешенные логарифмы вариаций всех кластеров, нормализованные общим количеством объектов.
-    Если контейнер пуст (n == 0), возвращается фиксированное большое отрицательное значение (-100000).
     """
 
     result_acc = 0.0
@@ -97,10 +103,8 @@ def br(container: EstimationContainer) -> float:
         # Накопление результатов с учётом числа объектов в кластере
         result_acc += cl_n * np.log(var_stable)
     # Нормализация результата общим числом объектов
-    if container.n:
-        result = result_acc / container.n
-        return -result
-    return -100000
+    result = result_acc / container.n
+    return -result
 
 
 def sym(container: EstimationContainer) -> float:
