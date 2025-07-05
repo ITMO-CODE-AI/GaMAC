@@ -6,7 +6,7 @@
 
 * Ubuntu 22.04 / WSL
 * 4 CPU cores, 16 GB RAM;
-* GPU: NVIDIA, CUDA 12.6 support, GPU memory size: 10 Gb
+* GPU: NVIDIA, CUDA 12.8 support, GPU memory size: 10 Gb
 * Python>=3.12
 
 ### Python dependencies
