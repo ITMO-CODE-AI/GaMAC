@@ -8,11 +8,35 @@ pylibraft.config.set_output_as("cupy")
 
 
 class MeanShiftModel(ClusteringModel):
+    """Модель кластеризации, обученная алгоритмом MeanShift.
+    
+    Атрибуты:
+        labels_ (cupy.ndarray): Метки кластеров для каждой точки обучающей выборки.
+        centroids_ (cupy.ndarray): Координаты центроидов кластеров.
+    """
+    
     def __init__(self, labels_, centroids_):
+        """Инициализация модели MeanShift.
+        
+        Аргументы:
+            labels_ (cupy.ndarray): Метки кластеров для каждой точки.
+            centroids_ (cupy.ndarray): Координаты центроидов кластеров.
+        """
         super().__init__(labels_)
         self.centroids_ = centroids_
 
     def predict(self, X: DataFrameType) -> LabelsType:
+        """Предсказание меток кластеров для новых данных.
+        
+        Аргументы:
+            X (DataFrameType): Массив новых данных для предсказания.
+            
+        Возвращает:
+            LabelsType: Массив предсказанных меток кластеров.
+            
+        Выбрасывает:
+            ValueError: Если модель не была обучена (отсутствуют центроиды).
+        """
         if self.centroids_ is None:
             raise ValueError("Модель еще не обучена!")
 
@@ -25,13 +49,32 @@ class MeanShiftModel(ClusteringModel):
 
 
 class MeanShift(ClusteringAlgo):
+    """Реализация алгоритма MeanShift для кластеризации с использованием GPU.
+    
+    Алгоритм основан на сдвиге точек в направлении увеличения плотности распределения данных.
+    
+    Параметры:
+        bandwidth (float): Ширина окна для поиска соседей (по умолчанию 1.0).
+        max_iter (int): Максимальное количество итераций (по умолчанию 300).
+        tol (float): Допустимое изменение центроидов для остановки (по умолчанию 1e-3).
+    """
+    
     def __init__(self, bandwidth=1.0, max_iter=300, tol=1e-3):
+        """Инициализация алгоритма MeanShift."""
         self.bandwidth = bandwidth
         self.max_iter = max_iter
         self.tol = tol
         self.centroids = None
 
     def fit(self, X):
+        """Обучение модели MeanShift на переданных данных.
+        
+        Аргументы:
+            X (cupy.ndarray): Обучающие данные для кластеризации.
+            
+        Возвращает:
+            MeanShiftModel: Обученная модель кластеризации.
+        """
         centroids = X.copy()
 
         for _ in range(self.max_iter):
@@ -65,6 +108,14 @@ class MeanShift(ClusteringAlgo):
         return MeanShiftModel(labels_=labels, centroids_=self.centroids)
 
     def _assign_labels(self, X):
+        """Назначение меток кластеров точкам на основе ближайшего центроида.
+        
+        Аргументы:
+            X (cupy.ndarray): Данные для кластеризации.
+            
+        Возвращает:
+            cupy.ndarray: Массив меток кластеров.
+        """
         labels = cp.empty(X.shape[0], dtype=cp.int32)
         for i, x in enumerate(X):
             distances = cp.linalg.norm(self.centroids - x, axis=1)
@@ -73,12 +124,21 @@ class MeanShift(ClusteringAlgo):
 
 
 class MeanShiftConfig(AlgoConfig):
+    """Конфигурация для подбора гиперпараметров алгоритма MeanShift.
+    
+    Параметры:
+        bandwidth (tuple): Диапазон для подбора ширины окна (по умолчанию (1e-4, 1.0)).
+        max_iter (tuple): Диапазон для подбора максимального числа итераций (по умолчанию (50, 300)).
+        tol (tuple): Диапазон для подбора допустимого изменения центроидов (по умолчанию (1e-5, 1e-4)).
+    """
+    
     def __init__(
             self, *,
             bandwidth=(1e-4, 1.0),
             max_iter=(50, 300),
             tol=(1e-5, 1e-4)
     ):
+        """Инициализация конфигурации для MeanShift."""
         super().__init__(
             MeanShift,
             bandwidth=bandwidth,

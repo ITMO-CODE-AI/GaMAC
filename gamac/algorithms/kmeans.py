@@ -9,11 +9,32 @@ pylibraft.config.set_output_as("cupy")
 
 
 class KMeansModel(ClusteringModel):
+    """Модель кластеризации, обученная алгоритмом K-средних.
+    
+    Атрибуты:
+        labels_ (cupy.ndarray): Метки кластеров для каждой точки обучающей выборки.
+        centroids_ (cupy.ndarray): Координаты центроидов кластеров.
+    """
+    
     def __init__(self, labels_, centroids_):
+        """Инициализация модели KMeans.
+        
+        Аргументы:
+            labels_ (cupy.ndarray): Метки кластеров для каждой точки.
+            centroids_ (cupy.ndarray): Координаты центроидов кластеров.
+        """
         super().__init__(labels_)
         self.centroids_ = centroids_
 
     def predict(self, X: DataFrameType) -> LabelsType:
+        """Предсказание меток кластеров для новых данных.
+        
+        Аргументы:
+            X (DataFrameType): Массив новых данных для предсказания.
+            
+        Возвращает:
+            LabelsType: Массив предсказанных меток кластеров.
+        """
         # Вычисление квадратов норм
         x_squared = cp.sum(X**2, axis=1)[:, cp.newaxis]
         centroids_squared = cp.sum(self.centroids_**2, axis=1)[cp.newaxis, :]
@@ -24,19 +45,23 @@ class KMeansModel(ClusteringModel):
 
 
 class KMeans(ClusteringAlgo):
-    """A simple clustering method that forms k clusters by iteratively reassigning
-    samples to the closest centroids and after that moves the centroids to the center
-    of the new formed clusters using GPU.
-
-
-    Parameters:
+    """Алгоритм K-средних для кластеризации с использованием GPU.
+    
+    Простой метод кластеризации, который формирует k кластеров, итеративно перераспределяя
+    точки к ближайшим центроидам и затем перемещая центроиды в центр новых кластеров.
+    
+    Параметры:
     -----------
-    k: int
-        The number of clusters the algorithm will form.
-    max_iterations: int
-        The number of iterations the algorithm will run for if it does
-        not converge before that.
+    n_clusters: int, по умолчанию=2
+        Количество кластеров, которые нужно сформировать.
+    max_iter: int, по умолчанию=100
+        Максимальное количество итераций алгоритма, если раньше не достигнута сходимость.
+    tol: float, по умолчанию=1e-4
+        Допустимое изменение центроидов для определения сходимости.
+    random_state: int, по умолчанию=None
+        Зерно для генератора случайных чисел для воспроизводимости.
     """
+    
     def __init__(
             self,
             n_clusters=2,
@@ -44,6 +69,7 @@ class KMeans(ClusteringAlgo):
             tol=1e-4,
             random_state=None
     ):
+        """Инициализация алгоритма K-средних."""
         super().__init__()
         self.n_clusters = n_clusters
         self.max_iter = max_iter
@@ -52,6 +78,14 @@ class KMeans(ClusteringAlgo):
         self.centroids = None
 
     def fit(self, X):
+        """Обучение модели K-средних на переданных данных.
+        
+        Аргументы:
+            X (cupy.ndarray): Обучающие данные для кластеризации.
+            
+        Возвращает:
+            KMeansModel: Обученная модель кластеризации.
+        """
         # Установка случайного зерна для воспроизводимости
         if self.random_state is not None:
             cp.random.seed(self.random_state)
@@ -97,12 +131,25 @@ class KMeans(ClusteringAlgo):
 
 
 class KMeansConfig(AlgoConfig):
+    """Конфигурация для подбора гиперпараметров алгоритма K-средних.
+    
+    Параметры:
+    -----------
+    n_clusters: tuple, по умолчанию=(2, 15)
+        Диапазон для подбора оптимального количества кластеров.
+    max_iter: int, по умолчанию=100
+        Максимальное количество итераций алгоритма.
+    tol: float, по умолчанию=1e-4
+        Допустимое изменение центроидов для определения сходимости.
+    """
+    
     def __init__(
             self, *,
             n_clusters=(2, 15),
             max_iter=100,
             tol=1e-4
     ):
+        """Инициализация конфигурации для K-средних."""
         super().__init__(
             KMeans,
             n_clusters=n_clusters,

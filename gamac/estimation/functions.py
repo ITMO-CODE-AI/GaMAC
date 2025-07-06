@@ -188,7 +188,7 @@ def c_index(container: EstimationContainer) -> float:
         s_c=gpu_s_c,
     ).invoke(
         grid=(container.n // 16 + 1, container.n // 16 + 1),
-        blocks=(16,16),
+        blocks=(16, 16),
     )
     # Извлечение результатов с GPU
     s_c = gpu_s_c.item()
@@ -306,7 +306,7 @@ def os(container: EstimationContainer):
     # Последовательный расчёт S-значения
     s_val = 0.0
     for x_idx, x_row in enumerate(container.cent_matrix):
-        s_x = float('inf') # Минимальная дистанция до ближайшего соседнего кластера
+        s_x = float('inf')  # Минимальная дистанция до ближайшего соседнего кластера
         for y_idx, y in enumerate(x_row):
             if x_idx == y_idx:
                 continue

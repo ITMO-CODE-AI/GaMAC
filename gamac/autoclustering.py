@@ -26,8 +26,29 @@ from gamac.pipeline.run_types import Optimal
 
 
 class Gamac:
-    """Основной пайплайн Gamac"""
+    """Основной класс Gamac для автоматической кластеризации мультимодальных данных.
 
+    Класс реализует пайплайн для автоматического выбора алгоритма кластеризации и его гиперпараметров
+    на основе многорукого бандита (MAB) и мета-обучения. Поддерживает обработку текстовых, 
+    изобразительных и табличных данных.
+
+    Основные возможности:
+    - Автоматический подбор алгоритма кластеризации (K-means, DBSCAN, HDBSCAN и др.)
+    - Оптимизация гиперпараметров выбранного алгоритма
+    - Подбор метрик качества кластеризации (CVI)
+    - Обработка мультимодальных данных (текст, изображения, таблицы)
+    - Интеграция с моделями CLIP для получения векторных представлений
+
+    Пример использования:
+        >>> gamac = Gamac()
+        >>> df, clusters = gamac.run(text=text_data, image=image_data)
+        >>> print(clusters)
+
+    Attributes:
+        batch_size (int): Размер батча для обработки данных
+        model_name (str): Название модели CLIP
+        verbose (bool): Флаг вывода дополнительной информации
+    """
     def __init__(
             self,
             mab_solver: MabSolvers = MabSolvers.SOFTMAX,
@@ -35,10 +56,29 @@ class Gamac:
             target_measures: Optional[Set[Internal]] = None,
             time_limit: Optional[int] = None,
             iter_limit: Optional[int] = 50,
-            batch_size: int = 32, 
+            batch_size: int = 32,
             model_name: str = "openai/clip-vit-large-patch14",
             verbose: bool = False
     ):
+        """Запускает основной пайплайн кластеризации.
+
+        Обрабатывает входные данные, предсказывает оптимальные метрики качества,
+        выполняет автоматический подбор алгоритма кластеризации и его параметров.
+
+        Args:
+            table: Датафрейм с табличными данными (опционально)
+            text: Список текстовых данных (опционально)
+            image: Список изображений в формате PIL.Image (опционально)
+
+        Returns:
+            Кортеж из:
+            - Обработанные данные в виде массива numpy/cupy
+            - Результат кластеризации (метки кластеров)
+
+        Raises:
+            AssertionError: Если не передано ни одного типа данных или переданы
+                        только текст или только изображения без таблицы
+        """
         self._mab_arg = mab_solver
         self._hyper_arg = hyper_optimiser
         self._algorithms = [BisectingKMeansConfig(), MeanShiftConfig(), DBSCANConfig(),

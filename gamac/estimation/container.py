@@ -6,6 +6,18 @@ from gamac.kernels import MIDDLEWARE, BATCH_SIZE
 
 
 class EstimationContainer:
+    """Контейнер для хранения и обработки данных кластеризации с GPU-ускорением.
+    
+    Атрибуты:
+        NOISE_THRESHOLD (float): Пороговое значение для доли шумовых объектов (по умолчанию 0.1)
+        data (NDArray): Исходные данные для анализа
+        labels (NDArray): Метки кластеров для каждого объекта
+        uniq_labels_gpu (NDArray): Уникальные метки кластеров на GPU
+        uniq_labels_arr (np.ndarray): Уникальные метки кластеров на CPU
+        n (int): Количество объектов
+        d (int): Размерность данных
+    """
+    
     NOISE_THRESHOLD = 0.1
 
     def __init__(
@@ -15,6 +27,14 @@ class EstimationContainer:
             uniq_labels_gpu: NDArray,
             uniq_labels_arr: np.ndarray,
     ):
+        """Инициализация контейнера с данными кластеризации.
+        
+        Аргументы:
+            data (NDArray): Массив с данными (N x D)
+            labels (NDArray): Метки кластеров для каждого объекта
+            uniq_labels_gpu (NDArray): Уникальные метки кластеров на GPU
+            uniq_labels_arr (np.ndarray): Уникальные метки кластеров на CPU
+        """
         self.data = data
         self.labels = labels
         self.uniq_labels_gpu = uniq_labels_gpu
@@ -27,25 +47,55 @@ class EstimationContainer:
         self._cent_matrix = None
 
     @staticmethod
-    def _denoise(df, labels):
+    def _denoise(df: NDArray, labels: NDArray) -> tuple[NDArray, NDArray]:
+        """Фильтрация шумовых объектов (с меткой -1).
+        
+        Аргументы:
+            df (NDArray): Исходные данные
+            labels (NDArray): Метки кластеров
+            
+        Возвращает:
+            tuple[NDArray, NDArray]: Очищенные данные и метки
+            
+        Выбрасывает:
+            ValueError: Если доля шума превышает NOISE_THRESHOLD
+        """
         denoised = labels != -1
         denoised_labels = labels[denoised]
         denoised_ratio = len(denoised_labels) / len(labels)
         noise_ratio = 1.0 - denoised_ratio
         if noise_ratio > EstimationContainer.NOISE_THRESHOLD:
             noice_perc = int(noise_ratio * 100)
-            raise ValueError(f"Received {noice_perc}% objects with noise labels")
+            raise ValueError(f"Получено {noice_perc}% объектов с шумовыми метками")
         return df[denoised], denoised_labels
 
     @staticmethod
-    def _check_max_clusters(data, uniq_labels):
+    def _check_max_clusters(data: NDArray, uniq_labels: np.ndarray) -> None:
+        """Проверка допустимого количества кластеров для размера выборки.
+        
+        Аргументы:
+            data (NDArray): Исходные данные
+            uniq_labels (np.ndarray): Уникальные метки кластеров
+            
+        Выбрасывает:
+            ValueError: Если количество кластеров слишком велико для выборки
+        """
         n, k = len(data), len(uniq_labels)
         max_clusters = int(np.cbrt(2 * n)) + 1
         if k > max_clusters:
-            raise ValueError(f"Received too many ({k}) clusters for dataset of {n} objects")
+            raise ValueError(f"Получено слишком много ({k}) кластеров для выборки из {n} объектов")
 
     @staticmethod
-    def create(df, labels):
+    def create(df: NDArray, labels: NDArray) -> 'EstimationContainer':
+        """Фабричный метод для создания контейнера с предварительной обработкой данных.
+        
+        Аргументы:
+            df (NDArray): Исходные данные
+            labels (NDArray): Метки кластеров
+            
+        Возвращает:
+            EstimationContainer: Экземпляр контейнера с обработанными данными
+        """
         uniq_labels_gpu = cp.unique(labels)
         uniq_labels_arr = uniq_labels_gpu.get()
 
@@ -71,10 +121,12 @@ class EstimationContainer:
 
     @property
     def k(self) -> int:
+        """Количество кластеров."""
         return len(self.uniq_labels_arr)
 
     @property
     def n_w(self) -> int:
+        """Количество внутрикластерных пар объектов."""
         n_w = 0
         for cl in self.clusters:
             cl_n = len(cl)
@@ -83,11 +135,16 @@ class EstimationContainer:
 
     @property
     def n_b(self) -> int:
+        """Количество межкластерных пар объектов."""
         n = len(self.data)
         return n * (n - 1) - self.n_w
 
     @property
-    def clusters(self):
+    def clusters(self) -> list[NDArray]:
+        """Список кластеров (разделенных по меткам).
+        
+        Вычисляется лениво при первом обращении.
+        """
         if self._clusters is None:
             self._clusters = [
                 self.data[self.labels == label]
@@ -96,7 +153,11 @@ class EstimationContainer:
         return self._clusters
 
     @property
-    def centroids(self) -> list:
+    def centroids(self) -> NDArray:
+        """Массив центроидов кластеров.
+        
+        Вычисляется лениво с использованием GPU-ускорения.
+        """
         if self._centroids is None:
             centroids = cp.empty(shape=(self.k, self.d), dtype=cp.float32)
             MIDDLEWARE.get_centroids(
@@ -115,7 +176,11 @@ class EstimationContainer:
         return self._centroids
 
     @property
-    def cent_dists(self) -> list:
+    def cent_dists(self) -> list[NDArray]:
+        """Расстояния от объектов до центроидов их кластеров.
+        
+        Вычисляется лениво с использованием GPU-ускорения.
+        """
         if self._cent_dists is None:
             cent_dists_list = list()
             for k_idx, cluster in enumerate(self.clusters):
@@ -139,7 +204,11 @@ class EstimationContainer:
         return self._cent_dists
 
     @property
-    def sym_dists(self) -> list:
+    def sym_dists(self) -> list[NDArray]:
+        """Симметризованные расстояния между объектами.
+        
+        Вычисляется лениво с использованием GPU-ускорения.
+        """
         if self._sym_dists is None:
             sym_dists_list = list()
             for k_idx in range(self.k):
@@ -178,7 +247,11 @@ class EstimationContainer:
         return self._sym_dists
 
     @property
-    def cent_matrix(self):
+    def cent_matrix(self) -> np.ndarray:
+        """Матрица попарных расстояний между центроидами.
+        
+        Вычисляется лениво с использованием GPU-ускорения.
+        """
         if self._cent_matrix is None:
             cent_matrix = cp.empty(shape=(self.k, self.k), dtype=cp.float32)
             MIDDLEWARE.get_cent_matrix(
@@ -192,4 +265,3 @@ class EstimationContainer:
             )
             self._cent_matrix = cp.asnumpy(cent_matrix)
         return self._cent_matrix
-

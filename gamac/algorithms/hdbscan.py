@@ -9,12 +9,35 @@ pylibraft.config.set_output_as("cupy")
 
 
 class HDBSCANModel(ClusteringModel):
+    """A clustering model trained by HDBSCAN algorithm.
+    
+    Attributes:
+        labels_ (cupy.ndarray): Cluster labels for each point in the training set.
+        X_ (cupy.ndarray): The training data used to fit the model.
+    """
+    
     def __init__(self, labels_, X_):
+        """Initialize HDBSCANModel with cluster labels and training data.
+        
+        Args:
+            labels_ (cupy.ndarray): Cluster labels for each point.
+            X_ (cupy.ndarray): The training data.
+        """
         super().__init__(labels_)
         self.X_ = X_
 
     def predict(self, X):
-        """Predict using nearest core points"""
+        """Predict cluster labels for new data points using nearest core points.
+        
+        Args:
+            X (cupy.ndarray): New data points to predict clusters for.
+            
+        Returns:
+            cupy.ndarray: Predicted cluster labels for each point in X.
+            
+        Raises:
+            Exception: If model hasn't been fitted yet.
+        """
         if not hasattr(self, 'labels_'):
             raise Exception("Model not fitted yet")
 
@@ -25,11 +48,27 @@ class HDBSCANModel(ClusteringModel):
 
 
 class HDBSCAN(ClusteringAlgo):
+    """HDBSCAN clustering algorithm implementation.
+    
+    Args:
+        min_cluster_size (int, optional): Minimum size of clusters. Defaults to 5.
+        min_samples (int, optional): Number of samples in neighborhood for core point.
+            If None, set to min_cluster_size. Defaults to None.
+    """
+    
     def __init__(self, min_cluster_size=5, min_samples=None):
         self.min_cluster_size = min_cluster_size
         self.min_samples = min_samples if min_samples else min_cluster_size
 
     def fit(self, X):
+        """Fit HDBSCAN clustering model to the data.
+        
+        Args:
+            X (cupy.ndarray): Training data to cluster.
+            
+        Returns:
+            HDBSCANModel: Fitted clustering model.
+        """
         # Шаг 1: вычисление ближайших соседей
         nbrs = NearestNeighbors(n_neighbors=self.min_samples).fit(X.get())
         distances, indices = nbrs.kneighbors(X.get())
@@ -46,6 +85,15 @@ class HDBSCAN(ClusteringAlgo):
         )
 
     def _cluster(self, distances, indices):
+        """Perform clustering based on reachability distances.
+        
+        Args:
+            distances (cupy.ndarray): Distances to nearest neighbors.
+            indices (cupy.ndarray): Indices of nearest neighbors.
+            
+        Returns:
+            cupy.ndarray: Cluster labels for each point.
+        """
         labels = cp.full(distances.shape[0], -1, dtype=cp.int32)
         cluster_id = 0
 
@@ -62,6 +110,14 @@ class HDBSCAN(ClusteringAlgo):
         return labels  # Преобразование обратно в numpy массив
 
     def _expand_cluster(self, point_index, indices, labels, cluster_id):
+        """Expand cluster from core point to its neighbors.
+        
+        Args:
+            point_index (int): Index of core point to expand from.
+            indices (cupy.ndarray): Indices of nearest neighbors for all points.
+            labels (cupy.ndarray): Cluster labels array to update.
+            cluster_id (int): Current cluster ID to assign.
+        """
         stack = [point_index]
         while stack:
             current_point = stack.pop()
@@ -72,6 +128,13 @@ class HDBSCAN(ClusteringAlgo):
 
 
 class HDBSCANConfig(AlgoConfig):
+    """Configuration for HDBSCAN algorithm hyperparameter optimization.
+    
+    Args:
+        min_cluster_size (tuple, optional): Range for min_cluster_size parameter. Defaults to (5, 15).
+        min_samples (tuple, optional): Range for min_samples parameter. Defaults to (5, 15).
+    """
+    
     def __init__(
             self, *,
             min_cluster_size=(5, 15),
