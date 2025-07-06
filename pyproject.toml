@@ -171,10 +171,3 @@ dependencies = [
 ]
 license = "Apache-2.0"
 license-files = ["LICEN[CS]E*"]
-
-[project.urls]
-Homepage = "https://github.com/CTLab-ITMO/CoolPrompt"
-Issues = "https://github.com/CTLab-ITMO/CoolPrompt/issues"
-Documentation = "https://github.com/CTLab-ITMO/CoolPrompt"
-Repository = "https://github.com/CTLab-ITMO/CoolPrompt"
-Changelog = "https://github.com/CTLab-ITMO/CoolPrompt/blob/master/CHANGELOG.md"
