@@ -9,6 +9,7 @@ from gamac.estimation.functions import f1
 DATA = os.getenv('DATA', "gen.csv")
 TARGET_MEASURES = os.getenv('TARGET_MEASURES', "BR,OS,MCR,SYM")
 
+
 def main():
     measures = {"BR": Internal.BR, "OS": Internal.OS, "MCR": Internal.MCR, "SYM": Internal.SYM}
     used_measures = [measures[x] for x in TARGET_MEASURES.split(sep=',')]
@@ -24,6 +25,7 @@ def main():
     #df, optimal = Gamac().run(table=data, text=None, image=None)
     print(f'optimal.model: {optimal.model}')
     print(f'clusters: {optimal.model.labels_}')
+
 
 if __name__ == '__main__':
     start = time.time()
