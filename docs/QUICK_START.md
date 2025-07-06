@@ -9,7 +9,7 @@
 
 2. Run Gamac
 
-Check examples in following [notebook](notebooks/basic_example.ipynb)
+Check examples in following [notebook](https://github.com/ITMO-CODE-AI/GaMAC/blob/develop/notebooks/basic_example.ipynb)
 
 2.1. Autoclustering with table, text and image data
 ---
@@ -34,11 +34,11 @@ print(f'clusters: {best_model.model.labels_}')
 ---
 ```
 import pandas as pd
-from sklearn.datasets import load_iris
+from sklearn.datasets import load_digits
 from gamac.autoclustering import Gamac
 
 # Import data
-data = load_iris(as_frame=True)
+data = load_digits(as_frame=True)
 table = data['data']
 
 df, best_model = Gamac().run(table=table, text=None, image=None)

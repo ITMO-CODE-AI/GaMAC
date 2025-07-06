@@ -69,7 +69,7 @@ pip install -r requirements.txt --extra-index-url https://download.pytorch.org/w
 
 2. Запуск Gamac
 
-Основные примеры лежат в [ноутбуке](notebooks/basic_example.ipynb)
+Основные примеры лежат в [ноутбуке](https://github.com/ITMO-CODE-AI/GaMAC/blob/develop/notebooks/basic_example.ipynb)
 
 2.1. Автоматическая кластеризация табличных, визуальных и текстовых данных
 ---
@@ -96,11 +96,11 @@ print(f'clusters: {best_model.model.labels_}')
 ---
 ```
 import pandas as pd
-from sklearn.datasets import load_iris
+from sklearn.datasets import load_digits
 from gamac.autoclustering import Gamac
 
 # Import data
-data = load_iris(as_frame=True)
+data = load_digits(as_frame=True)
 table = data['data']
 
 # Run Gamac
