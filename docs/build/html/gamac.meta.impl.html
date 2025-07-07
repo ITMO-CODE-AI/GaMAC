@@ -1,0 +1,514 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="ru" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>gamac.meta.impl package &mdash; документация GaMAC 1.0.0</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=e35015f7"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="_static/translations.js?v=cd1d70c9"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Алфавитный указатель" href="genindex.html" />
+    <link rel="search" title="Поиск" href="search.html" />
+    <link rel="next" title="gamac.meta.storage package" href="gamac.meta.storage.html" />
+    <link rel="prev" title="gamac.meta package" href="gamac.meta.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            GaMAC
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Поиск в документации" aria-label="Поиск в документации" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Меню навигации">
+              <p class="caption" role="heading"><span class="caption-text">API Reference:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">gamac</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="gamac.html">gamac package</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="gamac.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="gamac.algorithms.html">gamac.algorithms package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="gamac.bin.html">gamac.bin package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="gamac.data.html">gamac.data package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="gamac.estimation.html">gamac.estimation package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="gamac.kernels.html">gamac.kernels package</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="gamac.meta.html">gamac.meta package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="gamac.pipeline.html">gamac.pipeline package</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="gamac.html#submodules">Submodules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="gamac.html#module-gamac.autoclustering">gamac.autoclustering module</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Меню навигации для мобильных устройств" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">GaMAC</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Навигация по страницам">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="modules.html">gamac</a></li>
+          <li class="breadcrumb-item"><a href="gamac.html">gamac package</a></li>
+          <li class="breadcrumb-item"><a href="gamac.meta.html">gamac.meta package</a></li>
+      <li class="breadcrumb-item active">gamac.meta.impl package</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/gamac.meta.impl.rst.txt" rel="nofollow"> Просмотреть исходный код страницы</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="gamac-meta-impl-package">
+<h1>gamac.meta.impl package<a class="headerlink" href="#gamac-meta-impl-package" title="Ссылка на этот заголовок"></a></h1>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Ссылка на этот заголовок"></a></h2>
+</section>
+<section id="module-gamac.meta.impl.cvi">
+<span id="gamac-meta-impl-cvi-module"></span><h2>gamac.meta.impl.cvi module<a class="headerlink" href="#module-gamac.meta.impl.cvi" title="Ссылка на этот заголовок"></a></h2>
+<p>CPU internal measures implementations</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="gamac.meta.impl.cvi.ArrayStat">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gamac.meta.impl.cvi.</span></span><span class="sig-name descname"><span class="pre">ArrayStat</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">arr</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gamac/meta/impl/cvi.html#ArrayStat"><span class="viewcode-link"><span class="pre">[исходный</span> <span class="pre">код]</span></span></a><a class="headerlink" href="#gamac.meta.impl.cvi.ArrayStat" title="Ссылка на это определение"></a></dt>
+<dd><p>Базовые классы: <a class="reference internal" href="#gamac.meta.impl.cvi.CachedValues" title="gamac.meta.impl.cvi.CachedValues"><code class="xref py py-class docutils literal notranslate"><span class="pre">CachedValues</span></code></a></p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="gamac.meta.impl.cvi.CachedValues">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gamac.meta.impl.cvi.</span></span><span class="sig-name descname"><span class="pre">CachedValues</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">min_val</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mean_val</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_val</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sum_val</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gamac/meta/impl/cvi.html#CachedValues"><span class="viewcode-link"><span class="pre">[исходный</span> <span class="pre">код]</span></span></a><a class="headerlink" href="#gamac.meta.impl.cvi.CachedValues" title="Ссылка на это определение"></a></dt>
+<dd><p>Базовые классы: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="gamac.meta.impl.cvi.Clusters">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gamac.meta.impl.cvi.</span></span><span class="sig-name descname"><span class="pre">Clusters</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">all_data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">global_centroid</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">clusters_data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">ndarray</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">centroids</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">ndarray</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cent_dists</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#gamac.meta.impl.cvi.ArrayStat" title="gamac.meta.impl.cvi.ArrayStat"><span class="pre">ArrayStat</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sym_dists</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#gamac.meta.impl.cvi.ArrayStat" title="gamac.meta.impl.cvi.ArrayStat"><span class="pre">ArrayStat</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cartesian_stats</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#gamac.meta.impl.cvi.CachedValues" title="gamac.meta.impl.cvi.CachedValues"><span class="pre">CachedValues</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gamac/meta/impl/cvi.html#Clusters"><span class="viewcode-link"><span class="pre">[исходный</span> <span class="pre">код]</span></span></a><a class="headerlink" href="#gamac.meta.impl.cvi.Clusters" title="Ссылка на это определение"></a></dt>
+<dd><p>Базовые классы: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="gamac.meta.impl.cvi.Clusters.create">
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">create</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">labels</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gamac/meta/impl/cvi.html#Clusters.create"><span class="viewcode-link"><span class="pre">[исходный</span> <span class="pre">код]</span></span></a><a class="headerlink" href="#gamac.meta.impl.cvi.Clusters.create" title="Ссылка на это определение"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="gamac.meta.impl.cvi.Clusters.intra_stats">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">intra_stats</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#gamac.meta.impl.cvi.CachedValues" title="gamac.meta.impl.cvi.CachedValues"><span class="pre">CachedValues</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#gamac.meta.impl.cvi.Clusters.intra_stats" title="Ссылка на это определение"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="gamac.meta.impl.cvi.banfield_raftery">
+<span class="sig-prename descclassname"><span class="pre">gamac.meta.impl.cvi.</span></span><span class="sig-name descname"><span class="pre">banfield_raftery</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">clusters</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#gamac.meta.impl.cvi.Clusters" title="gamac.meta.impl.cvi.Clusters"><span class="pre">Clusters</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="_modules/gamac/meta/impl/cvi.html#banfield_raftery"><span class="viewcode-link"><span class="pre">[исходный</span> <span class="pre">код]</span></span></a><a class="headerlink" href="#gamac.meta.impl.cvi.banfield_raftery" title="Ссылка на это определение"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="gamac.meta.impl.cvi.c_index">
+<span class="sig-prename descclassname"><span class="pre">gamac.meta.impl.cvi.</span></span><span class="sig-name descname"><span class="pre">c_index</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">clusters</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#gamac.meta.impl.cvi.Clusters" title="gamac.meta.impl.cvi.Clusters"><span class="pre">Clusters</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="_modules/gamac/meta/impl/cvi.html#c_index"><span class="viewcode-link"><span class="pre">[исходный</span> <span class="pre">код]</span></span></a><a class="headerlink" href="#gamac.meta.impl.cvi.c_index" title="Ссылка на это определение"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="gamac.meta.impl.cvi.ch">
+<span class="sig-prename descclassname"><span class="pre">gamac.meta.impl.cvi.</span></span><span class="sig-name descname"><span class="pre">ch</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">clusters</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#gamac.meta.impl.cvi.Clusters" title="gamac.meta.impl.cvi.Clusters"><span class="pre">Clusters</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="_modules/gamac/meta/impl/cvi.html#ch"><span class="viewcode-link"><span class="pre">[исходный</span> <span class="pre">код]</span></span></a><a class="headerlink" href="#gamac.meta.impl.cvi.ch" title="Ссылка на это определение"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="gamac.meta.impl.cvi.cop">
+<span class="sig-prename descclassname"><span class="pre">gamac.meta.impl.cvi.</span></span><span class="sig-name descname"><span class="pre">cop</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">clusters</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#gamac.meta.impl.cvi.Clusters" title="gamac.meta.impl.cvi.Clusters"><span class="pre">Clusters</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="_modules/gamac/meta/impl/cvi.html#cop"><span class="viewcode-link"><span class="pre">[исходный</span> <span class="pre">код]</span></span></a><a class="headerlink" href="#gamac.meta.impl.cvi.cop" title="Ссылка на это определение"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="gamac.meta.impl.cvi.cs">
+<span class="sig-prename descclassname"><span class="pre">gamac.meta.impl.cvi.</span></span><span class="sig-name descname"><span class="pre">cs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">clusters</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#gamac.meta.impl.cvi.Clusters" title="gamac.meta.impl.cvi.Clusters"><span class="pre">Clusters</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="_modules/gamac/meta/impl/cvi.html#cs"><span class="viewcode-link"><span class="pre">[исходный</span> <span class="pre">код]</span></span></a><a class="headerlink" href="#gamac.meta.impl.cvi.cs" title="Ссылка на это определение"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="gamac.meta.impl.cvi.db">
+<span class="sig-prename descclassname"><span class="pre">gamac.meta.impl.cvi.</span></span><span class="sig-name descname"><span class="pre">db</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">clusters</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#gamac.meta.impl.cvi.Clusters" title="gamac.meta.impl.cvi.Clusters"><span class="pre">Clusters</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="_modules/gamac/meta/impl/cvi.html#db"><span class="viewcode-link"><span class="pre">[исходный</span> <span class="pre">код]</span></span></a><a class="headerlink" href="#gamac.meta.impl.cvi.db" title="Ссылка на это определение"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="gamac.meta.impl.cvi.db_star">
+<span class="sig-prename descclassname"><span class="pre">gamac.meta.impl.cvi.</span></span><span class="sig-name descname"><span class="pre">db_star</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">clusters</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#gamac.meta.impl.cvi.Clusters" title="gamac.meta.impl.cvi.Clusters"><span class="pre">Clusters</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="_modules/gamac/meta/impl/cvi.html#db_star"><span class="viewcode-link"><span class="pre">[исходный</span> <span class="pre">код]</span></span></a><a class="headerlink" href="#gamac.meta.impl.cvi.db_star" title="Ссылка на это определение"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="gamac.meta.impl.cvi.dunn11">
+<span class="sig-prename descclassname"><span class="pre">gamac.meta.impl.cvi.</span></span><span class="sig-name descname"><span class="pre">dunn11</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">clusters</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#gamac.meta.impl.cvi.Clusters" title="gamac.meta.impl.cvi.Clusters"><span class="pre">Clusters</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="_modules/gamac/meta/impl/cvi.html#dunn11"><span class="viewcode-link"><span class="pre">[исходный</span> <span class="pre">код]</span></span></a><a class="headerlink" href="#gamac.meta.impl.cvi.dunn11" title="Ссылка на это определение"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="gamac.meta.impl.cvi.dunn13">
+<span class="sig-prename descclassname"><span class="pre">gamac.meta.impl.cvi.</span></span><span class="sig-name descname"><span class="pre">dunn13</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">clusters</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#gamac.meta.impl.cvi.Clusters" title="gamac.meta.impl.cvi.Clusters"><span class="pre">Clusters</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="_modules/gamac/meta/impl/cvi.html#dunn13"><span class="viewcode-link"><span class="pre">[исходный</span> <span class="pre">код]</span></span></a><a class="headerlink" href="#gamac.meta.impl.cvi.dunn13" title="Ссылка на это определение"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="gamac.meta.impl.cvi.dunn31">
+<span class="sig-prename descclassname"><span class="pre">gamac.meta.impl.cvi.</span></span><span class="sig-name descname"><span class="pre">dunn31</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">clusters</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#gamac.meta.impl.cvi.Clusters" title="gamac.meta.impl.cvi.Clusters"><span class="pre">Clusters</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="_modules/gamac/meta/impl/cvi.html#dunn31"><span class="viewcode-link"><span class="pre">[исходный</span> <span class="pre">код]</span></span></a><a class="headerlink" href="#gamac.meta.impl.cvi.dunn31" title="Ссылка на это определение"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="gamac.meta.impl.cvi.dunn33">
+<span class="sig-prename descclassname"><span class="pre">gamac.meta.impl.cvi.</span></span><span class="sig-name descname"><span class="pre">dunn33</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">clusters</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#gamac.meta.impl.cvi.Clusters" title="gamac.meta.impl.cvi.Clusters"><span class="pre">Clusters</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="_modules/gamac/meta/impl/cvi.html#dunn33"><span class="viewcode-link"><span class="pre">[исходный</span> <span class="pre">код]</span></span></a><a class="headerlink" href="#gamac.meta.impl.cvi.dunn33" title="Ссылка на это определение"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="gamac.meta.impl.cvi.dunn41">
+<span class="sig-prename descclassname"><span class="pre">gamac.meta.impl.cvi.</span></span><span class="sig-name descname"><span class="pre">dunn41</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">clusters</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#gamac.meta.impl.cvi.Clusters" title="gamac.meta.impl.cvi.Clusters"><span class="pre">Clusters</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="_modules/gamac/meta/impl/cvi.html#dunn41"><span class="viewcode-link"><span class="pre">[исходный</span> <span class="pre">код]</span></span></a><a class="headerlink" href="#gamac.meta.impl.cvi.dunn41" title="Ссылка на это определение"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="gamac.meta.impl.cvi.dunn43">
+<span class="sig-prename descclassname"><span class="pre">gamac.meta.impl.cvi.</span></span><span class="sig-name descname"><span class="pre">dunn43</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">clusters</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#gamac.meta.impl.cvi.Clusters" title="gamac.meta.impl.cvi.Clusters"><span class="pre">Clusters</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="_modules/gamac/meta/impl/cvi.html#dunn43"><span class="viewcode-link"><span class="pre">[исходный</span> <span class="pre">код]</span></span></a><a class="headerlink" href="#gamac.meta.impl.cvi.dunn43" title="Ссылка на это определение"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="gamac.meta.impl.cvi.gamma_index">
+<span class="sig-prename descclassname"><span class="pre">gamac.meta.impl.cvi.</span></span><span class="sig-name descname"><span class="pre">gamma_index</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">clusters</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#gamac.meta.impl.cvi.Clusters" title="gamac.meta.impl.cvi.Clusters"><span class="pre">Clusters</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="_modules/gamac/meta/impl/cvi.html#gamma_index"><span class="viewcode-link"><span class="pre">[исходный</span> <span class="pre">код]</span></span></a><a class="headerlink" href="#gamac.meta.impl.cvi.gamma_index" title="Ссылка на это определение"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="gamac.meta.impl.cvi.mc_clain_rao">
+<span class="sig-prename descclassname"><span class="pre">gamac.meta.impl.cvi.</span></span><span class="sig-name descname"><span class="pre">mc_clain_rao</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">clusters</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#gamac.meta.impl.cvi.Clusters" title="gamac.meta.impl.cvi.Clusters"><span class="pre">Clusters</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="_modules/gamac/meta/impl/cvi.html#mc_clain_rao"><span class="viewcode-link"><span class="pre">[исходный</span> <span class="pre">код]</span></span></a><a class="headerlink" href="#gamac.meta.impl.cvi.mc_clain_rao" title="Ссылка на это определение"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="gamac.meta.impl.cvi.os">
+<span class="sig-prename descclassname"><span class="pre">gamac.meta.impl.cvi.</span></span><span class="sig-name descname"><span class="pre">os</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">clusters</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#gamac.meta.impl.cvi.Clusters" title="gamac.meta.impl.cvi.Clusters"><span class="pre">Clusters</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="_modules/gamac/meta/impl/cvi.html#os"><span class="viewcode-link"><span class="pre">[исходный</span> <span class="pre">код]</span></span></a><a class="headerlink" href="#gamac.meta.impl.cvi.os" title="Ссылка на это определение"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="gamac.meta.impl.cvi.pakhira_bandyopadhyay_maulik">
+<span class="sig-prename descclassname"><span class="pre">gamac.meta.impl.cvi.</span></span><span class="sig-name descname"><span class="pre">pakhira_bandyopadhyay_maulik</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">clusters</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#gamac.meta.impl.cvi.Clusters" title="gamac.meta.impl.cvi.Clusters"><span class="pre">Clusters</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="_modules/gamac/meta/impl/cvi.html#pakhira_bandyopadhyay_maulik"><span class="viewcode-link"><span class="pre">[исходный</span> <span class="pre">код]</span></span></a><a class="headerlink" href="#gamac.meta.impl.cvi.pakhira_bandyopadhyay_maulik" title="Ссылка на это определение"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="gamac.meta.impl.cvi.point_biserial">
+<span class="sig-prename descclassname"><span class="pre">gamac.meta.impl.cvi.</span></span><span class="sig-name descname"><span class="pre">point_biserial</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">clusters</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#gamac.meta.impl.cvi.Clusters" title="gamac.meta.impl.cvi.Clusters"><span class="pre">Clusters</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="_modules/gamac/meta/impl/cvi.html#point_biserial"><span class="viewcode-link"><span class="pre">[исходный</span> <span class="pre">код]</span></span></a><a class="headerlink" href="#gamac.meta.impl.cvi.point_biserial" title="Ссылка на это определение"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="gamac.meta.impl.cvi.ray_turi">
+<span class="sig-prename descclassname"><span class="pre">gamac.meta.impl.cvi.</span></span><span class="sig-name descname"><span class="pre">ray_turi</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">clusters</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#gamac.meta.impl.cvi.Clusters" title="gamac.meta.impl.cvi.Clusters"><span class="pre">Clusters</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="_modules/gamac/meta/impl/cvi.html#ray_turi"><span class="viewcode-link"><span class="pre">[исходный</span> <span class="pre">код]</span></span></a><a class="headerlink" href="#gamac.meta.impl.cvi.ray_turi" title="Ссылка на это определение"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="gamac.meta.impl.cvi.score">
+<span class="sig-prename descclassname"><span class="pre">gamac.meta.impl.cvi.</span></span><span class="sig-name descname"><span class="pre">score</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">clusters</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#gamac.meta.impl.cvi.Clusters" title="gamac.meta.impl.cvi.Clusters"><span class="pre">Clusters</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="_modules/gamac/meta/impl/cvi.html#score"><span class="viewcode-link"><span class="pre">[исходный</span> <span class="pre">код]</span></span></a><a class="headerlink" href="#gamac.meta.impl.cvi.score" title="Ссылка на это определение"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="gamac.meta.impl.cvi.sil">
+<span class="sig-prename descclassname"><span class="pre">gamac.meta.impl.cvi.</span></span><span class="sig-name descname"><span class="pre">sil</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">clusters</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#gamac.meta.impl.cvi.Clusters" title="gamac.meta.impl.cvi.Clusters"><span class="pre">Clusters</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="_modules/gamac/meta/impl/cvi.html#sil"><span class="viewcode-link"><span class="pre">[исходный</span> <span class="pre">код]</span></span></a><a class="headerlink" href="#gamac.meta.impl.cvi.sil" title="Ссылка на это определение"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="gamac.meta.impl.cvi.sv">
+<span class="sig-prename descclassname"><span class="pre">gamac.meta.impl.cvi.</span></span><span class="sig-name descname"><span class="pre">sv</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">clusters</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#gamac.meta.impl.cvi.Clusters" title="gamac.meta.impl.cvi.Clusters"><span class="pre">Clusters</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="_modules/gamac/meta/impl/cvi.html#sv"><span class="viewcode-link"><span class="pre">[исходный</span> <span class="pre">код]</span></span></a><a class="headerlink" href="#gamac.meta.impl.cvi.sv" title="Ссылка на это определение"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="gamac.meta.impl.cvi.sym">
+<span class="sig-prename descclassname"><span class="pre">gamac.meta.impl.cvi.</span></span><span class="sig-name descname"><span class="pre">sym</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">clusters</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#gamac.meta.impl.cvi.Clusters" title="gamac.meta.impl.cvi.Clusters"><span class="pre">Clusters</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="_modules/gamac/meta/impl/cvi.html#sym"><span class="viewcode-link"><span class="pre">[исходный</span> <span class="pre">код]</span></span></a><a class="headerlink" href="#gamac.meta.impl.cvi.sym" title="Ссылка на это определение"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="gamac.meta.impl.cvi.sym_11">
+<span class="sig-prename descclassname"><span class="pre">gamac.meta.impl.cvi.</span></span><span class="sig-name descname"><span class="pre">sym_11</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">clusters</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#gamac.meta.impl.cvi.Clusters" title="gamac.meta.impl.cvi.Clusters"><span class="pre">Clusters</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="_modules/gamac/meta/impl/cvi.html#sym_11"><span class="viewcode-link"><span class="pre">[исходный</span> <span class="pre">код]</span></span></a><a class="headerlink" href="#gamac.meta.impl.cvi.sym_11" title="Ссылка на это определение"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="gamac.meta.impl.cvi.sym_33">
+<span class="sig-prename descclassname"><span class="pre">gamac.meta.impl.cvi.</span></span><span class="sig-name descname"><span class="pre">sym_33</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">clusters</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#gamac.meta.impl.cvi.Clusters" title="gamac.meta.impl.cvi.Clusters"><span class="pre">Clusters</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="_modules/gamac/meta/impl/cvi.html#sym_33"><span class="viewcode-link"><span class="pre">[исходный</span> <span class="pre">код]</span></span></a><a class="headerlink" href="#gamac.meta.impl.cvi.sym_33" title="Ссылка на это определение"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="gamac.meta.impl.cvi.sym_db">
+<span class="sig-prename descclassname"><span class="pre">gamac.meta.impl.cvi.</span></span><span class="sig-name descname"><span class="pre">sym_db</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">clusters</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#gamac.meta.impl.cvi.Clusters" title="gamac.meta.impl.cvi.Clusters"><span class="pre">Clusters</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="_modules/gamac/meta/impl/cvi.html#sym_db"><span class="viewcode-link"><span class="pre">[исходный</span> <span class="pre">код]</span></span></a><a class="headerlink" href="#gamac.meta.impl.cvi.sym_db" title="Ссылка на это определение"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="gamac.meta.impl.cvi.sym_db_star">
+<span class="sig-prename descclassname"><span class="pre">gamac.meta.impl.cvi.</span></span><span class="sig-name descname"><span class="pre">sym_db_star</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">clusters</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#gamac.meta.impl.cvi.Clusters" title="gamac.meta.impl.cvi.Clusters"><span class="pre">Clusters</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="_modules/gamac/meta/impl/cvi.html#sym_db_star"><span class="viewcode-link"><span class="pre">[исходный</span> <span class="pre">код]</span></span></a><a class="headerlink" href="#gamac.meta.impl.cvi.sym_db_star" title="Ссылка на это определение"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="gamac.meta.impl.cvi.wemmert_gancarski">
+<span class="sig-prename descclassname"><span class="pre">gamac.meta.impl.cvi.</span></span><span class="sig-name descname"><span class="pre">wemmert_gancarski</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">clusters</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#gamac.meta.impl.cvi.Clusters" title="gamac.meta.impl.cvi.Clusters"><span class="pre">Clusters</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="_modules/gamac/meta/impl/cvi.html#wemmert_gancarski"><span class="viewcode-link"><span class="pre">[исходный</span> <span class="pre">код]</span></span></a><a class="headerlink" href="#gamac.meta.impl.cvi.wemmert_gancarski" title="Ссылка на это определение"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="gamac.meta.impl.cvi.xie_beni">
+<span class="sig-prename descclassname"><span class="pre">gamac.meta.impl.cvi.</span></span><span class="sig-name descname"><span class="pre">xie_beni</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">clusters</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#gamac.meta.impl.cvi.Clusters" title="gamac.meta.impl.cvi.Clusters"><span class="pre">Clusters</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="_modules/gamac/meta/impl/cvi.html#xie_beni"><span class="viewcode-link"><span class="pre">[исходный</span> <span class="pre">код]</span></span></a><a class="headerlink" href="#gamac.meta.impl.cvi.xie_beni" title="Ссылка на это определение"></a></dt>
+<dd></dd></dl>
+
+</section>
+<section id="module-gamac.meta.impl.mfs">
+<span id="gamac-meta-impl-mfs-module"></span><h2>gamac.meta.impl.mfs module<a class="headerlink" href="#module-gamac.meta.impl.mfs" title="Ссылка на этот заголовок"></a></h2>
+<p>CPU meta features computation</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="gamac.meta.impl.mfs.compute_mfs">
+<span class="sig-prename descclassname"><span class="pre">gamac.meta.impl.mfs.</span></span><span class="sig-name descname"><span class="pre">compute_mfs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ndarray</span></span></span><a class="reference internal" href="_modules/gamac/meta/impl/mfs.html#compute_mfs"><span class="viewcode-link"><span class="pre">[исходный</span> <span class="pre">код]</span></span></a><a class="headerlink" href="#gamac.meta.impl.mfs.compute_mfs" title="Ссылка на это определение"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="gamac.meta.impl.mfs.dist">
+<span class="sig-prename descclassname"><span class="pre">gamac.meta.impl.mfs.</span></span><span class="sig-name descname"><span class="pre">dist</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="_modules/gamac/meta/impl/mfs.html#dist"><span class="viewcode-link"><span class="pre">[исходный</span> <span class="pre">код]</span></span></a><a class="headerlink" href="#gamac.meta.impl.mfs.dist" title="Ссылка на это определение"></a></dt>
+<dd></dd></dl>
+
+</section>
+<section id="module-gamac.meta.impl.models">
+<span id="gamac-meta-impl-models-module"></span><h2>gamac.meta.impl.models module<a class="headerlink" href="#module-gamac.meta.impl.models" title="Ссылка на этот заголовок"></a></h2>
+<p>Search space for meta-classifier / meta-regressor hyperparameters</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="gamac.meta.impl.models.ModelProvider">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gamac.meta.impl.models.</span></span><span class="sig-name descname"><span class="pre">ModelProvider</span></span><a class="reference internal" href="_modules/gamac/meta/impl/models.html#ModelProvider"><span class="viewcode-link"><span class="pre">[исходный</span> <span class="pre">код]</span></span></a><a class="headerlink" href="#gamac.meta.impl.models.ModelProvider" title="Ссылка на это определение"></a></dt>
+<dd><p>Базовые классы: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="gamac.meta.impl.models.ModelProvider.get_best_extractor">
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_best_extractor</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/gamac/meta/impl/models.html#ModelProvider.get_best_extractor"><span class="viewcode-link"><span class="pre">[исходный</span> <span class="pre">код]</span></span></a><a class="headerlink" href="#gamac.meta.impl.models.ModelProvider.get_best_extractor" title="Ссылка на это определение"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="gamac.meta.impl.models.ModelProvider.get_best_knn_classifier">
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_best_knn_classifier</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/gamac/meta/impl/models.html#ModelProvider.get_best_knn_classifier"><span class="viewcode-link"><span class="pre">[исходный</span> <span class="pre">код]</span></span></a><a class="headerlink" href="#gamac.meta.impl.models.ModelProvider.get_best_knn_classifier" title="Ссылка на это определение"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="gamac.meta.impl.models.ModelProvider.get_best_knn_regressor">
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_best_knn_regressor</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/gamac/meta/impl/models.html#ModelProvider.get_best_knn_regressor"><span class="viewcode-link"><span class="pre">[исходный</span> <span class="pre">код]</span></span></a><a class="headerlink" href="#gamac.meta.impl.models.ModelProvider.get_best_knn_regressor" title="Ссылка на это определение"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="gamac.meta.impl.models.ModelProvider.get_best_xgb_classifier">
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_best_xgb_classifier</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/gamac/meta/impl/models.html#ModelProvider.get_best_xgb_classifier"><span class="viewcode-link"><span class="pre">[исходный</span> <span class="pre">код]</span></span></a><a class="headerlink" href="#gamac.meta.impl.models.ModelProvider.get_best_xgb_classifier" title="Ссылка на это определение"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="gamac.meta.impl.models.ModelProvider.get_best_xgb_regressor">
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_best_xgb_regressor</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/gamac/meta/impl/models.html#ModelProvider.get_best_xgb_regressor"><span class="viewcode-link"><span class="pre">[исходный</span> <span class="pre">код]</span></span></a><a class="headerlink" href="#gamac.meta.impl.models.ModelProvider.get_best_xgb_regressor" title="Ссылка на это определение"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="gamac.meta.impl.models.ModelProvider.get_classifiers">
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_classifiers</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/gamac/meta/impl/models.html#ModelProvider.get_classifiers"><span class="viewcode-link"><span class="pre">[исходный</span> <span class="pre">код]</span></span></a><a class="headerlink" href="#gamac.meta.impl.models.ModelProvider.get_classifiers" title="Ссылка на это определение"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="gamac.meta.impl.models.ModelProvider.get_extractors">
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_extractors</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/gamac/meta/impl/models.html#ModelProvider.get_extractors"><span class="viewcode-link"><span class="pre">[исходный</span> <span class="pre">код]</span></span></a><a class="headerlink" href="#gamac.meta.impl.models.ModelProvider.get_extractors" title="Ссылка на это определение"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="gamac.meta.impl.models.ModelProvider.get_regressors">
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_regressors</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/gamac/meta/impl/models.html#ModelProvider.get_regressors"><span class="viewcode-link"><span class="pre">[исходный</span> <span class="pre">код]</span></span></a><a class="headerlink" href="#gamac.meta.impl.models.ModelProvider.get_regressors" title="Ссылка на это определение"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-gamac.meta.impl.ord">
+<span id="gamac-meta-impl-ord-module"></span><h2>gamac.meta.impl.ord module<a class="headerlink" href="#module-gamac.meta.impl.ord" title="Ссылка на этот заголовок"></a></h2>
+<p>Functions to compute distance between two orderings</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="gamac.meta.impl.ord.ORDERING_DISTANCE">
+<span class="sig-prename descclassname"><span class="pre">gamac.meta.impl.ord.</span></span><span class="sig-name descname"><span class="pre">ORDERING_DISTANCE</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pretend_ordering</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ground_ordering</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="headerlink" href="#gamac.meta.impl.ord.ORDERING_DISTANCE" title="Ссылка на это определение"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="gamac.meta.impl.ord.lin_f_dist">
+<span class="sig-prename descclassname"><span class="pre">gamac.meta.impl.ord.</span></span><span class="sig-name descname"><span class="pre">lin_f_dist</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pretend_ordering</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ground_ordering</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="_modules/gamac/meta/impl/ord.html#lin_f_dist"><span class="viewcode-link"><span class="pre">[исходный</span> <span class="pre">код]</span></span></a><a class="headerlink" href="#gamac.meta.impl.ord.lin_f_dist" title="Ссылка на это определение"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="gamac.meta.impl.ord.norm_f_dist">
+<span class="sig-prename descclassname"><span class="pre">gamac.meta.impl.ord.</span></span><span class="sig-name descname"><span class="pre">norm_f_dist</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x_order</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y_order</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="_modules/gamac/meta/impl/ord.html#norm_f_dist"><span class="viewcode-link"><span class="pre">[исходный</span> <span class="pre">код]</span></span></a><a class="headerlink" href="#gamac.meta.impl.ord.norm_f_dist" title="Ссылка на это определение"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="gamac.meta.impl.ord.norm_kendall_tau">
+<span class="sig-prename descclassname"><span class="pre">gamac.meta.impl.ord.</span></span><span class="sig-name descname"><span class="pre">norm_kendall_tau</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x_order</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y_order</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="_modules/gamac/meta/impl/ord.html#norm_kendall_tau"><span class="viewcode-link"><span class="pre">[исходный</span> <span class="pre">код]</span></span></a><a class="headerlink" href="#gamac.meta.impl.ord.norm_kendall_tau" title="Ссылка на это определение"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="gamac.meta.impl.ord.sq_f_dist">
+<span class="sig-prename descclassname"><span class="pre">gamac.meta.impl.ord.</span></span><span class="sig-name descname"><span class="pre">sq_f_dist</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pretend_ordering</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ground_ordering</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="_modules/gamac/meta/impl/ord.html#sq_f_dist"><span class="viewcode-link"><span class="pre">[исходный</span> <span class="pre">код]</span></span></a><a class="headerlink" href="#gamac.meta.impl.ord.sq_f_dist" title="Ссылка на это определение"></a></dt>
+<dd></dd></dl>
+
+</section>
+<section id="module-gamac.meta.impl.producers">
+<span id="gamac-meta-impl-producers-module"></span><h2>gamac.meta.impl.producers module<a class="headerlink" href="#module-gamac.meta.impl.producers" title="Ссылка на этот заголовок"></a></h2>
+<p>A set of clustering algorithms with different hyperparameters</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="gamac.meta.impl.producers.ProducerProvider">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gamac.meta.impl.producers.</span></span><span class="sig-name descname"><span class="pre">ProducerProvider</span></span><a class="reference internal" href="_modules/gamac/meta/impl/producers.html#ProducerProvider"><span class="viewcode-link"><span class="pre">[исходный</span> <span class="pre">код]</span></span></a><a class="headerlink" href="#gamac.meta.impl.producers.ProducerProvider" title="Ссылка на это определение"></a></dt>
+<dd><p>Базовые классы: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="gamac.meta.impl.producers.ProducerProvider.agglomerative">
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">agglomerative</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/gamac/meta/impl/producers.html#ProducerProvider.agglomerative"><span class="viewcode-link"><span class="pre">[исходный</span> <span class="pre">код]</span></span></a><a class="headerlink" href="#gamac.meta.impl.producers.ProducerProvider.agglomerative" title="Ссылка на это определение"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="gamac.meta.impl.producers.ProducerProvider.birch">
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">birch</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/gamac/meta/impl/producers.html#ProducerProvider.birch"><span class="viewcode-link"><span class="pre">[исходный</span> <span class="pre">код]</span></span></a><a class="headerlink" href="#gamac.meta.impl.producers.ProducerProvider.birch" title="Ссылка на это определение"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="gamac.meta.impl.producers.ProducerProvider.bisecting">
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">bisecting</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/gamac/meta/impl/producers.html#ProducerProvider.bisecting"><span class="viewcode-link"><span class="pre">[исходный</span> <span class="pre">код]</span></span></a><a class="headerlink" href="#gamac.meta.impl.producers.ProducerProvider.bisecting" title="Ссылка на это определение"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="gamac.meta.impl.producers.ProducerProvider.dbscan">
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">dbscan</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/gamac/meta/impl/producers.html#ProducerProvider.dbscan"><span class="viewcode-link"><span class="pre">[исходный</span> <span class="pre">код]</span></span></a><a class="headerlink" href="#gamac.meta.impl.producers.ProducerProvider.dbscan" title="Ссылка на это определение"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="gamac.meta.impl.producers.ProducerProvider.get_all">
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_all</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#gamac.meta.impl.utils.Producer" title="gamac.meta.impl.utils.Producer"><span class="pre">Producer</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/gamac/meta/impl/producers.html#ProducerProvider.get_all"><span class="viewcode-link"><span class="pre">[исходный</span> <span class="pre">код]</span></span></a><a class="headerlink" href="#gamac.meta.impl.producers.ProducerProvider.get_all" title="Ссылка на это определение"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="gamac.meta.impl.producers.ProducerProvider.kmeans">
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">kmeans</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/gamac/meta/impl/producers.html#ProducerProvider.kmeans"><span class="viewcode-link"><span class="pre">[исходный</span> <span class="pre">код]</span></span></a><a class="headerlink" href="#gamac.meta.impl.producers.ProducerProvider.kmeans" title="Ссылка на это определение"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="gamac.meta.impl.producers.ProducerProvider.meanshift">
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">meanshift</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/gamac/meta/impl/producers.html#ProducerProvider.meanshift"><span class="viewcode-link"><span class="pre">[исходный</span> <span class="pre">код]</span></span></a><a class="headerlink" href="#gamac.meta.impl.producers.ProducerProvider.meanshift" title="Ссылка на это определение"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-gamac.meta.impl.reducers">
+<span id="gamac-meta-impl-reducers-module"></span><h2>gamac.meta.impl.reducers module<a class="headerlink" href="#module-gamac.meta.impl.reducers" title="Ссылка на этот заголовок"></a></h2>
+<p>A set of feature extractors with different hyperparameters</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="gamac.meta.impl.reducers.ReducerProvider">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gamac.meta.impl.reducers.</span></span><span class="sig-name descname"><span class="pre">ReducerProvider</span></span><a class="reference internal" href="_modules/gamac/meta/impl/reducers.html#ReducerProvider"><span class="viewcode-link"><span class="pre">[исходный</span> <span class="pre">код]</span></span></a><a class="headerlink" href="#gamac.meta.impl.reducers.ReducerProvider" title="Ссылка на это определение"></a></dt>
+<dd><p>Базовые классы: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="gamac.meta.impl.reducers.ReducerProvider.get_all">
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_all</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#gamac.meta.impl.utils.Reducer" title="gamac.meta.impl.utils.Reducer"><span class="pre">Reducer</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/gamac/meta/impl/reducers.html#ReducerProvider.get_all"><span class="viewcode-link"><span class="pre">[исходный</span> <span class="pre">код]</span></span></a><a class="headerlink" href="#gamac.meta.impl.reducers.ReducerProvider.get_all" title="Ссылка на это определение"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="gamac.meta.impl.reducers.ReducerProvider.mds">
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">mds</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/gamac/meta/impl/reducers.html#ReducerProvider.mds"><span class="viewcode-link"><span class="pre">[исходный</span> <span class="pre">код]</span></span></a><a class="headerlink" href="#gamac.meta.impl.reducers.ReducerProvider.mds" title="Ссылка на это определение"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="gamac.meta.impl.reducers.ReducerProvider.mlle">
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">mlle</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/gamac/meta/impl/reducers.html#ReducerProvider.mlle"><span class="viewcode-link"><span class="pre">[исходный</span> <span class="pre">код]</span></span></a><a class="headerlink" href="#gamac.meta.impl.reducers.ReducerProvider.mlle" title="Ссылка на это определение"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="gamac.meta.impl.reducers.ReducerProvider.pca">
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">pca</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/gamac/meta/impl/reducers.html#ReducerProvider.pca"><span class="viewcode-link"><span class="pre">[исходный</span> <span class="pre">код]</span></span></a><a class="headerlink" href="#gamac.meta.impl.reducers.ReducerProvider.pca" title="Ссылка на это определение"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="gamac.meta.impl.reducers.ReducerProvider.spec">
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">spec</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/gamac/meta/impl/reducers.html#ReducerProvider.spec"><span class="viewcode-link"><span class="pre">[исходный</span> <span class="pre">код]</span></span></a><a class="headerlink" href="#gamac.meta.impl.reducers.ReducerProvider.spec" title="Ссылка на это определение"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="gamac.meta.impl.reducers.ReducerProvider.tsne">
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">tsne</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/gamac/meta/impl/reducers.html#ReducerProvider.tsne"><span class="viewcode-link"><span class="pre">[исходный</span> <span class="pre">код]</span></span></a><a class="headerlink" href="#gamac.meta.impl.reducers.ReducerProvider.tsne" title="Ссылка на это определение"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="gamac.meta.impl.reducers.ReducerProvider.umap">
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">umap</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/gamac/meta/impl/reducers.html#ReducerProvider.umap"><span class="viewcode-link"><span class="pre">[исходный</span> <span class="pre">код]</span></span></a><a class="headerlink" href="#gamac.meta.impl.reducers.ReducerProvider.umap" title="Ссылка на это определение"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-gamac.meta.impl.utils">
+<span id="gamac-meta-impl-utils-module"></span><h2>gamac.meta.impl.utils module<a class="headerlink" href="#module-gamac.meta.impl.utils" title="Ссылка на этот заголовок"></a></h2>
+<p>Named containers for clustering algorithms and feature extractors</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="gamac.meta.impl.utils.Producer">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gamac.meta.impl.utils.</span></span><span class="sig-name descname"><span class="pre">Producer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">algo</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gamac/meta/impl/utils.html#Producer"><span class="viewcode-link"><span class="pre">[исходный</span> <span class="pre">код]</span></span></a><a class="headerlink" href="#gamac.meta.impl.utils.Producer" title="Ссылка на это определение"></a></dt>
+<dd><p>Базовые классы: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="gamac.meta.impl.utils.Reducer">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gamac.meta.impl.utils.</span></span><span class="sig-name descname"><span class="pre">Reducer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">algo</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gamac/meta/impl/utils.html#Reducer"><span class="viewcode-link"><span class="pre">[исходный</span> <span class="pre">код]</span></span></a><a class="headerlink" href="#gamac.meta.impl.utils.Reducer" title="Ссылка на это определение"></a></dt>
+<dd><p>Базовые классы: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="gamac.meta.impl.utils.Reducer.fit_transform">
+<span class="sig-name descname"><span class="pre">fit_transform</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ndarray</span></span></span><a class="reference internal" href="_modules/gamac/meta/impl/utils.html#Reducer.fit_transform"><span class="viewcode-link"><span class="pre">[исходный</span> <span class="pre">код]</span></span></a><a class="headerlink" href="#gamac.meta.impl.utils.Reducer.fit_transform" title="Ссылка на это определение"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Нижняя область">
+        <a href="gamac.meta.html" class="btn btn-neutral float-left" title="gamac.meta package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Предыдущая</a>
+        <a href="gamac.meta.storage.html" class="btn btn-neutral float-right" title="gamac.meta.storage package" accesskey="n" rel="next">Следующая <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Авторские права 2025, Sergey Muravyov, Nikita Kulin, Ivan Usov, Olga Muravyova, Simar Muratov. </p>
+  </div>
+
+  Собрано при помощи <a href="https://www.sphinx-doc.org/">Sphinx</a> с использованием
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">темы,</a>
+    предоставленной <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

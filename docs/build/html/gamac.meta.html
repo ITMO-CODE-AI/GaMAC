@@ -1,0 +1,608 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="ru" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>gamac.meta package &mdash; документация GaMAC 1.0.0</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=e35015f7"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="_static/translations.js?v=cd1d70c9"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Алфавитный указатель" href="genindex.html" />
+    <link rel="search" title="Поиск" href="search.html" />
+    <link rel="next" title="gamac.meta.impl package" href="gamac.meta.impl.html" />
+    <link rel="prev" title="gamac.kernels package" href="gamac.kernels.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            GaMAC
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Поиск в документации" aria-label="Поиск в документации" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Меню навигации">
+              <p class="caption" role="heading"><span class="caption-text">API Reference:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">gamac</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="gamac.html">gamac package</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="gamac.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="gamac.algorithms.html">gamac.algorithms package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="gamac.bin.html">gamac.bin package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="gamac.data.html">gamac.data package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="gamac.estimation.html">gamac.estimation package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="gamac.kernels.html">gamac.kernels package</a></li>
+<li class="toctree-l4 current"><a class="current reference internal" href="#">gamac.meta package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="gamac.pipeline.html">gamac.pipeline package</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="gamac.html#submodules">Submodules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="gamac.html#module-gamac.autoclustering">gamac.autoclustering module</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Меню навигации для мобильных устройств" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">GaMAC</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Навигация по страницам">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="modules.html">gamac</a></li>
+          <li class="breadcrumb-item"><a href="gamac.html">gamac package</a></li>
+      <li class="breadcrumb-item active">gamac.meta package</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/gamac.meta.rst.txt" rel="nofollow"> Просмотреть исходный код страницы</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="gamac-meta-package">
+<h1>gamac.meta package<a class="headerlink" href="#gamac-meta-package" title="Ссылка на этот заголовок"></a></h1>
+<section id="subpackages">
+<h2>Subpackages<a class="headerlink" href="#subpackages" title="Ссылка на этот заголовок"></a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="gamac.meta.impl.html">gamac.meta.impl package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="gamac.meta.impl.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="gamac.meta.impl.html#module-gamac.meta.impl.cvi">gamac.meta.impl.cvi module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="gamac.meta.impl.html#gamac.meta.impl.cvi.ArrayStat"><code class="docutils literal notranslate"><span class="pre">ArrayStat</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="gamac.meta.impl.html#gamac.meta.impl.cvi.CachedValues"><code class="docutils literal notranslate"><span class="pre">CachedValues</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="gamac.meta.impl.html#gamac.meta.impl.cvi.Clusters"><code class="docutils literal notranslate"><span class="pre">Clusters</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="gamac.meta.impl.html#gamac.meta.impl.cvi.Clusters.create"><code class="docutils literal notranslate"><span class="pre">Clusters.create()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="gamac.meta.impl.html#gamac.meta.impl.cvi.Clusters.intra_stats"><code class="docutils literal notranslate"><span class="pre">Clusters.intra_stats</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="gamac.meta.impl.html#gamac.meta.impl.cvi.banfield_raftery"><code class="docutils literal notranslate"><span class="pre">banfield_raftery()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="gamac.meta.impl.html#gamac.meta.impl.cvi.c_index"><code class="docutils literal notranslate"><span class="pre">c_index()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="gamac.meta.impl.html#gamac.meta.impl.cvi.ch"><code class="docutils literal notranslate"><span class="pre">ch()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="gamac.meta.impl.html#gamac.meta.impl.cvi.cop"><code class="docutils literal notranslate"><span class="pre">cop()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="gamac.meta.impl.html#gamac.meta.impl.cvi.cs"><code class="docutils literal notranslate"><span class="pre">cs()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="gamac.meta.impl.html#gamac.meta.impl.cvi.db"><code class="docutils literal notranslate"><span class="pre">db()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="gamac.meta.impl.html#gamac.meta.impl.cvi.db_star"><code class="docutils literal notranslate"><span class="pre">db_star()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="gamac.meta.impl.html#gamac.meta.impl.cvi.dunn11"><code class="docutils literal notranslate"><span class="pre">dunn11()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="gamac.meta.impl.html#gamac.meta.impl.cvi.dunn13"><code class="docutils literal notranslate"><span class="pre">dunn13()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="gamac.meta.impl.html#gamac.meta.impl.cvi.dunn31"><code class="docutils literal notranslate"><span class="pre">dunn31()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="gamac.meta.impl.html#gamac.meta.impl.cvi.dunn33"><code class="docutils literal notranslate"><span class="pre">dunn33()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="gamac.meta.impl.html#gamac.meta.impl.cvi.dunn41"><code class="docutils literal notranslate"><span class="pre">dunn41()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="gamac.meta.impl.html#gamac.meta.impl.cvi.dunn43"><code class="docutils literal notranslate"><span class="pre">dunn43()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="gamac.meta.impl.html#gamac.meta.impl.cvi.gamma_index"><code class="docutils literal notranslate"><span class="pre">gamma_index()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="gamac.meta.impl.html#gamac.meta.impl.cvi.mc_clain_rao"><code class="docutils literal notranslate"><span class="pre">mc_clain_rao()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="gamac.meta.impl.html#gamac.meta.impl.cvi.os"><code class="docutils literal notranslate"><span class="pre">os()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="gamac.meta.impl.html#gamac.meta.impl.cvi.pakhira_bandyopadhyay_maulik"><code class="docutils literal notranslate"><span class="pre">pakhira_bandyopadhyay_maulik()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="gamac.meta.impl.html#gamac.meta.impl.cvi.point_biserial"><code class="docutils literal notranslate"><span class="pre">point_biserial()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="gamac.meta.impl.html#gamac.meta.impl.cvi.ray_turi"><code class="docutils literal notranslate"><span class="pre">ray_turi()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="gamac.meta.impl.html#gamac.meta.impl.cvi.score"><code class="docutils literal notranslate"><span class="pre">score()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="gamac.meta.impl.html#gamac.meta.impl.cvi.sil"><code class="docutils literal notranslate"><span class="pre">sil()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="gamac.meta.impl.html#gamac.meta.impl.cvi.sv"><code class="docutils literal notranslate"><span class="pre">sv()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="gamac.meta.impl.html#gamac.meta.impl.cvi.sym"><code class="docutils literal notranslate"><span class="pre">sym()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="gamac.meta.impl.html#gamac.meta.impl.cvi.sym_11"><code class="docutils literal notranslate"><span class="pre">sym_11()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="gamac.meta.impl.html#gamac.meta.impl.cvi.sym_33"><code class="docutils literal notranslate"><span class="pre">sym_33()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="gamac.meta.impl.html#gamac.meta.impl.cvi.sym_db"><code class="docutils literal notranslate"><span class="pre">sym_db()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="gamac.meta.impl.html#gamac.meta.impl.cvi.sym_db_star"><code class="docutils literal notranslate"><span class="pre">sym_db_star()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="gamac.meta.impl.html#gamac.meta.impl.cvi.wemmert_gancarski"><code class="docutils literal notranslate"><span class="pre">wemmert_gancarski()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="gamac.meta.impl.html#gamac.meta.impl.cvi.xie_beni"><code class="docutils literal notranslate"><span class="pre">xie_beni()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="gamac.meta.impl.html#module-gamac.meta.impl.mfs">gamac.meta.impl.mfs module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="gamac.meta.impl.html#gamac.meta.impl.mfs.compute_mfs"><code class="docutils literal notranslate"><span class="pre">compute_mfs()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="gamac.meta.impl.html#gamac.meta.impl.mfs.dist"><code class="docutils literal notranslate"><span class="pre">dist()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="gamac.meta.impl.html#module-gamac.meta.impl.models">gamac.meta.impl.models module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="gamac.meta.impl.html#gamac.meta.impl.models.ModelProvider"><code class="docutils literal notranslate"><span class="pre">ModelProvider</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="gamac.meta.impl.html#gamac.meta.impl.models.ModelProvider.get_best_extractor"><code class="docutils literal notranslate"><span class="pre">ModelProvider.get_best_extractor()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="gamac.meta.impl.html#gamac.meta.impl.models.ModelProvider.get_best_knn_classifier"><code class="docutils literal notranslate"><span class="pre">ModelProvider.get_best_knn_classifier()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="gamac.meta.impl.html#gamac.meta.impl.models.ModelProvider.get_best_knn_regressor"><code class="docutils literal notranslate"><span class="pre">ModelProvider.get_best_knn_regressor()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="gamac.meta.impl.html#gamac.meta.impl.models.ModelProvider.get_best_xgb_classifier"><code class="docutils literal notranslate"><span class="pre">ModelProvider.get_best_xgb_classifier()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="gamac.meta.impl.html#gamac.meta.impl.models.ModelProvider.get_best_xgb_regressor"><code class="docutils literal notranslate"><span class="pre">ModelProvider.get_best_xgb_regressor()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="gamac.meta.impl.html#gamac.meta.impl.models.ModelProvider.get_classifiers"><code class="docutils literal notranslate"><span class="pre">ModelProvider.get_classifiers()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="gamac.meta.impl.html#gamac.meta.impl.models.ModelProvider.get_extractors"><code class="docutils literal notranslate"><span class="pre">ModelProvider.get_extractors()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="gamac.meta.impl.html#gamac.meta.impl.models.ModelProvider.get_regressors"><code class="docutils literal notranslate"><span class="pre">ModelProvider.get_regressors()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="gamac.meta.impl.html#module-gamac.meta.impl.ord">gamac.meta.impl.ord module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="gamac.meta.impl.html#gamac.meta.impl.ord.ORDERING_DISTANCE"><code class="docutils literal notranslate"><span class="pre">ORDERING_DISTANCE()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="gamac.meta.impl.html#gamac.meta.impl.ord.lin_f_dist"><code class="docutils literal notranslate"><span class="pre">lin_f_dist()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="gamac.meta.impl.html#gamac.meta.impl.ord.norm_f_dist"><code class="docutils literal notranslate"><span class="pre">norm_f_dist()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="gamac.meta.impl.html#gamac.meta.impl.ord.norm_kendall_tau"><code class="docutils literal notranslate"><span class="pre">norm_kendall_tau()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="gamac.meta.impl.html#gamac.meta.impl.ord.sq_f_dist"><code class="docutils literal notranslate"><span class="pre">sq_f_dist()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="gamac.meta.impl.html#module-gamac.meta.impl.producers">gamac.meta.impl.producers module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="gamac.meta.impl.html#gamac.meta.impl.producers.ProducerProvider"><code class="docutils literal notranslate"><span class="pre">ProducerProvider</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="gamac.meta.impl.html#gamac.meta.impl.producers.ProducerProvider.agglomerative"><code class="docutils literal notranslate"><span class="pre">ProducerProvider.agglomerative()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="gamac.meta.impl.html#gamac.meta.impl.producers.ProducerProvider.birch"><code class="docutils literal notranslate"><span class="pre">ProducerProvider.birch()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="gamac.meta.impl.html#gamac.meta.impl.producers.ProducerProvider.bisecting"><code class="docutils literal notranslate"><span class="pre">ProducerProvider.bisecting()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="gamac.meta.impl.html#gamac.meta.impl.producers.ProducerProvider.dbscan"><code class="docutils literal notranslate"><span class="pre">ProducerProvider.dbscan()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="gamac.meta.impl.html#gamac.meta.impl.producers.ProducerProvider.get_all"><code class="docutils literal notranslate"><span class="pre">ProducerProvider.get_all()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="gamac.meta.impl.html#gamac.meta.impl.producers.ProducerProvider.kmeans"><code class="docutils literal notranslate"><span class="pre">ProducerProvider.kmeans()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="gamac.meta.impl.html#gamac.meta.impl.producers.ProducerProvider.meanshift"><code class="docutils literal notranslate"><span class="pre">ProducerProvider.meanshift()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="gamac.meta.impl.html#module-gamac.meta.impl.reducers">gamac.meta.impl.reducers module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="gamac.meta.impl.html#gamac.meta.impl.reducers.ReducerProvider"><code class="docutils literal notranslate"><span class="pre">ReducerProvider</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="gamac.meta.impl.html#gamac.meta.impl.reducers.ReducerProvider.get_all"><code class="docutils literal notranslate"><span class="pre">ReducerProvider.get_all()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="gamac.meta.impl.html#gamac.meta.impl.reducers.ReducerProvider.mds"><code class="docutils literal notranslate"><span class="pre">ReducerProvider.mds()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="gamac.meta.impl.html#gamac.meta.impl.reducers.ReducerProvider.mlle"><code class="docutils literal notranslate"><span class="pre">ReducerProvider.mlle()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="gamac.meta.impl.html#gamac.meta.impl.reducers.ReducerProvider.pca"><code class="docutils literal notranslate"><span class="pre">ReducerProvider.pca()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="gamac.meta.impl.html#gamac.meta.impl.reducers.ReducerProvider.spec"><code class="docutils literal notranslate"><span class="pre">ReducerProvider.spec()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="gamac.meta.impl.html#gamac.meta.impl.reducers.ReducerProvider.tsne"><code class="docutils literal notranslate"><span class="pre">ReducerProvider.tsne()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="gamac.meta.impl.html#gamac.meta.impl.reducers.ReducerProvider.umap"><code class="docutils literal notranslate"><span class="pre">ReducerProvider.umap()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="gamac.meta.impl.html#module-gamac.meta.impl.utils">gamac.meta.impl.utils module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="gamac.meta.impl.html#gamac.meta.impl.utils.Producer"><code class="docutils literal notranslate"><span class="pre">Producer</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="gamac.meta.impl.html#gamac.meta.impl.utils.Reducer"><code class="docutils literal notranslate"><span class="pre">Reducer</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="gamac.meta.impl.html#gamac.meta.impl.utils.Reducer.fit_transform"><code class="docutils literal notranslate"><span class="pre">Reducer.fit_transform()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="gamac.meta.storage.html">gamac.meta.storage package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="gamac.meta.storage.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="gamac.meta.storage.html#module-gamac.meta.storage.binaries">gamac.meta.storage.binaries module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="gamac.meta.storage.html#gamac.meta.storage.binaries.Binaries"><code class="docutils literal notranslate"><span class="pre">Binaries</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="gamac.meta.storage.html#gamac.meta.storage.binaries.Binaries.classifier_path"><code class="docutils literal notranslate"><span class="pre">Binaries.classifier_path</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="gamac.meta.storage.html#gamac.meta.storage.binaries.Binaries.extractor_path"><code class="docutils literal notranslate"><span class="pre">Binaries.extractor_path</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="gamac.meta.storage.html#gamac.meta.storage.binaries.Binaries.regressor_path"><code class="docutils literal notranslate"><span class="pre">Binaries.regressor_path</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="gamac.meta.storage.html#gamac.meta.storage.binaries.Binaries.write_classifier"><code class="docutils literal notranslate"><span class="pre">Binaries.write_classifier()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="gamac.meta.storage.html#gamac.meta.storage.binaries.Binaries.write_extractor"><code class="docutils literal notranslate"><span class="pre">Binaries.write_extractor()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="gamac.meta.storage.html#gamac.meta.storage.binaries.Binaries.write_pkl"><code class="docutils literal notranslate"><span class="pre">Binaries.write_pkl()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="gamac.meta.storage.html#gamac.meta.storage.binaries.Binaries.write_regressor"><code class="docutils literal notranslate"><span class="pre">Binaries.write_regressor()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="gamac.meta.storage.html#module-gamac.meta.storage.computed">gamac.meta.storage.computed module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="gamac.meta.storage.html#gamac.meta.storage.computed.Computed"><code class="docutils literal notranslate"><span class="pre">Computed</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="gamac.meta.storage.html#gamac.meta.storage.computed.Computed.features_path"><code class="docutils literal notranslate"><span class="pre">Computed.features_path()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="gamac.meta.storage.html#gamac.meta.storage.computed.Computed.measures_exists"><code class="docutils literal notranslate"><span class="pre">Computed.measures_exists()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="gamac.meta.storage.html#gamac.meta.storage.computed.Computed.measures_path"><code class="docutils literal notranslate"><span class="pre">Computed.measures_path()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="gamac.meta.storage.html#gamac.meta.storage.computed.Computed.meta_features_exist"><code class="docutils literal notranslate"><span class="pre">Computed.meta_features_exist()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="gamac.meta.storage.html#gamac.meta.storage.computed.Computed.read_measures"><code class="docutils literal notranslate"><span class="pre">Computed.read_measures()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="gamac.meta.storage.html#gamac.meta.storage.computed.Computed.read_meta_features"><code class="docutils literal notranslate"><span class="pre">Computed.read_meta_features()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="gamac.meta.storage.html#gamac.meta.storage.computed.Computed.write_measures"><code class="docutils literal notranslate"><span class="pre">Computed.write_measures()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="gamac.meta.storage.html#gamac.meta.storage.computed.Computed.write_meta_features"><code class="docutils literal notranslate"><span class="pre">Computed.write_meta_features()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="gamac.meta.storage.html#module-gamac.meta.storage.contents">gamac.meta.storage.contents module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="gamac.meta.storage.html#gamac.meta.storage.contents.Contents"><code class="docutils literal notranslate"><span class="pre">Contents</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="gamac.meta.storage.html#gamac.meta.storage.contents.Contents.create_data_dir"><code class="docutils literal notranslate"><span class="pre">Contents.create_data_dir()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="gamac.meta.storage.html#gamac.meta.storage.contents.Contents.gen_data_path"><code class="docutils literal notranslate"><span class="pre">Contents.gen_data_path()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="gamac.meta.storage.html#gamac.meta.storage.contents.Contents.image_path"><code class="docutils literal notranslate"><span class="pre">Contents.image_path()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="gamac.meta.storage.html#gamac.meta.storage.contents.Contents.partitions_path"><code class="docutils literal notranslate"><span class="pre">Contents.partitions_path()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="gamac.meta.storage.html#gamac.meta.storage.contents.Contents.producers_path"><code class="docutils literal notranslate"><span class="pre">Contents.producers_path()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="gamac.meta.storage.html#gamac.meta.storage.contents.Contents.read_gen_data"><code class="docutils literal notranslate"><span class="pre">Contents.read_gen_data()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="gamac.meta.storage.html#gamac.meta.storage.contents.Contents.read_partitions"><code class="docutils literal notranslate"><span class="pre">Contents.read_partitions()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="gamac.meta.storage.html#gamac.meta.storage.contents.Contents.write_gen_data"><code class="docutils literal notranslate"><span class="pre">Contents.write_gen_data()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="gamac.meta.storage.html#gamac.meta.storage.contents.Contents.write_partitions"><code class="docutils literal notranslate"><span class="pre">Contents.write_partitions()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="gamac.meta.storage.html#gamac.meta.storage.contents.Contents.write_producers"><code class="docutils literal notranslate"><span class="pre">Contents.write_producers()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="gamac.meta.storage.html#module-gamac.meta.storage.gathered">gamac.meta.storage.gathered module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="gamac.meta.storage.html#gamac.meta.storage.gathered.DataOrdering"><code class="docutils literal notranslate"><span class="pre">DataOrdering</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="gamac.meta.storage.html#gamac.meta.storage.gathered.DataScoring"><code class="docutils literal notranslate"><span class="pre">DataScoring</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="gamac.meta.storage.html#gamac.meta.storage.gathered.Gathered"><code class="docutils literal notranslate"><span class="pre">Gathered</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="gamac.meta.storage.html#gamac.meta.storage.gathered.Gathered.classifier_data_path"><code class="docutils literal notranslate"><span class="pre">Gathered.classifier_data_path</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="gamac.meta.storage.html#gamac.meta.storage.gathered.Gathered.orderings_path"><code class="docutils literal notranslate"><span class="pre">Gathered.orderings_path</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="gamac.meta.storage.html#gamac.meta.storage.gathered.Gathered.pre_meta_path"><code class="docutils literal notranslate"><span class="pre">Gathered.pre_meta_path</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="gamac.meta.storage.html#gamac.meta.storage.gathered.Gathered.pre_value_path"><code class="docutils literal notranslate"><span class="pre">Gathered.pre_value_path</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="gamac.meta.storage.html#gamac.meta.storage.gathered.Gathered.read_orderings"><code class="docutils literal notranslate"><span class="pre">Gathered.read_orderings()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="gamac.meta.storage.html#gamac.meta.storage.gathered.Gathered.read_pre_meta_dataset"><code class="docutils literal notranslate"><span class="pre">Gathered.read_pre_meta_dataset()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="gamac.meta.storage.html#gamac.meta.storage.gathered.Gathered.read_pre_values"><code class="docutils literal notranslate"><span class="pre">Gathered.read_pre_values()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="gamac.meta.storage.html#gamac.meta.storage.gathered.Gathered.read_scorings"><code class="docutils literal notranslate"><span class="pre">Gathered.read_scorings()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="gamac.meta.storage.html#gamac.meta.storage.gathered.Gathered.regressor_data_path"><code class="docutils literal notranslate"><span class="pre">Gathered.regressor_data_path</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="gamac.meta.storage.html#gamac.meta.storage.gathered.Gathered.scorings_path"><code class="docutils literal notranslate"><span class="pre">Gathered.scorings_path</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="gamac.meta.storage.html#gamac.meta.storage.gathered.Gathered.write_classifier_dataset"><code class="docutils literal notranslate"><span class="pre">Gathered.write_classifier_dataset()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="gamac.meta.storage.html#gamac.meta.storage.gathered.Gathered.write_orderings"><code class="docutils literal notranslate"><span class="pre">Gathered.write_orderings()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="gamac.meta.storage.html#gamac.meta.storage.gathered.Gathered.write_pre_meta_dataset"><code class="docutils literal notranslate"><span class="pre">Gathered.write_pre_meta_dataset()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="gamac.meta.storage.html#gamac.meta.storage.gathered.Gathered.write_regressor_dataset"><code class="docutils literal notranslate"><span class="pre">Gathered.write_regressor_dataset()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="gamac.meta.storage.html#gamac.meta.storage.gathered.Gathered.write_scorings"><code class="docutils literal notranslate"><span class="pre">Gathered.write_scorings()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="gamac.meta.storage.html#gamac.meta.storage.gathered.PreMetaDataItem"><code class="docutils literal notranslate"><span class="pre">PreMetaDataItem</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="gamac.meta.storage.html#gamac.meta.storage.gathered.PreMetaDataset"><code class="docutils literal notranslate"><span class="pre">PreMetaDataset</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="gamac.meta.storage.html#module-gamac.meta.storage.markups">gamac.meta.storage.markups module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="gamac.meta.storage.html#gamac.meta.storage.markups.AccessorResult"><code class="docutils literal notranslate"><span class="pre">AccessorResult</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="gamac.meta.storage.html#gamac.meta.storage.markups.Markups"><code class="docutils literal notranslate"><span class="pre">Markups</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="gamac.meta.storage.html#gamac.meta.storage.markups.Markups.accessor_exists"><code class="docutils literal notranslate"><span class="pre">Markups.accessor_exists()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="gamac.meta.storage.html#gamac.meta.storage.markups.Markups.accessor_path"><code class="docutils literal notranslate"><span class="pre">Markups.accessor_path()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="gamac.meta.storage.html#gamac.meta.storage.markups.Markups.create_markup_dir"><code class="docutils literal notranslate"><span class="pre">Markups.create_markup_dir()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="gamac.meta.storage.html#gamac.meta.storage.markups.Markups.dir_path"><code class="docutils literal notranslate"><span class="pre">Markups.dir_path()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="gamac.meta.storage.html#gamac.meta.storage.markups.Markups.read_markup"><code class="docutils literal notranslate"><span class="pre">Markups.read_markup()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="gamac.meta.storage.html#gamac.meta.storage.markups.Markups.read_markups"><code class="docutils literal notranslate"><span class="pre">Markups.read_markups()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="gamac.meta.storage.html#gamac.meta.storage.markups.Markups.write_markup"><code class="docutils literal notranslate"><span class="pre">Markups.write_markup()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+</section>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Ссылка на этот заголовок"></a></h2>
+</section>
+<section id="module-gamac.meta.build">
+<span id="gamac-meta-build-module"></span><h2>gamac.meta.build module<a class="headerlink" href="#module-gamac.meta.build" title="Ссылка на этот заголовок"></a></h2>
+<p>Persists pickle binaries for fitted meta-classifier and meta-regressor</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="gamac.meta.build.build_binaries">
+<span class="sig-prename descclassname"><span class="pre">gamac.meta.build.</span></span><span class="sig-name descname"><span class="pre">build_binaries</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/gamac/meta/build.html#build_binaries"><span class="viewcode-link"><span class="pre">[исходный</span> <span class="pre">код]</span></span></a><a class="headerlink" href="#gamac.meta.build.build_binaries" title="Ссылка на это определение"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="gamac.meta.build.build_classifier">
+<span class="sig-prename descclassname"><span class="pre">gamac.meta.build.</span></span><span class="sig-name descname"><span class="pre">build_classifier</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">extractor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ms</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ys</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ws</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gamac/meta/build.html#build_classifier"><span class="viewcode-link"><span class="pre">[исходный</span> <span class="pre">код]</span></span></a><a class="headerlink" href="#gamac.meta.build.build_classifier" title="Ссылка на это определение"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="gamac.meta.build.build_extractor">
+<span class="sig-prename descclassname"><span class="pre">gamac.meta.build.</span></span><span class="sig-name descname"><span class="pre">build_extractor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gamac/meta/build.html#build_extractor"><span class="viewcode-link"><span class="pre">[исходный</span> <span class="pre">код]</span></span></a><a class="headerlink" href="#gamac.meta.build.build_extractor" title="Ссылка на это определение"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="gamac.meta.build.build_regressor">
+<span class="sig-prename descclassname"><span class="pre">gamac.meta.build.</span></span><span class="sig-name descname"><span class="pre">build_regressor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">extractor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ms</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ys</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gamac/meta/build.html#build_regressor"><span class="viewcode-link"><span class="pre">[исходный</span> <span class="pre">код]</span></span></a><a class="headerlink" href="#gamac.meta.build.build_regressor" title="Ссылка на это определение"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="gamac.meta.build.collect_raw_meta_dataset">
+<span class="sig-prename descclassname"><span class="pre">gamac.meta.build.</span></span><span class="sig-name descname"><span class="pre">collect_raw_meta_dataset</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/gamac/meta/build.html#collect_raw_meta_dataset"><span class="viewcode-link"><span class="pre">[исходный</span> <span class="pre">код]</span></span></a><a class="headerlink" href="#gamac.meta.build.collect_raw_meta_dataset" title="Ссылка на это определение"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="gamac.meta.build.get_smooth_labels">
+<span class="sig-prename descclassname"><span class="pre">gamac.meta.build.</span></span><span class="sig-name descname"><span class="pre">get_smooth_labels</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ys</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ws</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gamac/meta/build.html#get_smooth_labels"><span class="viewcode-link"><span class="pre">[исходный</span> <span class="pre">код]</span></span></a><a class="headerlink" href="#gamac.meta.build.get_smooth_labels" title="Ссылка на это определение"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="gamac.meta.build.shuffle_data">
+<span class="sig-prename descclassname"><span class="pre">gamac.meta.build.</span></span><span class="sig-name descname"><span class="pre">shuffle_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">l1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">l2</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gamac/meta/build.html#shuffle_data"><span class="viewcode-link"><span class="pre">[исходный</span> <span class="pre">код]</span></span></a><a class="headerlink" href="#gamac.meta.build.shuffle_data" title="Ссылка на это определение"></a></dt>
+<dd></dd></dl>
+
+</section>
+<section id="module-gamac.meta.collector">
+<span id="gamac-meta-collector-module"></span><h2>gamac.meta.collector module<a class="headerlink" href="#module-gamac.meta.collector" title="Ссылка на этот заголовок"></a></h2>
+<p>Collect and filter partitions for visualisation</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="gamac.meta.collector.DatasetForMetaCVI">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gamac.meta.collector.</span></span><span class="sig-name descname"><span class="pre">DatasetForMetaCVI</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reducer</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="gamac.meta.impl.html#gamac.meta.impl.utils.Reducer" title="gamac.meta.impl.utils.Reducer"><span class="pre">Reducer</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">original</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gamac/meta/collector.html#DatasetForMetaCVI"><span class="viewcode-link"><span class="pre">[исходный</span> <span class="pre">код]</span></span></a><a class="headerlink" href="#gamac.meta.collector.DatasetForMetaCVI" title="Ссылка на это определение"></a></dt>
+<dd><p>Базовые классы: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="gamac.meta.collector.DatasetInfoCollector">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gamac.meta.collector.</span></span><span class="sig-name descname"><span class="pre">DatasetInfoCollector</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dataset</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#gamac.meta.collector.DatasetForMetaCVI" title="gamac.meta.collector.DatasetForMetaCVI"><span class="pre">DatasetForMetaCVI</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gamac/meta/collector.html#DatasetInfoCollector"><span class="viewcode-link"><span class="pre">[исходный</span> <span class="pre">код]</span></span></a><a class="headerlink" href="#gamac.meta.collector.DatasetInfoCollector" title="Ссылка на это определение"></a></dt>
+<dd><p>Базовые классы: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="gamac.meta.collector.DatasetInfoCollector.persist">
+<span class="sig-name descname"><span class="pre">persist</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/gamac/meta/collector.html#DatasetInfoCollector.persist"><span class="viewcode-link"><span class="pre">[исходный</span> <span class="pre">код]</span></span></a><a class="headerlink" href="#gamac.meta.collector.DatasetInfoCollector.persist" title="Ссылка на это определение"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="gamac.meta.collector.DatasetInfoCollector.save">
+<span class="sig-name descname"><span class="pre">save</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">partition</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">producer</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gamac/meta/collector.html#DatasetInfoCollector.save"><span class="viewcode-link"><span class="pre">[исходный</span> <span class="pre">код]</span></span></a><a class="headerlink" href="#gamac.meta.collector.DatasetInfoCollector.save" title="Ссылка на это определение"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-gamac.meta.features">
+<span id="gamac-meta-features-module"></span><h2>gamac.meta.features module<a class="headerlink" href="#module-gamac.meta.features" title="Ссылка на этот заголовок"></a></h2>
+<p>Compute meta-features on available datasets</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="gamac.meta.features.compute_meta_features">
+<span class="sig-prename descclassname"><span class="pre">gamac.meta.features.</span></span><span class="sig-name descname"><span class="pre">compute_meta_features</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data_path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gamac/meta/features.html#compute_meta_features"><span class="viewcode-link"><span class="pre">[исходный</span> <span class="pre">код]</span></span></a><a class="headerlink" href="#gamac.meta.features.compute_meta_features" title="Ссылка на это определение"></a></dt>
+<dd></dd></dl>
+
+</section>
+<section id="module-gamac.meta.generator">
+<span id="gamac-meta-generator-module"></span><h2>gamac.meta.generator module<a class="headerlink" href="#module-gamac.meta.generator" title="Ссылка на этот заголовок"></a></h2>
+<p>Generate 2D projections from original datasets and produce partitions for them</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="gamac.meta.generator.launch">
+<span class="sig-prename descclassname"><span class="pre">gamac.meta.generator.</span></span><span class="sig-name descname"><span class="pre">launch</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data_name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gamac/meta/generator.html#launch"><span class="viewcode-link"><span class="pre">[исходный</span> <span class="pre">код]</span></span></a><a class="headerlink" href="#gamac.meta.generator.launch" title="Ссылка на это определение"></a></dt>
+<dd></dd></dl>
+
+</section>
+<section id="module-gamac.meta.gui">
+<span id="gamac-meta-gui-module"></span><h2>gamac.meta.gui module<a class="headerlink" href="#module-gamac.meta.gui" title="Ссылка на этот заголовок"></a></h2>
+<p>Launch GUI tool for accessor markup</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="gamac.meta.gui.Application">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gamac.meta.gui.</span></span><span class="sig-name descname"><span class="pre">Application</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data_for_estimation</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gamac/meta/gui.html#Application"><span class="viewcode-link"><span class="pre">[исходный</span> <span class="pre">код]</span></span></a><a class="headerlink" href="#gamac.meta.gui.Application" title="Ссылка на это определение"></a></dt>
+<dd><p>Базовые классы: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="gamac.meta.gui.Application.data_ctx">
+<span class="sig-name descname"><span class="pre">data_ctx</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#gamac.meta.gui.DataContext" title="gamac.meta.gui.DataContext"><span class="pre">DataContext</span></a></span></span><a class="reference internal" href="_modules/gamac/meta/gui.html#Application.data_ctx"><span class="viewcode-link"><span class="pre">[исходный</span> <span class="pre">код]</span></span></a><a class="headerlink" href="#gamac.meta.gui.Application.data_ctx" title="Ссылка на это определение"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="gamac.meta.gui.Application.next_data_ctx">
+<span class="sig-name descname"><span class="pre">next_data_ctx</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/gamac/meta/gui.html#Application.next_data_ctx"><span class="viewcode-link"><span class="pre">[исходный</span> <span class="pre">код]</span></span></a><a class="headerlink" href="#gamac.meta.gui.Application.next_data_ctx" title="Ссылка на это определение"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="gamac.meta.gui.ComparisonContext">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gamac.meta.gui.</span></span><span class="sig-name descname"><span class="pre">ComparisonContext</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sorted_indices</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gamac/meta/gui.html#ComparisonContext"><span class="viewcode-link"><span class="pre">[исходный</span> <span class="pre">код]</span></span></a><a class="headerlink" href="#gamac.meta.gui.ComparisonContext" title="Ссылка на это определение"></a></dt>
+<dd><p>Базовые классы: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="gamac.meta.gui.ComparisonContext.colour">
+<span class="sig-name descname"><span class="pre">colour</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/gamac/meta/gui.html#ComparisonContext.colour"><span class="viewcode-link"><span class="pre">[исходный</span> <span class="pre">код]</span></span></a><a class="headerlink" href="#gamac.meta.gui.ComparisonContext.colour" title="Ссылка на это определение"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="gamac.meta.gui.ComparisonContext.label">
+<span class="sig-name descname"><span class="pre">label</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/gamac/meta/gui.html#ComparisonContext.label"><span class="viewcode-link"><span class="pre">[исходный</span> <span class="pre">код]</span></span></a><a class="headerlink" href="#gamac.meta.gui.ComparisonContext.label" title="Ссылка на это определение"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="gamac.meta.gui.ComparisonContext.rendered_image_idx">
+<span class="sig-name descname"><span class="pre">rendered_image_idx</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/gamac/meta/gui.html#ComparisonContext.rendered_image_idx"><span class="viewcode-link"><span class="pre">[исходный</span> <span class="pre">код]</span></span></a><a class="headerlink" href="#gamac.meta.gui.ComparisonContext.rendered_image_idx" title="Ссылка на это определение"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="gamac.meta.gui.ComparisonContext.shift">
+<span class="sig-name descname"><span class="pre">shift</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/gamac/meta/gui.html#ComparisonContext.shift"><span class="viewcode-link"><span class="pre">[исходный</span> <span class="pre">код]</span></span></a><a class="headerlink" href="#gamac.meta.gui.ComparisonContext.shift" title="Ссылка на это определение"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="gamac.meta.gui.ComparisonContext.swap">
+<span class="sig-name descname"><span class="pre">swap</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/gamac/meta/gui.html#ComparisonContext.swap"><span class="viewcode-link"><span class="pre">[исходный</span> <span class="pre">код]</span></span></a><a class="headerlink" href="#gamac.meta.gui.ComparisonContext.swap" title="Ссылка на это определение"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="gamac.meta.gui.DataContext">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gamac.meta.gui.</span></span><span class="sig-name descname"><span class="pre">DataContext</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data_path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gamac/meta/gui.html#DataContext"><span class="viewcode-link"><span class="pre">[исходный</span> <span class="pre">код]</span></span></a><a class="headerlink" href="#gamac.meta.gui.DataContext" title="Ссылка на это определение"></a></dt>
+<dd><p>Базовые классы: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="gamac.meta.gui.DataContext.choose">
+<span class="sig-name descname"><span class="pre">choose</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/gamac/meta/gui.html#DataContext.choose"><span class="viewcode-link"><span class="pre">[исходный</span> <span class="pre">код]</span></span></a><a class="headerlink" href="#gamac.meta.gui.DataContext.choose" title="Ссылка на это определение"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="gamac.meta.gui.DataContext.comp_ctx">
+<span class="sig-name descname"><span class="pre">comp_ctx</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#gamac.meta.gui.ComparisonContext" title="gamac.meta.gui.ComparisonContext"><span class="pre">ComparisonContext</span></a></span></span><a class="reference internal" href="_modules/gamac/meta/gui.html#DataContext.comp_ctx"><span class="viewcode-link"><span class="pre">[исходный</span> <span class="pre">код]</span></span></a><a class="headerlink" href="#gamac.meta.gui.DataContext.comp_ctx" title="Ссылка на это определение"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="gamac.meta.gui.DataContext.has_next">
+<span class="sig-name descname"><span class="pre">has_next</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/gamac/meta/gui.html#DataContext.has_next"><span class="viewcode-link"><span class="pre">[исходный</span> <span class="pre">код]</span></span></a><a class="headerlink" href="#gamac.meta.gui.DataContext.has_next" title="Ссылка на это определение"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="gamac.meta.gui.DataContext.next_comp_ctx">
+<span class="sig-name descname"><span class="pre">next_comp_ctx</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/gamac/meta/gui.html#DataContext.next_comp_ctx"><span class="viewcode-link"><span class="pre">[исходный</span> <span class="pre">код]</span></span></a><a class="headerlink" href="#gamac.meta.gui.DataContext.next_comp_ctx" title="Ссылка на это определение"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="gamac.meta.gui.DataContext.persist">
+<span class="sig-name descname"><span class="pre">persist</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/gamac/meta/gui.html#DataContext.persist"><span class="viewcode-link"><span class="pre">[исходный</span> <span class="pre">код]</span></span></a><a class="headerlink" href="#gamac.meta.gui.DataContext.persist" title="Ссылка на это определение"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="gamac.meta.gui.is_estimated">
+<span class="sig-prename descclassname"><span class="pre">gamac.meta.gui.</span></span><span class="sig-name descname"><span class="pre">is_estimated</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data_path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gamac/meta/gui.html#is_estimated"><span class="viewcode-link"><span class="pre">[исходный</span> <span class="pre">код]</span></span></a><a class="headerlink" href="#gamac.meta.gui.is_estimated" title="Ссылка на это определение"></a></dt>
+<dd></dd></dl>
+
+</section>
+<section id="module-gamac.meta.measures">
+<span id="gamac-meta-measures-module"></span><h2>gamac.meta.measures module<a class="headerlink" href="#module-gamac.meta.measures" title="Ссылка на этот заголовок"></a></h2>
+<p>Compute internal measures values on available datasets</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="gamac.meta.measures.compute_measures">
+<span class="sig-prename descclassname"><span class="pre">gamac.meta.measures.</span></span><span class="sig-name descname"><span class="pre">compute_measures</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data_path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gamac/meta/measures.html#compute_measures"><span class="viewcode-link"><span class="pre">[исходный</span> <span class="pre">код]</span></span></a><a class="headerlink" href="#gamac.meta.measures.compute_measures" title="Ссылка на это определение"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="gamac.meta.measures.traverse_measures">
+<span class="sig-prename descclassname"><span class="pre">gamac.meta.measures.</span></span><span class="sig-name descname"><span class="pre">traverse_measures</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/gamac/meta/measures.html#traverse_measures"><span class="viewcode-link"><span class="pre">[исходный</span> <span class="pre">код]</span></span></a><a class="headerlink" href="#gamac.meta.measures.traverse_measures" title="Ссылка на это определение"></a></dt>
+<dd></dd></dl>
+
+</section>
+<section id="module-gamac.meta.orderings">
+<span id="gamac-meta-orderings-module"></span><h2>gamac.meta.orderings module<a class="headerlink" href="#module-gamac.meta.orderings" title="Ссылка на этот заголовок"></a></h2>
+<p>Transform markups and measure values into strong orderings for markuped datasets</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="gamac.meta.orderings.compute_orderings">
+<span class="sig-prename descclassname"><span class="pre">gamac.meta.orderings.</span></span><span class="sig-name descname"><span class="pre">compute_orderings</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/gamac/meta/orderings.html#compute_orderings"><span class="viewcode-link"><span class="pre">[исходный</span> <span class="pre">код]</span></span></a><a class="headerlink" href="#gamac.meta.orderings.compute_orderings" title="Ссылка на это определение"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="gamac.meta.orderings.filter_accessors">
+<span class="sig-prename descclassname"><span class="pre">gamac.meta.orderings.</span></span><span class="sig-name descname"><span class="pre">filter_accessors</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">accessors</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="gamac.meta.storage.html#gamac.meta.storage.markups.AccessorResult" title="gamac.meta.storage.markups.AccessorResult"><span class="pre">AccessorResult</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/gamac/meta/orderings.html#filter_accessors"><span class="viewcode-link"><span class="pre">[исходный</span> <span class="pre">код]</span></span></a><a class="headerlink" href="#gamac.meta.orderings.filter_accessors" title="Ссылка на это определение"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="gamac.meta.orderings.order_measures">
+<span class="sig-prename descclassname"><span class="pre">gamac.meta.orderings.</span></span><span class="sig-name descname"><span class="pre">order_measures</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">measures</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gamac/meta/orderings.html#order_measures"><span class="viewcode-link"><span class="pre">[исходный</span> <span class="pre">код]</span></span></a><a class="headerlink" href="#gamac.meta.orderings.order_measures" title="Ссылка на это определение"></a></dt>
+<dd></dd></dl>
+
+</section>
+<section id="module-gamac.meta.premeta">
+<span id="gamac-meta-premeta-module"></span><h2>gamac.meta.premeta module<a class="headerlink" href="#module-gamac.meta.premeta" title="Ссылка на этот заголовок"></a></h2>
+<p>Select the top of internal measures w.r.t higher correlation with accessor markups</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="gamac.meta.premeta.compute_pre_meta_dataset">
+<span class="sig-prename descclassname"><span class="pre">gamac.meta.premeta.</span></span><span class="sig-name descname"><span class="pre">compute_pre_meta_dataset</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/gamac/meta/premeta.html#compute_pre_meta_dataset"><span class="viewcode-link"><span class="pre">[исходный</span> <span class="pre">код]</span></span></a><a class="headerlink" href="#gamac.meta.premeta.compute_pre_meta_dataset" title="Ссылка на это определение"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="gamac.meta.premeta.estimate_popularity">
+<span class="sig-prename descclassname"><span class="pre">gamac.meta.premeta.</span></span><span class="sig-name descname"><span class="pre">estimate_popularity</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">scorings</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="gamac.meta.storage.html#gamac.meta.storage.gathered.DataScoring" title="gamac.meta.storage.gathered.DataScoring"><span class="pre">DataScoring</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">measures_list</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ndarray</span></span></span><a class="reference internal" href="_modules/gamac/meta/premeta.html#estimate_popularity"><span class="viewcode-link"><span class="pre">[исходный</span> <span class="pre">код]</span></span></a><a class="headerlink" href="#gamac.meta.premeta.estimate_popularity" title="Ссылка на это определение"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="gamac.meta.premeta.estimate_weights">
+<span class="sig-prename descclassname"><span class="pre">gamac.meta.premeta.</span></span><span class="sig-name descname"><span class="pre">estimate_weights</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">scorings</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="gamac.meta.storage.html#gamac.meta.storage.gathered.DataScoring" title="gamac.meta.storage.gathered.DataScoring"><span class="pre">DataScoring</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/gamac/meta/premeta.html#estimate_weights"><span class="viewcode-link"><span class="pre">[исходный</span> <span class="pre">код]</span></span></a><a class="headerlink" href="#gamac.meta.premeta.estimate_weights" title="Ссылка на это определение"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="gamac.meta.premeta.select_measures">
+<span class="sig-prename descclassname"><span class="pre">gamac.meta.premeta.</span></span><span class="sig-name descname"><span class="pre">select_measures</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">scorings</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="gamac.meta.storage.html#gamac.meta.storage.gathered.DataScoring" title="gamac.meta.storage.gathered.DataScoring"><span class="pre">DataScoring</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/gamac/meta/premeta.html#select_measures"><span class="viewcode-link"><span class="pre">[исходный</span> <span class="pre">код]</span></span></a><a class="headerlink" href="#gamac.meta.premeta.select_measures" title="Ссылка на это определение"></a></dt>
+<dd></dd></dl>
+
+</section>
+<section id="module-gamac.meta.render">
+<span id="gamac-meta-render-module"></span><h2>gamac.meta.render module<a class="headerlink" href="#module-gamac.meta.render" title="Ссылка на этот заголовок"></a></h2>
+<p>Util to render dataset partitions</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="gamac.meta.render.scatter_image">
+<span class="sig-prename descclassname"><span class="pre">gamac.meta.render.</span></span><span class="sig-name descname"><span class="pre">scatter_image</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">colors</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">img_path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gamac/meta/render.html#scatter_image"><span class="viewcode-link"><span class="pre">[исходный</span> <span class="pre">код]</span></span></a><a class="headerlink" href="#gamac.meta.render.scatter_image" title="Ссылка на это определение"></a></dt>
+<dd></dd></dl>
+
+</section>
+<section id="module-gamac.meta.scorings">
+<span id="gamac-meta-scorings-module"></span><h2>gamac.meta.scorings module<a class="headerlink" href="#module-gamac.meta.scorings" title="Ссылка на этот заголовок"></a></h2>
+<p>Estimate scalar measures scores w.r.t accessors markup</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="gamac.meta.scorings.calc_disagreement">
+<span class="sig-prename descclassname"><span class="pre">gamac.meta.scorings.</span></span><span class="sig-name descname"><span class="pre">calc_disagreement</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">accessors</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="_modules/gamac/meta/scorings.html#calc_disagreement"><span class="viewcode-link"><span class="pre">[исходный</span> <span class="pre">код]</span></span></a><a class="headerlink" href="#gamac.meta.scorings.calc_disagreement" title="Ссылка на это определение"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="gamac.meta.scorings.calc_measures_scores">
+<span class="sig-prename descclassname"><span class="pre">gamac.meta.scorings.</span></span><span class="sig-name descname"><span class="pre">calc_measures_scores</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">orderings</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="gamac.meta.storage.html#gamac.meta.storage.gathered.DataOrdering" title="gamac.meta.storage.gathered.DataOrdering"><span class="pre">DataOrdering</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/gamac/meta/scorings.html#calc_measures_scores"><span class="viewcode-link"><span class="pre">[исходный</span> <span class="pre">код]</span></span></a><a class="headerlink" href="#gamac.meta.scorings.calc_measures_scores" title="Ссылка на это определение"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="gamac.meta.scorings.compute_scorings">
+<span class="sig-prename descclassname"><span class="pre">gamac.meta.scorings.</span></span><span class="sig-name descname"><span class="pre">compute_scorings</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/gamac/meta/scorings.html#compute_scorings"><span class="viewcode-link"><span class="pre">[исходный</span> <span class="pre">код]</span></span></a><a class="headerlink" href="#gamac.meta.scorings.compute_scorings" title="Ссылка на это определение"></a></dt>
+<dd></dd></dl>
+
+</section>
+<section id="module-gamac.meta.tuning">
+<span id="gamac-meta-tuning-module"></span><h2>gamac.meta.tuning module<a class="headerlink" href="#module-gamac.meta.tuning" title="Ссылка на этот заголовок"></a></h2>
+<p>Optimise meta-classifier F1-score by tuning hyperparameters</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="gamac.meta.tuning.smape_loss">
+<span class="sig-prename descclassname"><span class="pre">gamac.meta.tuning.</span></span><span class="sig-name descname"><span class="pre">smape_loss</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">y_true</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y_pred</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gamac/meta/tuning.html#smape_loss"><span class="viewcode-link"><span class="pre">[исходный</span> <span class="pre">код]</span></span></a><a class="headerlink" href="#gamac.meta.tuning.smape_loss" title="Ссылка на это определение"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="gamac.meta.tuning.tune">
+<span class="sig-prename descclassname"><span class="pre">gamac.meta.tuning.</span></span><span class="sig-name descname"><span class="pre">tune</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/gamac/meta/tuning.html#tune"><span class="viewcode-link"><span class="pre">[исходный</span> <span class="pre">код]</span></span></a><a class="headerlink" href="#gamac.meta.tuning.tune" title="Ссылка на это определение"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="gamac.meta.tuning.tune_classifier">
+<span class="sig-prename descclassname"><span class="pre">gamac.meta.tuning.</span></span><span class="sig-name descname"><span class="pre">tune_classifier</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x_orig</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y_orig</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">weights</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gamac/meta/tuning.html#tune_classifier"><span class="viewcode-link"><span class="pre">[исходный</span> <span class="pre">код]</span></span></a><a class="headerlink" href="#gamac.meta.tuning.tune_classifier" title="Ссылка на это определение"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="gamac.meta.tuning.tune_regressors">
+<span class="sig-prename descclassname"><span class="pre">gamac.meta.tuning.</span></span><span class="sig-name descname"><span class="pre">tune_regressors</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x_orig</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y_orig</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gamac/meta/tuning.html#tune_regressors"><span class="viewcode-link"><span class="pre">[исходный</span> <span class="pre">код]</span></span></a><a class="headerlink" href="#gamac.meta.tuning.tune_regressors" title="Ссылка на это определение"></a></dt>
+<dd></dd></dl>
+
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Нижняя область">
+        <a href="gamac.kernels.html" class="btn btn-neutral float-left" title="gamac.kernels package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Предыдущая</a>
+        <a href="gamac.meta.impl.html" class="btn btn-neutral float-right" title="gamac.meta.impl package" accesskey="n" rel="next">Следующая <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Авторские права 2025, Sergey Muravyov, Nikita Kulin, Ivan Usov, Olga Muravyova, Simar Muratov. </p>
+  </div>
+
+  Собрано при помощи <a href="https://www.sphinx-doc.org/">Sphinx</a> с использованием
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">темы,</a>
+    предоставленной <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,175 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="ru" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>gamac.meta.orderings &mdash; документация GaMAC 1.0.0</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=e35015f7"></script>
+      <script src="../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../../_static/translations.js?v=cd1d70c9"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Алфавитный указатель" href="../../../genindex.html" />
+    <link rel="search" title="Поиск" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            GaMAC
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Поиск в документации" aria-label="Поиск в документации" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Меню навигации">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../modules.html">gamac</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Меню навигации для мобильных устройств" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">GaMAC</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Навигация по страницам">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Код модуля</a></li>
+      <li class="breadcrumb-item active">gamac.meta.orderings</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Исходный код gamac.meta.orderings</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Transform markups and measure values into strong orderings for markuped datasets</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">List</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">gamac.meta.impl.ord</span><span class="w"> </span><span class="kn">import</span> <span class="n">ORDERING_DISTANCE</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">gamac.meta.storage</span><span class="w"> </span><span class="kn">import</span> <span class="n">traverse_data</span><span class="p">,</span> <span class="n">COMPUTED</span><span class="p">,</span> <span class="n">GATHERED</span><span class="p">,</span> <span class="n">MARKUPS</span><span class="p">,</span> <span class="n">AccessorResult</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">gamac.meta.storage.gathered</span><span class="w"> </span><span class="kn">import</span> <span class="n">DataOrdering</span>
+
+<span class="n">NUM_ACCESSORS</span> <span class="o">=</span> <span class="mi">5</span>
+
+
+<div class="viewcode-block" id="filter_accessors">
+<a class="viewcode-back" href="../../../gamac.meta.html#gamac.meta.orderings.filter_accessors">[документация]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">filter_accessors</span><span class="p">(</span><span class="n">accessors</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">AccessorResult</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]]:</span>
+    <span class="n">n</span><span class="p">,</span> <span class="n">evicted</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">accessors</span><span class="p">),</span> <span class="nb">set</span><span class="p">()</span>
+
+    <span class="n">d_matrix</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">n</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">x_idx</span><span class="p">,</span> <span class="n">x_res</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">accessors</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">y_idx</span><span class="p">,</span> <span class="n">y_res</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">accessors</span><span class="p">):</span>
+            <span class="n">dist</span> <span class="o">=</span> <span class="n">ORDERING_DISTANCE</span><span class="p">(</span><span class="n">x_res</span><span class="o">.</span><span class="n">sorted_indices</span><span class="p">,</span> <span class="n">y_res</span><span class="o">.</span><span class="n">sorted_indices</span><span class="p">)</span>
+            <span class="n">d_matrix</span><span class="p">[</span><span class="n">x_idx</span><span class="p">,</span> <span class="n">y_idx</span><span class="p">]</span> <span class="o">=</span> <span class="n">dist</span>
+
+    <span class="k">while</span> <span class="nb">len</span><span class="p">(</span><span class="n">evicted</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">n</span> <span class="o">-</span> <span class="n">NUM_ACCESSORS</span><span class="p">:</span>
+        <span class="n">remained_dists</span> <span class="o">=</span> <span class="n">d_matrix</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">most_dissimilar_idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">remained_dists</span><span class="p">)</span>
+        <span class="n">evicted</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">most_dissimilar_idx</span><span class="p">)</span>
+        <span class="n">d_matrix</span><span class="p">[</span><span class="n">most_dissimilar_idx</span><span class="p">,</span> <span class="p">:]</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">d_matrix</span><span class="p">[:,</span> <span class="n">most_dissimilar_idx</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="n">remained_indices</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">n</span><span class="p">)</span><span class="o">.</span><span class="n">tolist</span><span class="p">())</span> <span class="o">-</span> <span class="n">evicted</span>
+    <span class="k">return</span> <span class="p">[</span>
+        <span class="n">a_res</span><span class="o">.</span><span class="n">sorted_indices</span> <span class="k">for</span> <span class="n">a_idx</span><span class="p">,</span> <span class="n">a_res</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">accessors</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">a_idx</span> <span class="ow">in</span> <span class="n">remained_indices</span>
+    <span class="p">]</span></div>
+
+
+
+<div class="viewcode-block" id="order_measures">
+<a class="viewcode-back" href="../../../gamac.meta.html#gamac.meta.orderings.order_measures">[документация]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">order_measures</span><span class="p">(</span><span class="n">measures</span><span class="p">):</span>
+    <span class="k">return</span> <span class="p">{</span><span class="n">m_name</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">argsort</span><span class="p">(</span><span class="n">m_vals</span><span class="p">)</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span> <span class="k">for</span> <span class="n">m_name</span><span class="p">,</span> <span class="n">m_vals</span> <span class="ow">in</span> <span class="n">measures</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span></div>
+
+
+
+<div class="viewcode-block" id="compute_orderings">
+<a class="viewcode-back" href="../../../gamac.meta.html#gamac.meta.orderings.compute_orderings">[документация]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">compute_orderings</span><span class="p">():</span>
+    <span class="n">pre_values</span> <span class="o">=</span> <span class="n">GATHERED</span><span class="o">.</span><span class="n">read_pre_values</span><span class="p">()</span>
+    <span class="n">filtered</span> <span class="o">=</span> <span class="p">{</span><span class="n">data_path</span> <span class="k">for</span> <span class="n">data_path</span><span class="p">,</span> <span class="n">pre_val</span> <span class="ow">in</span> <span class="n">pre_values</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">pre_val</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">}</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">prepare_orderings</span><span class="p">(</span><span class="n">data_path</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DataOrdering</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">data_path</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">filtered</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">FileNotFoundError</span><span class="p">()</span>
+        <span class="n">accessors</span> <span class="o">=</span> <span class="n">MARKUPS</span><span class="o">.</span><span class="n">read_markups</span><span class="p">(</span><span class="n">data_path</span><span class="p">)</span>
+        <span class="n">measures</span> <span class="o">=</span> <span class="n">COMPUTED</span><span class="o">.</span><span class="n">read_measures</span><span class="p">(</span><span class="n">data_path</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">accessors</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">NUM_ACCESSORS</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">FileNotFoundError</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">DataOrdering</span><span class="p">(</span>
+            <span class="n">accessors</span><span class="o">=</span><span class="n">filter_accessors</span><span class="p">(</span><span class="n">accessors</span><span class="p">),</span>
+            <span class="n">measures</span><span class="o">=</span><span class="n">order_measures</span><span class="p">(</span><span class="n">measures</span><span class="p">),</span>
+        <span class="p">)</span>
+
+    <span class="n">orderings</span> <span class="o">=</span> <span class="n">traverse_data</span><span class="p">(</span><span class="n">prepare_orderings</span><span class="p">)</span>
+    <span class="n">GATHERED</span><span class="o">.</span><span class="n">write_orderings</span><span class="p">(</span><span class="n">orderings</span><span class="p">)</span></div>
+
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="n">compute_orderings</span><span class="p">()</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Авторские права 2025, Sergey Muravyov, Nikita Kulin, Ivan Usov, Olga Muravyova, Simar Muratov. </p>
+  </div>
+
+  Собрано при помощи <a href="https://www.sphinx-doc.org/">Sphinx</a> с использованием
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">темы,</a>
+    предоставленной <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

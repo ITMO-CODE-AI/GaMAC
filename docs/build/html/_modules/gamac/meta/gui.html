@@ -1,0 +1,350 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="ru" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>gamac.meta.gui &mdash; документация GaMAC 1.0.0</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=e35015f7"></script>
+      <script src="../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../../_static/translations.js?v=cd1d70c9"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Алфавитный указатель" href="../../../genindex.html" />
+    <link rel="search" title="Поиск" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            GaMAC
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Поиск в документации" aria-label="Поиск в документации" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Меню навигации">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../modules.html">gamac</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Меню навигации для мобильных устройств" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">GaMAC</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Навигация по страницам">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Код модуля</a></li>
+      <li class="breadcrumb-item active">gamac.meta.gui</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Исходный код gamac.meta.gui</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Launch GUI tool for accessor markup</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">time</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">gamac.meta.collector</span><span class="w"> </span><span class="kn">import</span> <span class="n">PARTITIONS_TO_ESTIMATE</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">gamac.meta.storage</span><span class="w"> </span><span class="kn">import</span> <span class="n">MARKUPS</span><span class="p">,</span> <span class="n">CONTENTS</span><span class="p">,</span> <span class="n">AccessorResult</span><span class="p">,</span> <span class="n">traverse_data</span>
+
+<span class="n">ALT_PUSH</span><span class="p">,</span> <span class="n">ALT_PULL</span> <span class="o">=</span> <span class="s2">&quot;PUSH&quot;</span><span class="p">,</span> <span class="s2">&quot;PULL&quot;</span>
+<span class="n">ACCESSOR_ID</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+
+
+<div class="viewcode-block" id="ComparisonContext">
+<a class="viewcode-back" href="../../../gamac.meta.html#gamac.meta.gui.ComparisonContext">[документация]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">ComparisonContext</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data_path</span><span class="p">,</span> <span class="n">sorted_indices</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">alt_push_idx</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">sorted_indices</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">alt_pull_idx</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">alt_push_idx</span> <span class="o">-</span> <span class="mi">1</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">sorted_indices</span> <span class="o">=</span> <span class="n">sorted_indices</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data_path</span> <span class="o">=</span> <span class="n">data_path</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">alternative</span> <span class="o">=</span> <span class="n">ALT_PUSH</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">t_start</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+
+<div class="viewcode-block" id="ComparisonContext.swap">
+<a class="viewcode-back" href="../../../gamac.meta.html#gamac.meta.gui.ComparisonContext.swap">[документация]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">swap</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">alternative</span> <span class="o">=</span> <span class="n">ALT_PUSH</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">alternative</span> <span class="o">==</span> <span class="n">ALT_PULL</span> <span class="k">else</span> <span class="n">ALT_PULL</span></div>
+
+
+<div class="viewcode-block" id="ComparisonContext.shift">
+<a class="viewcode-back" href="../../../gamac.meta.html#gamac.meta.gui.ComparisonContext.shift">[документация]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">shift</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">alt_pull_idx</span> <span class="o">-=</span> <span class="mi">1</span>
+        <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">alt_pull_idx</span> <span class="o">&gt;=</span> <span class="mi">0</span></div>
+
+
+<div class="viewcode-block" id="ComparisonContext.rendered_image_idx">
+<a class="viewcode-back" href="../../../gamac.meta.html#gamac.meta.gui.ComparisonContext.rendered_image_idx">[документация]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">rendered_image_idx</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">alt_push_idx</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">alternative</span> <span class="o">==</span> <span class="n">ALT_PUSH</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">sorted_indices</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">alt_pull_idx</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="ComparisonContext.label">
+<a class="viewcode-back" href="../../../gamac.meta.html#gamac.meta.gui.ComparisonContext.label">[документация]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">label</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">idx</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rendered_image_idx</span><span class="p">()</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">alternative</span><span class="si">}</span><span class="s1"> [</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">data_path</span><span class="si">}</span><span class="s1">, image #</span><span class="si">{</span><span class="n">idx</span><span class="si">}</span><span class="s1">]&#39;</span></div>
+
+
+<div class="viewcode-block" id="ComparisonContext.colour">
+<a class="viewcode-back" href="../../../gamac.meta.html#gamac.meta.gui.ComparisonContext.colour">[документация]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">colour</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s1">&#39;green&#39;</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">alternative</span> <span class="o">==</span> <span class="n">ALT_PUSH</span> <span class="k">else</span> <span class="s1">&#39;blue&#39;</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="DataContext">
+<a class="viewcode-back" href="../../../gamac.meta.html#gamac.meta.gui.DataContext">[документация]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">DataContext</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data_path</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data_path</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_comp_ctx</span> <span class="o">=</span> <span class="n">data_path</span><span class="p">,</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">images</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_photo_image</span><span class="p">(</span><span class="n">idx</span><span class="p">)</span> <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">PARTITIONS_TO_ESTIMATE</span><span class="p">)]</span>
+
+        <span class="n">MARKUPS</span><span class="o">.</span><span class="n">create_markup_dir</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data_path</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">MARKUPS</span><span class="o">.</span><span class="n">accessor_exists</span><span class="p">(</span><span class="n">data_path</span><span class="p">,</span> <span class="n">ACCESSOR_ID</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">FileExistsError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Data </span><span class="si">{</span><span class="n">data_path</span><span class="si">}</span><span class="s2"> has been already estimated by accessor </span><span class="si">{</span><span class="n">ACCESSOR_ID</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_sorted_indices</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_comparisons</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="p">[]</span>
+
+<div class="viewcode-block" id="DataContext.comp_ctx">
+<a class="viewcode-back" href="../../../gamac.meta.html#gamac.meta.gui.DataContext.comp_ctx">[документация]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">comp_ctx</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ComparisonContext</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_comp_ctx</span></div>
+
+
+<div class="viewcode-block" id="DataContext.next_comp_ctx">
+<a class="viewcode-back" href="../../../gamac.meta.html#gamac.meta.gui.DataContext.next_comp_ctx">[документация]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">next_comp_ctx</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">has_next</span><span class="p">():</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_comp_ctx</span> <span class="o">=</span> <span class="n">ComparisonContext</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data_path</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sorted_indices</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="DataContext.has_next">
+<a class="viewcode-back" href="../../../gamac.meta.html#gamac.meta.gui.DataContext.has_next">[документация]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">has_next</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_sorted_indices</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">PARTITIONS_TO_ESTIMATE</span></div>
+
+
+<div class="viewcode-block" id="DataContext.choose">
+<a class="viewcode-back" href="../../../gamac.meta.html#gamac.meta.gui.DataContext.choose">[документация]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">choose</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">comp_ctx</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">comp_ctx</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_save_comparison</span><span class="p">(</span><span class="n">comp_ctx</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_save_index_or_shift</span><span class="p">(</span><span class="n">comp_ctx</span><span class="p">)</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_save_comparison</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">comp_ctx</span><span class="p">):</span>
+        <span class="n">t_estimate</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">comp_ctx</span><span class="o">.</span><span class="n">t_start</span>
+        <span class="n">t_estimate</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">t_estimate</span> <span class="o">*</span> <span class="mi">10</span><span class="p">)</span> <span class="o">/</span> <span class="mi">10</span><span class="p">)</span>
+        <span class="n">push_idx</span><span class="p">,</span> <span class="n">pull_idx</span> <span class="o">=</span> <span class="n">comp_ctx</span><span class="o">.</span><span class="n">alt_push_idx</span><span class="p">,</span> <span class="n">comp_ctx</span><span class="o">.</span><span class="n">alt_pull_idx</span>
+        <span class="k">if</span> <span class="n">comp_ctx</span><span class="o">.</span><span class="n">alternative</span> <span class="o">==</span> <span class="n">ALT_PUSH</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_comparisons</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">push_idx</span><span class="p">,</span> <span class="n">pull_idx</span><span class="p">,</span> <span class="n">t_estimate</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_comparisons</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">pull_idx</span><span class="p">,</span> <span class="n">push_idx</span><span class="p">,</span> <span class="n">t_estimate</span><span class="p">))</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_save_index_or_shift</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">comp_ctx</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">comp_ctx</span><span class="o">.</span><span class="n">alternative</span> <span class="o">==</span> <span class="n">ALT_PUSH</span><span class="p">:</span>
+            <span class="n">insert_at</span> <span class="o">=</span> <span class="n">comp_ctx</span><span class="o">.</span><span class="n">alt_pull_idx</span> <span class="o">+</span> <span class="mi">1</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_sorted_indices</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="n">insert_at</span><span class="p">,</span> <span class="n">comp_ctx</span><span class="o">.</span><span class="n">alt_push_idx</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">next_comp_ctx</span><span class="p">()</span>
+        <span class="k">elif</span> <span class="n">comp_ctx</span><span class="o">.</span><span class="n">alternative</span> <span class="o">==</span> <span class="n">ALT_PULL</span> <span class="ow">and</span> <span class="n">comp_ctx</span><span class="o">.</span><span class="n">alt_pull_idx</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_sorted_indices</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">comp_ctx</span><span class="o">.</span><span class="n">alt_push_idx</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">next_comp_ctx</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">comp_ctx</span><span class="o">.</span><span class="n">shift</span><span class="p">()</span>
+
+<div class="viewcode-block" id="DataContext.persist">
+<a class="viewcode-back" href="../../../gamac.meta.html#gamac.meta.gui.DataContext.persist">[документация]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">persist</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">AccessorResult</span><span class="p">(</span>
+            <span class="n">sorted_indices</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_sorted_indices</span><span class="p">,</span>
+            <span class="n">all_comparisons</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_comparisons</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">MARKUPS</span><span class="o">.</span><span class="n">write_markup</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data_path</span><span class="p">,</span> <span class="n">ACCESSOR_ID</span><span class="p">,</span> <span class="n">result</span><span class="p">)</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_photo_image</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">idx</span><span class="p">):</span>
+        <span class="n">img_path</span> <span class="o">=</span> <span class="n">CONTENTS</span><span class="o">.</span><span class="n">image_path</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data_path</span><span class="p">,</span> <span class="n">idx</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">PhotoImage</span><span class="p">(</span><span class="n">file</span><span class="o">=</span><span class="n">img_path</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="Application">
+<a class="viewcode-back" href="../../../gamac.meta.html#gamac.meta.gui.Application">[документация]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">Application</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data_for_estimation</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_all_data</span> <span class="o">=</span> <span class="n">data_for_estimation</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_current_idx</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data_ctx</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="kc">None</span>
+
+<div class="viewcode-block" id="Application.data_ctx">
+<a class="viewcode-back" href="../../../gamac.meta.html#gamac.meta.gui.Application.data_ctx">[документация]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">data_ctx</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DataContext</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data_ctx</span></div>
+
+
+<div class="viewcode-block" id="Application.next_data_ctx">
+<a class="viewcode-back" href="../../../gamac.meta.html#gamac.meta.gui.Application.next_data_ctx">[документация]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">next_data_ctx</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_current_idx</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_all_data</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_current_idx</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="n">data_path</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_all_data</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_current_idx</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_data_ctx</span> <span class="o">=</span> <span class="n">DataContext</span><span class="p">(</span><span class="n">data_path</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_data_ctx</span><span class="o">.</span><span class="n">next_comp_ctx</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="s1">&#39;Congratulations! You have estimated all available data&#39;</span><span class="p">)</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="is_estimated">
+<a class="viewcode-back" href="../../../gamac.meta.html#gamac.meta.gui.is_estimated">[документация]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">is_estimated</span><span class="p">(</span><span class="n">data_path</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">MARKUPS</span><span class="o">.</span><span class="n">accessor_exists</span><span class="p">(</span><span class="n">data_path</span><span class="p">,</span> <span class="n">ACCESSOR_ID</span><span class="p">)</span></div>
+
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">tkinter</span><span class="w"> </span><span class="kn">import</span> <span class="o">*</span>
+
+    <span class="n">root</span> <span class="o">=</span> <span class="n">Tk</span><span class="p">()</span>
+    <span class="n">root</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;GAMaC Assessment [Accessor </span><span class="si">{</span><span class="n">ACCESSOR_ID</span><span class="si">}</span><span class="s2">]&quot;</span><span class="p">)</span>
+    <span class="n">root</span><span class="o">.</span><span class="n">geometry</span><span class="p">(</span><span class="s2">&quot;3200x2400&quot;</span><span class="p">)</span>
+
+    <span class="n">data_for_estimation</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="n">data_path</span> <span class="k">for</span> <span class="n">data_path</span><span class="p">,</span> <span class="n">estimated</span> <span class="ow">in</span> <span class="n">traverse_data</span><span class="p">(</span><span class="n">is_estimated</span><span class="p">)</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">estimated</span>
+    <span class="p">]</span>
+    <span class="n">application</span> <span class="o">=</span> <span class="n">Application</span><span class="p">(</span><span class="n">data_for_estimation</span><span class="p">)</span>
+
+    <span class="n">header</span> <span class="o">=</span> <span class="n">Label</span><span class="p">(</span><span class="n">font</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;Arial&quot;</span><span class="p">,</span> <span class="mi">20</span><span class="p">))</span>
+    <span class="n">header</span><span class="o">.</span><span class="n">pack</span><span class="p">()</span>
+
+    <span class="n">image</span> <span class="o">=</span> <span class="n">Label</span><span class="p">()</span>
+    <span class="n">image</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="n">expand</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">anchor</span><span class="o">=</span><span class="n">CENTER</span><span class="p">)</span>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">update_ui</span><span class="p">():</span>
+        <span class="n">data_ctx</span> <span class="o">=</span> <span class="n">application</span><span class="o">.</span><span class="n">data_ctx</span><span class="p">()</span>
+        <span class="n">comp_ctx</span> <span class="o">=</span> <span class="n">data_ctx</span><span class="o">.</span><span class="n">comp_ctx</span><span class="p">()</span>
+
+        <span class="n">header</span><span class="o">.</span><span class="n">config</span><span class="p">(</span>
+            <span class="n">text</span><span class="o">=</span><span class="n">comp_ctx</span><span class="o">.</span><span class="n">label</span><span class="p">(),</span>
+            <span class="n">foreground</span><span class="o">=</span><span class="n">comp_ctx</span><span class="o">.</span><span class="n">colour</span><span class="p">()</span>
+        <span class="p">)</span>
+
+        <span class="n">image_idx</span> <span class="o">=</span> <span class="n">comp_ctx</span><span class="o">.</span><span class="n">rendered_image_idx</span><span class="p">()</span>
+        <span class="n">image</span><span class="o">.</span><span class="n">config</span><span class="p">(</span>
+            <span class="n">highlightbackground</span><span class="o">=</span><span class="n">comp_ctx</span><span class="o">.</span><span class="n">colour</span><span class="p">(),</span>
+            <span class="n">highlightthickness</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span>
+            <span class="n">image</span><span class="o">=</span><span class="n">data_ctx</span><span class="o">.</span><span class="n">images</span><span class="p">[</span><span class="n">image_idx</span><span class="p">]</span>
+        <span class="p">)</span>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_ready_ui</span><span class="p">():</span>
+        <span class="n">header</span><span class="o">.</span><span class="n">config</span><span class="p">(</span>
+            <span class="n">text</span><span class="o">=</span><span class="sa">f</span><span class="s1">&#39;Press &lt;Enter&gt; to start next assessment&#39;</span><span class="p">,</span>
+            <span class="n">foreground</span><span class="o">=</span><span class="s1">&#39;red&#39;</span>
+        <span class="p">)</span>
+        <span class="n">image</span><span class="o">.</span><span class="n">config</span><span class="p">(</span>
+            <span class="n">highlightbackground</span><span class="o">=</span><span class="s1">&#39;red&#39;</span><span class="p">,</span>
+            <span class="n">highlightthickness</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">root</span><span class="o">.</span><span class="n">update_idletasks</span><span class="p">()</span>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">launch_next</span><span class="p">(</span><span class="n">_</span><span class="p">):</span>
+        <span class="n">data_ctx</span> <span class="o">=</span> <span class="n">application</span><span class="o">.</span><span class="n">data_ctx</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">data_ctx</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">data_ctx</span><span class="o">.</span><span class="n">has_next</span><span class="p">():</span>
+            <span class="n">application</span><span class="o">.</span><span class="n">next_data_ctx</span><span class="p">()</span>
+            <span class="n">update_ui</span><span class="p">()</span>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">swap</span><span class="p">(</span><span class="n">_</span><span class="p">):</span>
+        <span class="n">application</span><span class="o">.</span><span class="n">data_ctx</span><span class="p">()</span><span class="o">.</span><span class="n">comp_ctx</span><span class="p">()</span><span class="o">.</span><span class="n">swap</span><span class="p">()</span>
+        <span class="n">update_ui</span><span class="p">()</span>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">choose</span><span class="p">(</span><span class="n">_</span><span class="p">):</span>
+        <span class="n">data_ctx</span> <span class="o">=</span> <span class="n">application</span><span class="o">.</span><span class="n">data_ctx</span><span class="p">()</span>
+        <span class="n">data_ctx</span><span class="o">.</span><span class="n">choose</span><span class="p">()</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">data_ctx</span><span class="o">.</span><span class="n">has_next</span><span class="p">():</span>
+            <span class="n">data_ctx</span><span class="o">.</span><span class="n">persist</span><span class="p">()</span>
+            <span class="n">get_ready_ui</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">update_ui</span><span class="p">()</span>
+
+
+    <span class="n">root</span><span class="o">.</span><span class="n">bind</span><span class="p">(</span><span class="s1">&#39;&lt;KeyPress-Return&gt;&#39;</span><span class="p">,</span> <span class="n">launch_next</span><span class="p">)</span>
+    <span class="n">root</span><span class="o">.</span><span class="n">bind</span><span class="p">(</span><span class="s1">&#39;&lt;KeyPress-Tab&gt;&#39;</span><span class="p">,</span> <span class="n">swap</span><span class="p">)</span>
+    <span class="n">root</span><span class="o">.</span><span class="n">bind</span><span class="p">(</span><span class="s1">&#39;&lt;space&gt;&#39;</span><span class="p">,</span> <span class="n">choose</span><span class="p">)</span>
+
+    <span class="n">get_ready_ui</span><span class="p">()</span>
+    <span class="n">root</span><span class="o">.</span><span class="n">mainloop</span><span class="p">()</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Авторские права 2025, Sergey Muravyov, Nikita Kulin, Ivan Usov, Olga Muravyova, Simar Muratov. </p>
+  </div>
+
+  Собрано при помощи <a href="https://www.sphinx-doc.org/">Sphinx</a> с использованием
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">темы,</a>
+    предоставленной <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

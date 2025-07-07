@@ -1,0 +1,593 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="ru" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>gamac.estimation package &mdash; документация GaMAC 1.0.0</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=e35015f7"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="_static/translations.js?v=cd1d70c9"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Алфавитный указатель" href="genindex.html" />
+    <link rel="search" title="Поиск" href="search.html" />
+    <link rel="next" title="gamac.kernels package" href="gamac.kernels.html" />
+    <link rel="prev" title="gamac.data package" href="gamac.data.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            GaMAC
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Поиск в документации" aria-label="Поиск в документации" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Меню навигации">
+              <p class="caption" role="heading"><span class="caption-text">API Reference:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">gamac</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="gamac.html">gamac package</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="gamac.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="gamac.algorithms.html">gamac.algorithms package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="gamac.bin.html">gamac.bin package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="gamac.data.html">gamac.data package</a></li>
+<li class="toctree-l4 current"><a class="current reference internal" href="#">gamac.estimation package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="gamac.kernels.html">gamac.kernels package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="gamac.meta.html">gamac.meta package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="gamac.pipeline.html">gamac.pipeline package</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="gamac.html#submodules">Submodules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="gamac.html#module-gamac.autoclustering">gamac.autoclustering module</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Меню навигации для мобильных устройств" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">GaMAC</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Навигация по страницам">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="modules.html">gamac</a></li>
+          <li class="breadcrumb-item"><a href="gamac.html">gamac package</a></li>
+      <li class="breadcrumb-item active">gamac.estimation package</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/gamac.estimation.rst.txt" rel="nofollow"> Просмотреть исходный код страницы</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="gamac-estimation-package">
+<h1>gamac.estimation package<a class="headerlink" href="#gamac-estimation-package" title="Ссылка на этот заголовок"></a></h1>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Ссылка на этот заголовок"></a></h2>
+</section>
+<section id="module-gamac.estimation.container">
+<span id="gamac-estimation-container-module"></span><h2>gamac.estimation.container module<a class="headerlink" href="#module-gamac.estimation.container" title="Ссылка на этот заголовок"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="gamac.estimation.container.EstimationContainer">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gamac.estimation.container.</span></span><span class="sig-name descname"><span class="pre">EstimationContainer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">cupy.typing.NDArray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">labels</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">cupy.typing.NDArray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">uniq_labels_gpu</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">cupy.typing.NDArray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">uniq_labels_arr</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gamac/estimation/container.html#EstimationContainer"><span class="viewcode-link"><span class="pre">[исходный</span> <span class="pre">код]</span></span></a><a class="headerlink" href="#gamac.estimation.container.EstimationContainer" title="Ссылка на это определение"></a></dt>
+<dd><p>Базовые классы: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Контейнер для хранения и обработки данных кластеризации с GPU-ускорением.</p>
+<dl class="simple">
+<dt>Атрибуты:</dt><dd><p>NOISE_THRESHOLD (float): Пороговое значение для доли шумовых объектов (по умолчанию 0.1)
+data (NDArray): Исходные данные для анализа
+labels (NDArray): Метки кластеров для каждого объекта
+uniq_labels_gpu (NDArray): Уникальные метки кластеров на GPU
+uniq_labels_arr (np.ndarray): Уникальные метки кластеров на CPU
+n (int): Количество объектов
+d (int): Размерность данных</p>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="gamac.estimation.container.EstimationContainer.NOISE_THRESHOLD">
+<span class="sig-name descname"><span class="pre">NOISE_THRESHOLD</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">0.1</span></em><a class="headerlink" href="#gamac.estimation.container.EstimationContainer.NOISE_THRESHOLD" title="Ссылка на это определение"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="gamac.estimation.container.EstimationContainer.cent_dists">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">cent_dists</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">cupy.typing.NDArray</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#gamac.estimation.container.EstimationContainer.cent_dists" title="Ссылка на это определение"></a></dt>
+<dd><p>Расстояния от объектов до центроидов их кластеров.</p>
+<p>Вычисляется лениво с использованием GPU-ускорения.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="gamac.estimation.container.EstimationContainer.cent_matrix">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">cent_matrix</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ndarray</span></em><a class="headerlink" href="#gamac.estimation.container.EstimationContainer.cent_matrix" title="Ссылка на это определение"></a></dt>
+<dd><p>Матрица попарных расстояний между центроидами.</p>
+<p>Вычисляется лениво с использованием GPU-ускорения.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="gamac.estimation.container.EstimationContainer.centroids">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">centroids</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">cupy.typing.NDArray</span></em><a class="headerlink" href="#gamac.estimation.container.EstimationContainer.centroids" title="Ссылка на это определение"></a></dt>
+<dd><p>Массив центроидов кластеров.</p>
+<p>Вычисляется лениво с использованием GPU-ускорения.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="gamac.estimation.container.EstimationContainer.clusters">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">clusters</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">cupy.typing.NDArray</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#gamac.estimation.container.EstimationContainer.clusters" title="Ссылка на это определение"></a></dt>
+<dd><p>Список кластеров (разделенных по меткам).</p>
+<p>Вычисляется лениво при первом обращении.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="gamac.estimation.container.EstimationContainer.create">
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">create</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">cupy.typing.NDArray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">labels</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">cupy.typing.NDArray</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#gamac.estimation.container.EstimationContainer" title="gamac.estimation.container.EstimationContainer"><span class="pre">EstimationContainer</span></a></span></span><a class="reference internal" href="_modules/gamac/estimation/container.html#EstimationContainer.create"><span class="viewcode-link"><span class="pre">[исходный</span> <span class="pre">код]</span></span></a><a class="headerlink" href="#gamac.estimation.container.EstimationContainer.create" title="Ссылка на это определение"></a></dt>
+<dd><p>Фабричный метод для создания контейнера с предварительной обработкой данных.</p>
+<dl class="simple">
+<dt>Аргументы:</dt><dd><p>df (NDArray): Исходные данные
+labels (NDArray): Метки кластеров</p>
+</dd>
+<dt>Возвращает:</dt><dd><p>EstimationContainer: Экземпляр контейнера с обработанными данными</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="gamac.estimation.container.EstimationContainer.k">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">k</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#gamac.estimation.container.EstimationContainer.k" title="Ссылка на это определение"></a></dt>
+<dd><p>Количество кластеров.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="gamac.estimation.container.EstimationContainer.n_b">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">n_b</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#gamac.estimation.container.EstimationContainer.n_b" title="Ссылка на это определение"></a></dt>
+<dd><p>Количество межкластерных пар объектов.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="gamac.estimation.container.EstimationContainer.n_w">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">n_w</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#gamac.estimation.container.EstimationContainer.n_w" title="Ссылка на это определение"></a></dt>
+<dd><p>Количество внутрикластерных пар объектов.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="gamac.estimation.container.EstimationContainer.sym_dists">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">sym_dists</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">cupy.typing.NDArray</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#gamac.estimation.container.EstimationContainer.sym_dists" title="Ссылка на это определение"></a></dt>
+<dd><p>Симметризованные расстояния между объектами.</p>
+<p>Вычисляется лениво с использованием GPU-ускорения.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-gamac.estimation.external">
+<span id="gamac-estimation-external-module"></span><h2>gamac.estimation.external module<a class="headerlink" href="#module-gamac.estimation.external" title="Ссылка на этот заголовок"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="gamac.estimation.external.External">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gamac.estimation.external.</span></span><span class="sig-name descname"><span class="pre">External</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">new_class_name</span></span></em>, <em class="sig-param"><span class="positional-only-separator o"><abbr title="Positional-only parameter separator (PEP 570)"><span class="pre">/</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">names</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">module</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">qualname</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">boundary</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gamac/estimation/external.html#External"><span class="viewcode-link"><span class="pre">[исходный</span> <span class="pre">код]</span></span></a><a class="headerlink" href="#gamac.estimation.external.External" title="Ссылка на это определение"></a></dt>
+<dd><p>Базовые классы: <code class="xref py py-class docutils literal notranslate"><span class="pre">Enum</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="gamac.estimation.external.External.F1">
+<span class="sig-name descname"><span class="pre">F1</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">labels</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">cupy.typing.NDArray</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="headerlink" href="#gamac.estimation.external.External.F1" title="Ссылка на это определение"></a></dt>
+<dd><p>Реализация F1 меры</p>
+<dl class="field-list simple">
+<dt class="field-odd">Параметры<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>classes</strong> – NDArray</p></li>
+<li><p><strong>labels</strong> – NDArray</p></li>
+</ul>
+</dd>
+<dt class="field-even">Результат<span class="colon">:</span></dt>
+<dd class="field-even"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-gamac.estimation.functions">
+<span id="gamac-estimation-functions-module"></span><h2>gamac.estimation.functions module<a class="headerlink" href="#module-gamac.estimation.functions" title="Ссылка на этот заголовок"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="gamac.estimation.functions.br">
+<span class="sig-prename descclassname"><span class="pre">gamac.estimation.functions.</span></span><span class="sig-name descname"><span class="pre">br</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">container</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#gamac.estimation.container.EstimationContainer" title="gamac.estimation.container.EstimationContainer"><span class="pre">EstimationContainer</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="_modules/gamac/estimation/functions.html#br"><span class="viewcode-link"><span class="pre">[исходный</span> <span class="pre">код]</span></span></a><a class="headerlink" href="#gamac.estimation.functions.br" title="Ссылка на это определение"></a></dt>
+<dd><p>Функция вычисляет критерий Байеса-Рао (BR) для кластеров данных.</p>
+<section id="id1">
+<h3>Параметры:<a class="headerlink" href="#id1" title="Ссылка на этот заголовок"></a></h3>
+<dl class="simple">
+<dt>container<span class="classifier">EstimationContainer</span></dt><dd><dl class="simple">
+<dt>Объект контейнера, хранящий следующую информацию:</dt><dd><p>k       : Количество кластеров
+clusters: Список списков индексов точек, принадлежащих каждому кластеру
+cent_dists: Матрица расстояний от каждой точки до центра своего кластера
+n      : Общее количество объектов в наборе данных</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</section>
+<section id="id2">
+<h3>Возвращаемое значение:<a class="headerlink" href="#id2" title="Ссылка на этот заголовок"></a></h3>
+<dl class="simple">
+<dt>float</dt><dd><p>Значение критерия Байеса-Рао. Чем больше отрицательная величина, тем лучше качество разбиения на кластеры.</p>
+</dd>
+</dl>
+</section>
+<section id="id3">
+<h3>Примечания:<a class="headerlink" href="#id3" title="Ссылка на этот заголовок"></a></h3>
+<p>Для каждого кластера рассчитывается среднее квадратичное отклонение от центра кластера (вариация).
+Затем суммируются взвешенные логарифмы вариаций всех кластеров, нормализованные общим количеством объектов.</p>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="gamac.estimation.functions.c_index">
+<span class="sig-prename descclassname"><span class="pre">gamac.estimation.functions.</span></span><span class="sig-name descname"><span class="pre">c_index</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">container</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#gamac.estimation.container.EstimationContainer" title="gamac.estimation.container.EstimationContainer"><span class="pre">EstimationContainer</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="_modules/gamac/estimation/functions.html#c_index"><span class="viewcode-link"><span class="pre">[исходный</span> <span class="pre">код]</span></span></a><a class="headerlink" href="#gamac.estimation.functions.c_index" title="Ссылка на это определение"></a></dt>
+<dd><p>Вычисляет индекс C-кластеризации (C-index) набора данных.</p>
+<section id="id4">
+<h3>Параметры:<a class="headerlink" href="#id4" title="Ссылка на этот заголовок"></a></h3>
+<dl class="simple">
+<dt>container<span class="classifier">EstimationContainer</span></dt><dd><dl class="simple">
+<dt>Объект контейнера, содержащий всю необходимую информацию для расчета индекса:</dt><dd><ul class="simple">
+<li><p>data    : Входные данные</p></li>
+<li><p>n       : Число объектов</p></li>
+<li><p>d       : Размерность пространства признаков</p></li>
+<li><p>labels  : Метки классов/кластеров</p></li>
+<li><p>n_w     : Число пар точек внутри кластеров</p></li>
+</ul>
+</dd>
+</dl>
+</dd>
+</dl>
+</section>
+<section id="id5">
+<h3>Возвращаемое значение:<a class="headerlink" href="#id5" title="Ссылка на этот заголовок"></a></h3>
+<dl class="simple">
+<dt>float</dt><dd><p>Индекс C-кластеризации, нормированный в диапазоне [-1, 0]. Более высокие отрицательные значения означают лучшую кластеризацию.</p>
+</dd>
+</dl>
+</section>
+<section id="id6">
+<h3>Примечания:<a class="headerlink" href="#id6" title="Ссылка на этот заголовок"></a></h3>
+<p>Этот метод основан на сравнении суммарных расстояний между всеми парами точек внутри и вне кластеров.
+Используется оптимизированный алгоритм на GPU для ускорения расчетов.
+Подход заключается в вычислении минимального и максимального возможных суммарных расстояний среди пар точек и оценке реального распределения расстояний относительно этих границ.</p>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="gamac.estimation.functions.f1">
+<span class="sig-prename descclassname"><span class="pre">gamac.estimation.functions.</span></span><span class="sig-name descname"><span class="pre">f1</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">classes</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">cupy.typing.NDArray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">labels</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">cupy.typing.NDArray</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="_modules/gamac/estimation/functions.html#f1"><span class="viewcode-link"><span class="pre">[исходный</span> <span class="pre">код]</span></span></a><a class="headerlink" href="#gamac.estimation.functions.f1" title="Ссылка на это определение"></a></dt>
+<dd><p>Реализация F1 меры</p>
+<dl class="field-list simple">
+<dt class="field-odd">Параметры<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>classes</strong> – NDArray</p></li>
+<li><p><strong>labels</strong> – NDArray</p></li>
+</ul>
+</dd>
+<dt class="field-even">Результат<span class="colon">:</span></dt>
+<dd class="field-even"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="gamac.estimation.functions.mcr">
+<span class="sig-prename descclassname"><span class="pre">gamac.estimation.functions.</span></span><span class="sig-name descname"><span class="pre">mcr</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">container</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#gamac.estimation.container.EstimationContainer" title="gamac.estimation.container.EstimationContainer"><span class="pre">EstimationContainer</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="_modules/gamac/estimation/functions.html#mcr"><span class="viewcode-link"><span class="pre">[исходный</span> <span class="pre">код]</span></span></a><a class="headerlink" href="#gamac.estimation.functions.mcr" title="Ссылка на это определение"></a></dt>
+<dd><p>Вычисляет метрику межклассовой дисперсии (MCR), используя GPU вычисления.</p>
+<section id="id7">
+<h3>Параметры:<a class="headerlink" href="#id7" title="Ссылка на этот заголовок"></a></h3>
+<dl class="simple">
+<dt>container<span class="classifier">EstimationContainer</span></dt><dd><dl class="simple">
+<dt>Контейнер, содержащий данные для оценки метрики. Включает следующие поля:</dt><dd><ul class="simple">
+<li><p>data - входные данные</p></li>
+<li><p>n - количество выборок</p></li>
+<li><p>d - размерность признаков</p></li>
+<li><p>labels - метки классов</p></li>
+<li><p>n_w - общее число элементов внутри класса</p></li>
+<li><p>n_b - общее число элементов между классами</p></li>
+</ul>
+</dd>
+</dl>
+</dd>
+</dl>
+</section>
+<section id="id8">
+<h3>Возвращаемое значение:<a class="headerlink" href="#id8" title="Ссылка на этот заголовок"></a></h3>
+<dl class="simple">
+<dt>float</dt><dd><p>Отрицательное значение метрики межклассовой дисперсии (чем меньше абсолютная величина результата, тем лучше разделение).</p>
+</dd>
+</dl>
+</section>
+<section id="id9">
+<h3>Примечания:<a class="headerlink" href="#id9" title="Ссылка на этот заголовок"></a></h3>
+<p>Эта функция реализует вычислительный конвейер на GPU, распределяя работу по блокам и потокам CUDA.
+Использует вспомогательные массивы <cite>gpu_s_w</cite> и <cite>gpu_s_b</cite>, рассчитывая внутриклассовую (<cite>s_w</cite>) и межклассовую (<cite>s_b</cite>) дисперсию соответственно.
+Результат представляет собой отношение средних значений внутриклассовых и межклассовых дисперсий, умноженное на минус единицу для удобства интерпретации.</p>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="gamac.estimation.functions.os">
+<span class="sig-prename descclassname"><span class="pre">gamac.estimation.functions.</span></span><span class="sig-name descname"><span class="pre">os</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">container</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#gamac.estimation.container.EstimationContainer" title="gamac.estimation.container.EstimationContainer"><span class="pre">EstimationContainer</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gamac/estimation/functions.html#os"><span class="viewcode-link"><span class="pre">[исходный</span> <span class="pre">код]</span></span></a><a class="headerlink" href="#gamac.estimation.functions.os" title="Ссылка на это определение"></a></dt>
+<dd><p>Вычисляет показатель Optimized Silhouette (OS) для оценки качества кластеризации.</p>
+<section id="id10">
+<h3>Параметры:<a class="headerlink" href="#id10" title="Ссылка на этот заголовок"></a></h3>
+<dl class="simple">
+<dt>container<span class="classifier">EstimationContainer</span></dt><dd><dl class="simple">
+<dt>Объект, предоставляющий доступ к данным и параметрам кластеризации:</dt><dd><ul class="simple">
+<li><p>data          : исходные данные</p></li>
+<li><p>n            : количество объектов</p></li>
+<li><p>d            : размерность пространства признаков</p></li>
+<li><p>centroids     : координаты центроидов кластеров</p></li>
+<li><p>k            : количество кластеров</p></li>
+<li><p>labels        : метки принадлежности объектов к кластерам</p></li>
+<li><p>uniq_labels_gpu: уникальные метки кластеров на устройстве GPU</p></li>
+<li><p>cent_matrix   : матрица расстояний между центроидами</p></li>
+</ul>
+</dd>
+</dl>
+</dd>
+</dl>
+</section>
+<section id="id11">
+<h3>Возвращаемое значение:<a class="headerlink" href="#id11" title="Ссылка на этот заголовок"></a></h3>
+<dl class="simple">
+<dt>float</dt><dd><p>Оптимизированный коэффициент силуэта (Optimized Silhouette Score). Больше отрицательных значений соответствует лучшему качеству кластеризации.</p>
+</dd>
+</dl>
+</section>
+<section id="id12">
+<h3>Примечания:<a class="headerlink" href="#id12" title="Ссылка на этот заголовок"></a></h3>
+<dl class="simple">
+<dt>Показатель OS включает два основных компонента:</dt><dd><ol class="arabic simple">
+<li><p>Внутренняя компактность кластеров (O-value)</p></li>
+<li><p>Межкластерная сепарабельность (S-value)</p></li>
+</ol>
+</dd>
+</dl>
+<p>O-value вычисляется на GPU параллельно, тогда как S-value рассчитывается последовательным перебором ближайших соседних кластеров.
+Итоговый результат нормализуется делением первой величины на вторую и выводится с обратным знаком для улучшения интерпретируемости.</p>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="gamac.estimation.functions.sym">
+<span class="sig-prename descclassname"><span class="pre">gamac.estimation.functions.</span></span><span class="sig-name descname"><span class="pre">sym</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">container</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#gamac.estimation.container.EstimationContainer" title="gamac.estimation.container.EstimationContainer"><span class="pre">EstimationContainer</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="_modules/gamac/estimation/functions.html#sym"><span class="viewcode-link"><span class="pre">[исходный</span> <span class="pre">код]</span></span></a><a class="headerlink" href="#gamac.estimation.functions.sym" title="Ссылка на это определение"></a></dt>
+<dd><p>Вычисляет симметричную меру качества разделения кластеров (Symmetric Cluster Separation Measure).</p>
+<section id="id13">
+<h3>Параметры:<a class="headerlink" href="#id13" title="Ссылка на этот заголовок"></a></h3>
+<dl class="simple">
+<dt>container<span class="classifier">EstimationContainer</span></dt><dd><dl class="simple">
+<dt>Объект контейнера, содержащий необходимые данные для расчёта меры:</dt><dd><ul class="simple">
+<li><p>cent_matrix   : матрица центров кластеров</p></li>
+<li><p>sym_dists     : список матриц расстояний между объектами одного кластера</p></li>
+</ul>
+</dd>
+</dl>
+</dd>
+</dl>
+</section>
+<section id="id14">
+<h3>Возвращаемое значение:<a class="headerlink" href="#id14" title="Ссылка на этот заголовок"></a></h3>
+<dl class="simple">
+<dt>float</dt><dd><p>Симметричная мера разделения кластеров. Большее значение означает лучшее разделение.</p>
+</dd>
+</dl>
+</section>
+<section id="id15">
+<h3>Примечания:<a class="headerlink" href="#id15" title="Ссылка на этот заголовок"></a></h3>
+<dl class="simple">
+<dt>Мера основана на двух компонентах:</dt><dd><ol class="arabic simple">
+<li><p>Максимальное расстояние между центрами кластеров (d_k)</p></li>
+<li><p>Средняя сумма внутренних расстояний в каждом кластере (e_k)</p></li>
+</ol>
+</dd>
+</dl>
+<p>Результатом является соотношение максимального расстояния между центрами и средней внутренней связности.</p>
+</section>
+</dd></dl>
+
+</section>
+<section id="module-gamac.estimation.internal">
+<span id="gamac-estimation-internal-module"></span><h2>gamac.estimation.internal module<a class="headerlink" href="#module-gamac.estimation.internal" title="Ссылка на этот заголовок"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="gamac.estimation.internal.Internal">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gamac.estimation.internal.</span></span><span class="sig-name descname"><span class="pre">Internal</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">values</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gamac/estimation/internal.html#Internal"><span class="viewcode-link"><span class="pre">[исходный</span> <span class="pre">код]</span></span></a><a class="headerlink" href="#gamac.estimation.internal.Internal" title="Ссылка на это определение"></a></dt>
+<dd><p>Базовые классы: <code class="xref py py-class docutils literal notranslate"><span class="pre">Enum</span></code></p>
+<p>Перечисление внутренних метрик оценки качества кластеризации.</p>
+<dl class="simple">
+<dt>Атрибуты:</dt><dd><p>BR: Метрика Banfield-Raftery
+OS: Метрика OS (относительная разделимость)
+MCR: Метрика McClain-Rao
+SYM: Симметричная метрика</p>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="gamac.estimation.internal.Internal.BR">
+<span class="sig-name descname"><span class="pre">BR</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">('banfield_raftery',</span> <span class="pre">&lt;function</span> <span class="pre">br&gt;)</span></em><a class="headerlink" href="#gamac.estimation.internal.Internal.BR" title="Ссылка на это определение"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="gamac.estimation.internal.Internal.MCR">
+<span class="sig-name descname"><span class="pre">MCR</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">('mc_clain_rao',</span> <span class="pre">&lt;function</span> <span class="pre">mcr&gt;)</span></em><a class="headerlink" href="#gamac.estimation.internal.Internal.MCR" title="Ссылка на это определение"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="gamac.estimation.internal.Internal.OS">
+<span class="sig-name descname"><span class="pre">OS</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">('os',</span> <span class="pre">&lt;function</span> <span class="pre">os&gt;)</span></em><a class="headerlink" href="#gamac.estimation.internal.Internal.OS" title="Ссылка на это определение"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="gamac.estimation.internal.Internal.SYM">
+<span class="sig-name descname"><span class="pre">SYM</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">('sym',</span> <span class="pre">&lt;function</span> <span class="pre">sym&gt;)</span></em><a class="headerlink" href="#gamac.estimation.internal.Internal.SYM" title="Ссылка на это определение"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="gamac.estimation.internal.InternalEvaluator">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gamac.estimation.internal.</span></span><span class="sig-name descname"><span class="pre">InternalEvaluator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">cupy.typing.NDArray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pivots</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#gamac.estimation.internal.Internal" title="gamac.estimation.internal.Internal"><span class="pre">Internal</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gamac/estimation/internal.html#InternalEvaluator"><span class="viewcode-link"><span class="pre">[исходный</span> <span class="pre">код]</span></span></a><a class="headerlink" href="#gamac.estimation.internal.InternalEvaluator" title="Ссылка на это определение"></a></dt>
+<dd><p>Базовые классы: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Класс для оценки качества кластеризации с использованием внутренних метрик.</p>
+<p>Позволяет сравнивать различные кластеризации на основе заданных метрик.</p>
+<dl class="simple">
+<dt>Атрибуты:</dt><dd><p>df (DataFrameType): Исходные данные
+pivots (EstimationResult): Опорные значения метрик для случайной кластеризации</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="gamac.estimation.internal.InternalEvaluator.compare">
+<span class="sig-name descname"><span class="pre">compare</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#gamac.estimation.internal.Internal" title="gamac.estimation.internal.Internal"><span class="pre">Internal</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#gamac.estimation.internal.Internal" title="gamac.estimation.internal.Internal"><span class="pre">Internal</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="_modules/gamac/estimation/internal.html#InternalEvaluator.compare"><span class="viewcode-link"><span class="pre">[исходный</span> <span class="pre">код]</span></span></a><a class="headerlink" href="#gamac.estimation.internal.InternalEvaluator.compare" title="Ссылка на это определение"></a></dt>
+<dd><p>Сравнивает два результата оценки.</p>
+<dl class="simple">
+<dt>Аргументы:</dt><dd><p>x (EstimationResult): Первый результат
+y (EstimationResult): Второй результат</p>
+</dd>
+<dt>Возвращает:</dt><dd><p>float: Суммарная оценка сравнения по всем метрикам</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="gamac.estimation.internal.InternalEvaluator.create">
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">create</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">cupy.typing.NDArray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">measures</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Set</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#gamac.estimation.internal.Internal" title="gamac.estimation.internal.Internal"><span class="pre">Internal</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#gamac.estimation.internal.InternalEvaluator" title="gamac.estimation.internal.InternalEvaluator"><span class="pre">InternalEvaluator</span></a></span></span><a class="reference internal" href="_modules/gamac/estimation/internal.html#InternalEvaluator.create"><span class="viewcode-link"><span class="pre">[исходный</span> <span class="pre">код]</span></span></a><a class="headerlink" href="#gamac.estimation.internal.InternalEvaluator.create" title="Ссылка на это определение"></a></dt>
+<dd><p>Фабричный метод для создания оценщика.</p>
+<p>Вычисляет опорные значения метрик для случайной кластеризации.</p>
+<dl class="simple">
+<dt>Аргументы:</dt><dd><p>df (DataFrameType): Исходные данные
+measures (Set[Internal]): Набор метрик для оценки</p>
+</dd>
+<dt>Возвращает:</dt><dd><p>InternalEvaluator: Инициализированный оценщик</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="gamac.estimation.internal.InternalEvaluator.create_container">
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">create_container</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">cupy.typing.NDArray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">labels</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">cupy.typing.NDArray</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#gamac.estimation.container.EstimationContainer" title="gamac.estimation.container.EstimationContainer"><span class="pre">EstimationContainer</span></a></span></span><a class="reference internal" href="_modules/gamac/estimation/internal.html#InternalEvaluator.create_container"><span class="viewcode-link"><span class="pre">[исходный</span> <span class="pre">код]</span></span></a><a class="headerlink" href="#gamac.estimation.internal.InternalEvaluator.create_container" title="Ссылка на это определение"></a></dt>
+<dd><p>Создает контейнер для вычисления метрик.</p>
+<dl class="simple">
+<dt>Аргументы:</dt><dd><p>df (DataFrameType): Исходные данные
+labels (LabelsType): Метки кластеров</p>
+</dd>
+<dt>Возвращает:</dt><dd><p>EstimationContainer: Контейнер с данными кластеризации</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="gamac.estimation.internal.InternalEvaluator.eval_internal">
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">eval_internal</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">cupy.typing.NDArray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">measures</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Set</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#gamac.estimation.internal.Internal" title="gamac.estimation.internal.Internal"><span class="pre">Internal</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">labels</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">cupy.typing.NDArray</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#gamac.estimation.internal.Internal" title="gamac.estimation.internal.Internal"><span class="pre">Internal</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/gamac/estimation/internal.html#InternalEvaluator.eval_internal"><span class="viewcode-link"><span class="pre">[исходный</span> <span class="pre">код]</span></span></a><a class="headerlink" href="#gamac.estimation.internal.InternalEvaluator.eval_internal" title="Ссылка на это определение"></a></dt>
+<dd><p>Вычисляет значения внутренних метрик для заданной кластеризации.</p>
+<dl class="simple">
+<dt>Аргументы:</dt><dd><p>df (DataFrameType): Исходные данные
+measures (Set[Internal]): Набор метрик для вычисления
+labels (LabelsType): Метки кластеров</p>
+</dd>
+<dt>Возвращает:</dt><dd><p>EstimationResult: Словарь со значениями метрик</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="gamac.estimation.internal.InternalEvaluator.evaluate">
+<span class="sig-name descname"><span class="pre">evaluate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">labels</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">cupy.typing.NDArray</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#gamac.estimation.internal.Internal" title="gamac.estimation.internal.Internal"><span class="pre">Internal</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/gamac/estimation/internal.html#InternalEvaluator.evaluate"><span class="viewcode-link"><span class="pre">[исходный</span> <span class="pre">код]</span></span></a><a class="headerlink" href="#gamac.estimation.internal.InternalEvaluator.evaluate" title="Ссылка на это определение"></a></dt>
+<dd><p>Вычисляет значения метрик для заданной кластеризации.</p>
+<dl class="simple">
+<dt>Аргументы:</dt><dd><p>labels (LabelsType): Метки кластеров для оценки</p>
+</dd>
+<dt>Возвращает:</dt><dd><p>EstimationResult: Словарь со значениями метрик</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="gamac.estimation.internal.InternalEvaluator.is_better">
+<span class="sig-name descname"><span class="pre">is_better</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#gamac.estimation.internal.Internal" title="gamac.estimation.internal.Internal"><span class="pre">Internal</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#gamac.estimation.internal.Internal" title="gamac.estimation.internal.Internal"><span class="pre">Internal</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="_modules/gamac/estimation/internal.html#InternalEvaluator.is_better"><span class="viewcode-link"><span class="pre">[исходный</span> <span class="pre">код]</span></span></a><a class="headerlink" href="#gamac.estimation.internal.InternalEvaluator.is_better" title="Ссылка на это определение"></a></dt>
+<dd><p>Определяет, является ли первый результат лучше второго.</p>
+<dl class="simple">
+<dt>Аргументы:</dt><dd><p>x (EstimationResult): Первый результат
+y (EstimationResult): Второй результат</p>
+</dd>
+<dt>Возвращает:</dt><dd><p>bool: True если x лучше y, иначе False</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="gamac.estimation.internal.InternalEvaluator.rewards">
+<span class="sig-name descname"><span class="pre">rewards</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">estimates</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#gamac.estimation.internal.Internal" title="gamac.estimation.internal.Internal"><span class="pre">Internal</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/gamac/estimation/internal.html#InternalEvaluator.rewards"><span class="viewcode-link"><span class="pre">[исходный</span> <span class="pre">код]</span></span></a><a class="headerlink" href="#gamac.estimation.internal.InternalEvaluator.rewards" title="Ссылка на это определение"></a></dt>
+<dd><p>Вычисляет оценки «полезности» для списка результатов.</p>
+<dl class="simple">
+<dt>Аргументы:</dt><dd><p>estimates (List[EstimationResult]): Список результатов оценки</p>
+</dd>
+<dt>Возвращает:</dt><dd><p>List[float]: Список оценок полезности</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Нижняя область">
+        <a href="gamac.data.html" class="btn btn-neutral float-left" title="gamac.data package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Предыдущая</a>
+        <a href="gamac.kernels.html" class="btn btn-neutral float-right" title="gamac.kernels package" accesskey="n" rel="next">Следующая <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Авторские права 2025, Sergey Muravyov, Nikita Kulin, Ivan Usov, Olga Muravyova, Simar Muratov. </p>
+  </div>
+
+  Собрано при помощи <a href="https://www.sphinx-doc.org/">Sphinx</a> с использованием
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">темы,</a>
+    предоставленной <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

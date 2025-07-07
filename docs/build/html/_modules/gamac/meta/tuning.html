@@ -1,0 +1,178 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="ru" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>gamac.meta.tuning &mdash; документация GaMAC 1.0.0</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=e35015f7"></script>
+      <script src="../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../../_static/translations.js?v=cd1d70c9"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Алфавитный указатель" href="../../../genindex.html" />
+    <link rel="search" title="Поиск" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            GaMAC
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Поиск в документации" aria-label="Поиск в документации" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Меню навигации">
+              <p class="caption" role="heading"><span class="caption-text">API Reference:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../modules.html">gamac</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Меню навигации для мобильных устройств" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">GaMAC</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Навигация по страницам">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Код модуля</a></li>
+      <li class="breadcrumb-item active">gamac.meta.tuning</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Исходный код gamac.meta.tuning</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Optimise meta-classifier F1-score by tuning hyperparameters</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.metrics</span><span class="w"> </span><span class="kn">import</span> <span class="n">make_scorer</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.model_selection</span><span class="w"> </span><span class="kn">import</span> <span class="n">cross_validate</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">gamac.meta.build</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_smooth_labels</span><span class="p">,</span> <span class="n">shuffle_data</span><span class="p">,</span> <span class="n">collect_raw_meta_dataset</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">gamac.meta.impl.models</span><span class="w"> </span><span class="kn">import</span> <span class="n">ModelProvider</span>
+
+
+<div class="viewcode-block" id="tune_classifier">
+<a class="viewcode-back" href="../../../gamac.meta.html#gamac.meta.tuning.tune_classifier">[документация]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">tune_classifier</span><span class="p">(</span><span class="n">x_orig</span><span class="p">,</span> <span class="n">y_orig</span><span class="p">,</span> <span class="n">weights</span><span class="p">):</span>
+    <span class="n">classifiers_stat</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">extractor</span> <span class="ow">in</span> <span class="n">ModelProvider</span><span class="o">.</span><span class="n">get_extractors</span><span class="p">():</span>
+        <span class="n">ext_model</span> <span class="o">=</span> <span class="n">extractor</span><span class="o">.</span><span class="n">algo</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">x_orig</span><span class="p">)</span>
+        <span class="n">x_reduced</span> <span class="o">=</span> <span class="n">ext_model</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">x_orig</span><span class="p">)</span>
+        <span class="n">z_smooth</span> <span class="o">=</span> <span class="n">get_smooth_labels</span><span class="p">(</span><span class="n">x_reduced</span><span class="p">,</span> <span class="n">y_orig</span><span class="p">,</span> <span class="n">weights</span><span class="p">)</span>
+        <span class="n">x</span><span class="p">,</span> <span class="n">z</span> <span class="o">=</span> <span class="n">shuffle_data</span><span class="p">(</span><span class="n">x_reduced</span><span class="p">,</span> <span class="n">z_smooth</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">classifier</span> <span class="ow">in</span> <span class="n">ModelProvider</span><span class="o">.</span><span class="n">get_classifiers</span><span class="p">():</span>
+            <span class="n">classifier_dict</span> <span class="o">=</span> <span class="n">cross_validate</span><span class="p">(</span>
+                <span class="n">classifier</span><span class="o">.</span><span class="n">algo</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="n">cv</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">scoring</span><span class="o">=</span><span class="s1">&#39;f1_macro&#39;</span>
+            <span class="p">)</span>
+            <span class="n">score</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">classifier_dict</span><span class="p">[</span><span class="s1">&#39;test_score&#39;</span><span class="p">])</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="p">(</span><span class="n">extractor</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">classifier</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">score</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+            <span class="n">classifiers_stat</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">classifiers_stat</span></div>
+
+
+
+<div class="viewcode-block" id="smape_loss">
+<a class="viewcode-back" href="../../../gamac.meta.html#gamac.meta.tuning.smape_loss">[документация]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">smape_loss</span><span class="p">(</span><span class="n">y_true</span><span class="p">,</span> <span class="n">y_pred</span><span class="p">):</span>
+    <span class="n">diff</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">y_true</span> <span class="o">-</span> <span class="n">y_pred</span><span class="p">)</span>
+    <span class="n">norm</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">y_true</span><span class="p">)</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">y_pred</span><span class="p">)</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">diff</span> <span class="o">/</span> <span class="n">norm</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="tune_regressors">
+<a class="viewcode-back" href="../../../gamac.meta.html#gamac.meta.tuning.tune_regressors">[документация]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">tune_regressors</span><span class="p">(</span><span class="n">x_orig</span><span class="p">,</span> <span class="n">y_orig</span><span class="p">):</span>
+    <span class="n">smape_score</span> <span class="o">=</span> <span class="n">make_scorer</span><span class="p">(</span><span class="n">smape_loss</span><span class="p">,</span> <span class="n">greater_is_better</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">regressors_stat</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">extractor</span> <span class="ow">in</span> <span class="n">ModelProvider</span><span class="o">.</span><span class="n">get_extractors</span><span class="p">():</span>
+        <span class="n">ext_model</span> <span class="o">=</span> <span class="n">extractor</span><span class="o">.</span><span class="n">algo</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">x_orig</span><span class="p">)</span>
+        <span class="n">x_reduced</span> <span class="o">=</span> <span class="n">ext_model</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">x_orig</span><span class="p">)</span>
+        <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">shuffle_data</span><span class="p">(</span><span class="n">x_reduced</span><span class="p">,</span> <span class="n">y_orig</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">regressor</span> <span class="ow">in</span> <span class="n">ModelProvider</span><span class="o">.</span><span class="n">get_regressors</span><span class="p">():</span>
+            <span class="n">regressor_dict</span> <span class="o">=</span> <span class="n">cross_validate</span><span class="p">(</span>
+                <span class="n">regressor</span><span class="o">.</span><span class="n">algo</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">cv</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">scoring</span><span class="o">=</span><span class="n">smape_score</span>
+            <span class="p">)</span>
+            <span class="n">score</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">regressor_dict</span><span class="p">[</span><span class="s1">&#39;test_score&#39;</span><span class="p">])</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="p">(</span><span class="n">extractor</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">regressor</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">score</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+            <span class="n">regressors_stat</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">regressors_stat</span></div>
+
+
+
+<div class="viewcode-block" id="tune">
+<a class="viewcode-back" href="../../../gamac.meta.html#gamac.meta.tuning.tune">[документация]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">tune</span><span class="p">():</span>
+    <span class="n">_</span><span class="p">,</span> <span class="n">x_orig</span><span class="p">,</span> <span class="n">y_orig</span><span class="p">,</span> <span class="n">weights</span> <span class="o">=</span> <span class="n">collect_raw_meta_dataset</span><span class="p">()</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;=== CLASSIFIERS ===&quot;</span><span class="p">)</span>
+    <span class="n">tune_classifier</span><span class="p">(</span><span class="n">x_orig</span><span class="p">,</span> <span class="n">y_orig</span><span class="p">,</span> <span class="n">weights</span><span class="p">)</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;=== REGRESSORS ===&quot;</span><span class="p">)</span>
+    <span class="n">tune_regressors</span><span class="p">(</span><span class="n">x_orig</span><span class="p">,</span> <span class="n">y_orig</span><span class="p">)</span></div>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="n">tune</span><span class="p">()</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Авторские права 2025, Sergey Muravyov, Nikita Kulin, Ivan Usov, Olga Muravyova, Simar Muratov. </p>
+  </div>
+
+  Собрано при помощи <a href="https://www.sphinx-doc.org/">Sphinx</a> с использованием
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">темы,</a>
+    предоставленной <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

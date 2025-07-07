@@ -1,0 +1,271 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="ru" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>gamac.pipeline.cvi_predictor &mdash; документация GaMAC 1.0.0</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=e35015f7"></script>
+      <script src="../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../../_static/translations.js?v=cd1d70c9"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Алфавитный указатель" href="../../../genindex.html" />
+    <link rel="search" title="Поиск" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            GaMAC
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Поиск в документации" aria-label="Поиск в документации" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Меню навигации">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../modules.html">gamac</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Меню навигации для мобильных устройств" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">GaMAC</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Навигация по страницам">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Код модуля</a></li>
+      <li class="breadcrumb-item active">gamac.pipeline.cvi_predictor</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Исходный код gamac.pipeline.cvi_predictor</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Основной скрипт этапа подсказки метрик кластеризации.</span>
+
+<span class="sd">Модуль содержит класс для предсказания наиболее подходящих внутренних метрик</span>
+<span class="sd">оценки качества кластеризации (Cluster Validity Indices, CVI) на основе </span>
+<span class="sd">анализа мета-признаков входных данных.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pickle</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">gamac.data.data_pipeline</span><span class="w"> </span><span class="kn">import</span> <span class="n">DataFrameType</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">gamac.estimation.internal</span><span class="w"> </span><span class="kn">import</span> <span class="n">Internal</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">cupy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">cp</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">gamac.kernels</span><span class="w"> </span><span class="kn">import</span> <span class="n">BATCH_SIZE</span><span class="p">,</span> <span class="n">MIDDLEWARE</span>
+
+
+<div class="viewcode-block" id="load_pickle">
+<a class="viewcode-back" href="../../../gamac.pipeline.html#gamac.pipeline.cvi_predictor.load_pickle">[документация]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">load_pickle</span><span class="p">(</span><span class="n">file</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Загружает объект из pickle-файла.</span>
+<span class="sd">    </span>
+<span class="sd">    Аргументы:</span>
+<span class="sd">        file (str): Имя файла в директории bin</span>
+<span class="sd">        </span>
+<span class="sd">    Возвращает:</span>
+<span class="sd">        Any: Загруженный Python-объект</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">real_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">realpath</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)</span>
+    <span class="n">dir_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">real_path</span><span class="p">)</span>
+    <span class="n">root_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">dir_path</span><span class="p">)</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">root_path</span><span class="si">}</span><span class="s2">/bin/</span><span class="si">{</span><span class="n">file</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s1">&#39;rb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">fp</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">pickle</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">fp</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="CVIPredictor">
+<a class="viewcode-back" href="../../../gamac.pipeline.html#gamac.pipeline.cvi_predictor.CVIPredictor">[документация]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">CVIPredictor</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Класс для предсказания оптимальных метрик оценки кластеризации.</span>
+<span class="sd">    </span>
+<span class="sd">    Использует предобученные модели для анализа мета-признаков данных</span>
+<span class="sd">    и выбора наиболее подходящих метрик качества кластеризации.</span>
+<span class="sd">    </span>
+<span class="sd">    Атрибуты:</span>
+<span class="sd">        BUCKETS (int): Количество корзин для гистограммного анализа</span>
+<span class="sd">        MEASURES_BY_INDEX (list): Список метрик, соответствующих индексам модели</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="n">BUCKETS</span> <span class="o">=</span> <span class="mi">128</span>  <span class="c1"># Количество интервалов для статистики расстояний</span>
+    <span class="n">MEASURES_BY_INDEX</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="n">Internal</span><span class="o">.</span><span class="n">OS</span><span class="p">,</span>  <span class="c1"># Метрика OS (относительная разделимость)</span>
+        <span class="n">Internal</span><span class="o">.</span><span class="n">SYM</span><span class="p">,</span>  <span class="c1"># Симметричная метрика</span>
+        <span class="n">Internal</span><span class="o">.</span><span class="n">BR</span><span class="p">,</span>   <span class="c1"># Метрика Banfield-Raftery</span>
+        <span class="n">Internal</span><span class="o">.</span><span class="n">MCR</span>   <span class="c1"># Метрика McClain-Rao</span>
+    <span class="p">]</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Инициализирует предиктор, загружая предобученные модели.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">extractor</span> <span class="o">=</span> <span class="n">load_pickle</span><span class="p">(</span><span class="s1">&#39;extractor.pkl&#39;</span><span class="p">)</span>  <span class="c1"># Модель преобразования признаков</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="o">=</span> <span class="n">load_pickle</span><span class="p">(</span><span class="s1">&#39;classifier.pkl&#39;</span><span class="p">)</span>     <span class="c1"># Классификатор метрик</span>
+
+<div class="viewcode-block" id="CVIPredictor.run">
+<a class="viewcode-back" href="../../../gamac.pipeline.html#gamac.pipeline.cvi_predictor.CVIPredictor.run">[документация]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">df</span><span class="p">:</span> <span class="n">DataFrameType</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Internal</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Основной метод для предсказания оптимальной метрики.</span>
+<span class="sd">        </span>
+<span class="sd">        Аргументы:</span>
+<span class="sd">            df (DataFrameType): Входные данные для анализа</span>
+<span class="sd">            </span>
+<span class="sd">        Возвращает:</span>
+<span class="sd">            Internal: Рекомендуемая метрика оценки качества кластеризации</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">meta_features</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_meta_features</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
+        <span class="n">transformed</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_transform</span><span class="p">(</span><span class="n">meta_features</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_predict</span><span class="p">(</span><span class="n">transformed</span><span class="p">)</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_meta_features</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">df</span><span class="p">:</span> <span class="n">DataFrameType</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Вычисляет мета-признаки на основе распределения расстояний.</span>
+<span class="sd">        </span>
+<span class="sd">        Аргументы:</span>
+<span class="sd">            df (DataFrameType): Входные данные</span>
+<span class="sd">            </span>
+<span class="sd">        Возвращает:</span>
+<span class="sd">            np.ndarray: Массив мета-признаков (нормированный)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">n</span><span class="p">,</span> <span class="n">dims</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">shape</span>
+        <span class="n">d_max</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="s1">&#39;-inf&#39;</span><span class="p">)</span>  <span class="c1"># Максимальное расстояние в данных</span>
+        <span class="n">quotient</span><span class="p">,</span> <span class="n">remainder</span> <span class="o">=</span> <span class="nb">divmod</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">BUCKETS</span><span class="p">)</span>
+
+        <span class="c1"># Выделение памяти на GPU</span>
+        <span class="n">gpu_partial_arr</span> <span class="o">=</span> <span class="n">cp</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="n">BATCH_SIZE</span><span class="p">,</span> <span class="n">n</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+        <span class="n">gpu_stats_arr</span> <span class="o">=</span> <span class="n">cp</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="n">BATCH_SIZE</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">BUCKETS</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+
+        <span class="n">mfs_accumulator</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">BUCKETS</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+
+        <span class="n">iterations</span> <span class="o">=</span> <span class="n">n</span> <span class="o">//</span> <span class="n">BATCH_SIZE</span> <span class="o">+</span> <span class="p">(</span><span class="mi">0</span> <span class="k">if</span> <span class="n">n</span> <span class="o">%</span> <span class="n">BATCH_SIZE</span> <span class="o">==</span> <span class="mi">0</span> <span class="k">else</span> <span class="mi">1</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">iter_idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">iterations</span><span class="p">):</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;=== CVI prediction iteration </span><span class="si">{</span><span class="n">iter_idx</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="si">}</span><span class="s1">/</span><span class="si">{</span><span class="n">iterations</span><span class="si">}</span><span class="s1"> ====&#39;</span><span class="p">)</span>
+            <span class="n">batch_start</span> <span class="o">=</span> <span class="n">iter_idx</span> <span class="o">*</span> <span class="n">BATCH_SIZE</span>
+            <span class="n">batch_size</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">BATCH_SIZE</span><span class="p">,</span> <span class="n">n</span> <span class="o">-</span> <span class="n">batch_start</span><span class="p">)</span>
+
+            <span class="c1"># Вычисление частичных расстояний на GPU</span>
+            <span class="n">MIDDLEWARE</span><span class="o">.</span><span class="n">meta_dist_partial</span><span class="p">(</span>
+                <span class="n">N</span><span class="o">=</span><span class="n">n</span><span class="p">,</span>
+                <span class="n">D</span><span class="o">=</span><span class="n">dims</span><span class="p">,</span>
+                <span class="n">data</span><span class="o">=</span><span class="n">df</span><span class="p">,</span>
+                <span class="n">batch_start</span><span class="o">=</span><span class="n">batch_start</span><span class="p">,</span>
+                <span class="n">batch_size</span><span class="o">=</span><span class="n">batch_size</span><span class="p">,</span>
+                <span class="n">partial_dists</span><span class="o">=</span><span class="n">gpu_partial_arr</span><span class="p">,</span>
+            <span class="p">)</span><span class="o">.</span><span class="n">invoke</span><span class="p">(</span>
+                <span class="n">grid</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">n</span><span class="p">),</span>
+                <span class="n">blocks</span><span class="o">=</span><span class="p">(</span><span class="n">batch_size</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
+            <span class="p">)</span>
+
+            <span class="c1"># Сортировка и поиск максимального расстояния</span>
+            <span class="n">gpu_partial_arr</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+            <span class="n">cpu_d_max_arr</span> <span class="o">=</span> <span class="n">cp</span><span class="o">.</span><span class="n">asnumpy</span><span class="p">(</span><span class="n">gpu_partial_arr</span><span class="p">[:,</span> <span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+            <span class="n">d_max</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">d_max</span><span class="p">,</span> <span class="o">*</span><span class="n">cpu_d_max_arr</span><span class="p">[:</span><span class="n">batch_size</span><span class="p">])</span>
+
+            <span class="c1"># Вычисление статистики по корзинам</span>
+            <span class="n">MIDDLEWARE</span><span class="o">.</span><span class="n">meta_dist_stat</span><span class="p">(</span>
+                <span class="n">Q</span><span class="o">=</span><span class="n">quotient</span><span class="p">,</span>
+                <span class="n">R</span><span class="o">=</span><span class="n">remainder</span><span class="p">,</span>
+                <span class="n">N</span><span class="o">=</span><span class="n">n</span><span class="p">,</span>
+                <span class="n">sorted_dists</span><span class="o">=</span><span class="n">gpu_partial_arr</span><span class="p">,</span>
+                <span class="n">batch_size</span><span class="o">=</span><span class="n">batch_size</span><span class="p">,</span>
+                <span class="n">dist_stats</span><span class="o">=</span><span class="n">gpu_stats_arr</span><span class="p">,</span>
+            <span class="p">)</span><span class="o">.</span><span class="n">invoke</span><span class="p">(</span>
+                <span class="n">grid</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">BUCKETS</span><span class="p">),</span>
+                <span class="n">blocks</span><span class="o">=</span><span class="p">(</span><span class="n">batch_size</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
+            <span class="p">)</span>
+
+            <span class="c1"># Агрегация результатов</span>
+            <span class="n">cpu_stats_arr</span> <span class="o">=</span> <span class="n">cp</span><span class="o">.</span><span class="n">asnumpy</span><span class="p">(</span><span class="n">gpu_stats_arr</span><span class="p">)</span>
+            <span class="n">batch_accumulator</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span>
+                <span class="n">cpu_stats_arr</span><span class="p">[:</span><span class="n">batch_size</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span>
+            <span class="p">)</span>
+            <span class="n">mfs_accumulator</span> <span class="o">+=</span> <span class="n">batch_accumulator</span>
+
+        <span class="c1"># Нормировка мета-признаков</span>
+        <span class="k">return</span> <span class="n">mfs_accumulator</span><span class="o">.</span><span class="n">flatten</span><span class="p">(</span><span class="n">order</span><span class="o">=</span><span class="s1">&#39;F&#39;</span><span class="p">)</span> <span class="o">/</span> <span class="n">d_max</span> <span class="o">/</span> <span class="n">n</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_transform</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">meta_features</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Применяет преобразование признаков.</span>
+<span class="sd">        </span>
+<span class="sd">        Аргументы:</span>
+<span class="sd">            meta_features (np.ndarray): Сырые мета-признаки</span>
+<span class="sd">            </span>
+<span class="sd">        Возвращает:</span>
+<span class="sd">            np.ndarray: Преобразованные признаки</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">extractor</span><span class="o">.</span><span class="n">transform</span><span class="p">([</span><span class="n">meta_features</span><span class="p">])[</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_predict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">transformed</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Internal</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Выполняет предсказание оптимальной метрики.</span>
+<span class="sd">        </span>
+<span class="sd">        Аргументы:</span>
+<span class="sd">            transformed (np.ndarray): Преобразованные мета-признаки</span>
+<span class="sd">            </span>
+<span class="sd">        Возвращает:</span>
+<span class="sd">            Internal: Рекомендуемая метрика</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">cvi_index</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">predict</span><span class="p">([</span><span class="n">transformed</span><span class="p">])[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">MEASURES_BY_INDEX</span><span class="p">[</span><span class="n">cvi_index</span><span class="p">]</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Авторские права 2025, Sergey Muravyov, Nikita Kulin, Ivan Usov, Olga Muravyova, Simar Muratov. </p>
+  </div>
+
+  Собрано при помощи <a href="https://www.sphinx-doc.org/">Sphinx</a> с использованием
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">темы,</a>
+    предоставленной <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

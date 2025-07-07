@@ -1,0 +1,682 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="ru" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>gamac package &mdash; документация GaMAC 1.0.0</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=e35015f7"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="_static/translations.js?v=cd1d70c9"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Алфавитный указатель" href="genindex.html" />
+    <link rel="search" title="Поиск" href="search.html" />
+    <link rel="next" title="gamac.algorithms package" href="gamac.algorithms.html" />
+    <link rel="prev" title="gamac" href="modules.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            GaMAC
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Поиск в документации" aria-label="Поиск в документации" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Меню навигации">
+              <p class="caption" role="heading"><span class="caption-text">API Reference:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">gamac</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#">gamac package</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#subpackages">Subpackages</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="gamac.algorithms.html">gamac.algorithms package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="gamac.bin.html">gamac.bin package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="gamac.data.html">gamac.data package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="gamac.estimation.html">gamac.estimation package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="gamac.kernels.html">gamac.kernels package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="gamac.meta.html">gamac.meta package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="gamac.pipeline.html">gamac.pipeline package</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#submodules">Submodules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-gamac.autoclustering">gamac.autoclustering module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#gamac.autoclustering.Gamac"><code class="docutils literal notranslate"><span class="pre">Gamac</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Меню навигации для мобильных устройств" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">GaMAC</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Навигация по страницам">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="modules.html">gamac</a></li>
+      <li class="breadcrumb-item active">gamac package</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/gamac.rst.txt" rel="nofollow"> Просмотреть исходный код страницы</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="gamac-package">
+<h1>gamac package<a class="headerlink" href="#gamac-package" title="Ссылка на этот заголовок"></a></h1>
+<section id="subpackages">
+<h2>Subpackages<a class="headerlink" href="#subpackages" title="Ссылка на этот заголовок"></a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="gamac.algorithms.html">gamac.algorithms package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="gamac.algorithms.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="gamac.algorithms.html#module-gamac.algorithms.base">gamac.algorithms.base module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="gamac.algorithms.html#gamac.algorithms.base.AlgoConfig"><code class="docutils literal notranslate"><span class="pre">AlgoConfig</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="gamac.algorithms.html#gamac.algorithms.base.AlgoConfig.config_space"><code class="docutils literal notranslate"><span class="pre">AlgoConfig.config_space</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="gamac.algorithms.html#gamac.algorithms.base.AlgoConfig.builder"><code class="docutils literal notranslate"><span class="pre">AlgoConfig.builder</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="gamac.algorithms.html#gamac.algorithms.base.AlgoConfig.algo_name"><code class="docutils literal notranslate"><span class="pre">AlgoConfig.algo_name</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="gamac.algorithms.html#gamac.algorithms.base.AlgoConfig.build"><code class="docutils literal notranslate"><span class="pre">AlgoConfig.build()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="gamac.algorithms.html#gamac.algorithms.base.ClusteringAlgo"><code class="docutils literal notranslate"><span class="pre">ClusteringAlgo</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="gamac.algorithms.html#gamac.algorithms.base.ClusteringAlgo.name"><code class="docutils literal notranslate"><span class="pre">ClusteringAlgo.name</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="gamac.algorithms.html#gamac.algorithms.base.ClusteringAlgo.fit"><code class="docutils literal notranslate"><span class="pre">ClusteringAlgo.fit()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="gamac.algorithms.html#gamac.algorithms.base.ClusteringAlgo.fit_predict"><code class="docutils literal notranslate"><span class="pre">ClusteringAlgo.fit_predict()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="gamac.algorithms.html#gamac.algorithms.base.ClusteringAlgo.make_seed"><code class="docutils literal notranslate"><span class="pre">ClusteringAlgo.make_seed()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="gamac.algorithms.html#gamac.algorithms.base.ClusteringModel"><code class="docutils literal notranslate"><span class="pre">ClusteringModel</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="gamac.algorithms.html#gamac.algorithms.base.ClusteringModel.labels_"><code class="docutils literal notranslate"><span class="pre">ClusteringModel.labels_</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="gamac.algorithms.html#gamac.algorithms.base.ClusteringModel.predict"><code class="docutils literal notranslate"><span class="pre">ClusteringModel.predict()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="gamac.algorithms.html#module-gamac.algorithms.birch">gamac.algorithms.birch module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="gamac.algorithms.html#gamac.algorithms.birch.Birch"><code class="docutils literal notranslate"><span class="pre">Birch</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="gamac.algorithms.html#gamac.algorithms.birch.Birch.threshold"><code class="docutils literal notranslate"><span class="pre">Birch.threshold</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="gamac.algorithms.html#gamac.algorithms.birch.Birch.branching_factor"><code class="docutils literal notranslate"><span class="pre">Birch.branching_factor</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="gamac.algorithms.html#gamac.algorithms.birch.Birch.n_clusters"><code class="docutils literal notranslate"><span class="pre">Birch.n_clusters</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="gamac.algorithms.html#gamac.algorithms.birch.Birch.subcluster_labels"><code class="docutils literal notranslate"><span class="pre">Birch.subcluster_labels</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="gamac.algorithms.html#gamac.algorithms.birch.Birch.tree"><code class="docutils literal notranslate"><span class="pre">Birch.tree</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="gamac.algorithms.html#gamac.algorithms.birch.Birch.fit"><code class="docutils literal notranslate"><span class="pre">Birch.fit()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="gamac.algorithms.html#gamac.algorithms.birch.BirchConfig"><code class="docutils literal notranslate"><span class="pre">BirchConfig</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="gamac.algorithms.html#gamac.algorithms.birch.BirchConfig.config_space"><code class="docutils literal notranslate"><span class="pre">BirchConfig.config_space</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="gamac.algorithms.html#gamac.algorithms.birch.BirchModel"><code class="docutils literal notranslate"><span class="pre">BirchModel</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="gamac.algorithms.html#gamac.algorithms.birch.BirchModel.subcluster_labels"><code class="docutils literal notranslate"><span class="pre">BirchModel.subcluster_labels</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="gamac.algorithms.html#gamac.algorithms.birch.BirchModel.tree"><code class="docutils literal notranslate"><span class="pre">BirchModel.tree</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="gamac.algorithms.html#gamac.algorithms.birch.BirchModel.predict"><code class="docutils literal notranslate"><span class="pre">BirchModel.predict()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="gamac.algorithms.html#gamac.algorithms.birch.CFNodeGPU"><code class="docutils literal notranslate"><span class="pre">CFNodeGPU</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="gamac.algorithms.html#gamac.algorithms.birch.CFNodeGPU.threshold"><code class="docutils literal notranslate"><span class="pre">CFNodeGPU.threshold</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="gamac.algorithms.html#gamac.algorithms.birch.CFNodeGPU.branching_factor"><code class="docutils literal notranslate"><span class="pre">CFNodeGPU.branching_factor</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="gamac.algorithms.html#gamac.algorithms.birch.CFNodeGPU.is_leaf"><code class="docutils literal notranslate"><span class="pre">CFNodeGPU.is_leaf</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="gamac.algorithms.html#gamac.algorithms.birch.CFNodeGPU.cfs"><code class="docutils literal notranslate"><span class="pre">CFNodeGPU.cfs</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="gamac.algorithms.html#gamac.algorithms.birch.CFNodeGPU.children"><code class="docutils literal notranslate"><span class="pre">CFNodeGPU.children</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="gamac.algorithms.html#gamac.algorithms.birch.CFNodeGPU.next"><code class="docutils literal notranslate"><span class="pre">CFNodeGPU.next</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="gamac.algorithms.html#gamac.algorithms.birch.CFNodeGPU.find_closest_child"><code class="docutils literal notranslate"><span class="pre">CFNodeGPU.find_closest_child()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="gamac.algorithms.html#gamac.algorithms.birch.CFNodeGPU.insert"><code class="docutils literal notranslate"><span class="pre">CFNodeGPU.insert()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="gamac.algorithms.html#gamac.algorithms.birch.CFNodeGPU.split"><code class="docutils literal notranslate"><span class="pre">CFNodeGPU.split()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="gamac.algorithms.html#gamac.algorithms.birch.CFTreeGPU"><code class="docutils literal notranslate"><span class="pre">CFTreeGPU</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="gamac.algorithms.html#gamac.algorithms.birch.CFTreeGPU.threshold"><code class="docutils literal notranslate"><span class="pre">CFTreeGPU.threshold</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="gamac.algorithms.html#gamac.algorithms.birch.CFTreeGPU.branching_factor"><code class="docutils literal notranslate"><span class="pre">CFTreeGPU.branching_factor</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="gamac.algorithms.html#gamac.algorithms.birch.CFTreeGPU.root"><code class="docutils literal notranslate"><span class="pre">CFTreeGPU.root</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="gamac.algorithms.html#gamac.algorithms.birch.CFTreeGPU.insert"><code class="docutils literal notranslate"><span class="pre">CFTreeGPU.insert()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="gamac.algorithms.html#gamac.algorithms.birch.ClusteringFeatureGPU"><code class="docutils literal notranslate"><span class="pre">ClusteringFeatureGPU</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="gamac.algorithms.html#gamac.algorithms.birch.ClusteringFeatureGPU.n"><code class="docutils literal notranslate"><span class="pre">ClusteringFeatureGPU.n</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="gamac.algorithms.html#gamac.algorithms.birch.ClusteringFeatureGPU.LS"><code class="docutils literal notranslate"><span class="pre">ClusteringFeatureGPU.LS</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="gamac.algorithms.html#gamac.algorithms.birch.ClusteringFeatureGPU.SS"><code class="docutils literal notranslate"><span class="pre">ClusteringFeatureGPU.SS</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="gamac.algorithms.html#gamac.algorithms.birch.ClusteringFeatureGPU.add_point"><code class="docutils literal notranslate"><span class="pre">ClusteringFeatureGPU.add_point()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="gamac.algorithms.html#gamac.algorithms.birch.ClusteringFeatureGPU.centroid"><code class="docutils literal notranslate"><span class="pre">ClusteringFeatureGPU.centroid()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="gamac.algorithms.html#gamac.algorithms.birch.ClusteringFeatureGPU.merge"><code class="docutils literal notranslate"><span class="pre">ClusteringFeatureGPU.merge()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="gamac.algorithms.html#gamac.algorithms.birch.ClusteringFeatureGPU.radius"><code class="docutils literal notranslate"><span class="pre">ClusteringFeatureGPU.radius()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="gamac.algorithms.html#module-gamac.algorithms.bisecting_kmeans">gamac.algorithms.bisecting_kmeans module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="gamac.algorithms.html#gamac.algorithms.bisecting_kmeans.BisectingKMeans"><code class="docutils literal notranslate"><span class="pre">BisectingKMeans</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="gamac.algorithms.html#gamac.algorithms.bisecting_kmeans.BisectingKMeans.n_clusters"><code class="docutils literal notranslate"><span class="pre">BisectingKMeans.n_clusters</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="gamac.algorithms.html#gamac.algorithms.bisecting_kmeans.BisectingKMeans.max_iter"><code class="docutils literal notranslate"><span class="pre">BisectingKMeans.max_iter</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="gamac.algorithms.html#gamac.algorithms.bisecting_kmeans.BisectingKMeans.init"><code class="docutils literal notranslate"><span class="pre">BisectingKMeans.init</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="gamac.algorithms.html#gamac.algorithms.bisecting_kmeans.BisectingKMeans.tol"><code class="docutils literal notranslate"><span class="pre">BisectingKMeans.tol</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="gamac.algorithms.html#gamac.algorithms.bisecting_kmeans.BisectingKMeans.fit"><code class="docutils literal notranslate"><span class="pre">BisectingKMeans.fit()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="gamac.algorithms.html#gamac.algorithms.bisecting_kmeans.BisectingKMeansConfig"><code class="docutils literal notranslate"><span class="pre">BisectingKMeansConfig</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="gamac.algorithms.html#gamac.algorithms.bisecting_kmeans.BisectingKMeansConfig.config_space"><code class="docutils literal notranslate"><span class="pre">BisectingKMeansConfig.config_space</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="gamac.algorithms.html#gamac.algorithms.bisecting_kmeans.BisectingKMeansModel"><code class="docutils literal notranslate"><span class="pre">BisectingKMeansModel</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="gamac.algorithms.html#gamac.algorithms.bisecting_kmeans.BisectingKMeansModel.centroids_"><code class="docutils literal notranslate"><span class="pre">BisectingKMeansModel.centroids_</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="gamac.algorithms.html#gamac.algorithms.bisecting_kmeans.BisectingKMeansModel.predict"><code class="docutils literal notranslate"><span class="pre">BisectingKMeansModel.predict()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="gamac.algorithms.html#module-gamac.algorithms.dbscan">gamac.algorithms.dbscan module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="gamac.algorithms.html#gamac.algorithms.dbscan.DBSCAN"><code class="docutils literal notranslate"><span class="pre">DBSCAN</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="gamac.algorithms.html#gamac.algorithms.dbscan.DBSCAN.eps"><code class="docutils literal notranslate"><span class="pre">DBSCAN.eps</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="gamac.algorithms.html#gamac.algorithms.dbscan.DBSCAN.eps_sq"><code class="docutils literal notranslate"><span class="pre">DBSCAN.eps_sq</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="gamac.algorithms.html#gamac.algorithms.dbscan.DBSCAN.min_samples"><code class="docutils literal notranslate"><span class="pre">DBSCAN.min_samples</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="gamac.algorithms.html#gamac.algorithms.dbscan.DBSCAN.X"><code class="docutils literal notranslate"><span class="pre">DBSCAN.X</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="gamac.algorithms.html#gamac.algorithms.dbscan.DBSCAN.fit"><code class="docutils literal notranslate"><span class="pre">DBSCAN.fit()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="gamac.algorithms.html#gamac.algorithms.dbscan.DBSCANConfig"><code class="docutils literal notranslate"><span class="pre">DBSCANConfig</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="gamac.algorithms.html#gamac.algorithms.dbscan.DBSCANConfig.config_space"><code class="docutils literal notranslate"><span class="pre">DBSCANConfig.config_space</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="gamac.algorithms.html#gamac.algorithms.dbscan.DBSCANModel"><code class="docutils literal notranslate"><span class="pre">DBSCANModel</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="gamac.algorithms.html#gamac.algorithms.dbscan.DBSCANModel.X_"><code class="docutils literal notranslate"><span class="pre">DBSCANModel.X_</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="gamac.algorithms.html#gamac.algorithms.dbscan.DBSCANModel.eps_sq"><code class="docutils literal notranslate"><span class="pre">DBSCANModel.eps_sq</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="gamac.algorithms.html#gamac.algorithms.dbscan.DBSCANModel.predict"><code class="docutils literal notranslate"><span class="pre">DBSCANModel.predict()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="gamac.algorithms.html#module-gamac.algorithms.hdbscan">gamac.algorithms.hdbscan module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="gamac.algorithms.html#gamac.algorithms.hdbscan.HDBSCAN"><code class="docutils literal notranslate"><span class="pre">HDBSCAN</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="gamac.algorithms.html#gamac.algorithms.hdbscan.HDBSCAN.fit"><code class="docutils literal notranslate"><span class="pre">HDBSCAN.fit()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="gamac.algorithms.html#gamac.algorithms.hdbscan.HDBSCANConfig"><code class="docutils literal notranslate"><span class="pre">HDBSCANConfig</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="gamac.algorithms.html#gamac.algorithms.hdbscan.HDBSCANModel"><code class="docutils literal notranslate"><span class="pre">HDBSCANModel</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="gamac.algorithms.html#gamac.algorithms.hdbscan.HDBSCANModel.labels_"><code class="docutils literal notranslate"><span class="pre">HDBSCANModel.labels_</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="gamac.algorithms.html#gamac.algorithms.hdbscan.HDBSCANModel.X_"><code class="docutils literal notranslate"><span class="pre">HDBSCANModel.X_</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="gamac.algorithms.html#gamac.algorithms.hdbscan.HDBSCANModel.predict"><code class="docutils literal notranslate"><span class="pre">HDBSCANModel.predict()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="gamac.algorithms.html#module-gamac.algorithms.kmeans">gamac.algorithms.kmeans module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="gamac.algorithms.html#gamac.algorithms.kmeans.KMeans"><code class="docutils literal notranslate"><span class="pre">KMeans</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="gamac.algorithms.html#gamac.algorithms.kmeans.KMeans.fit"><code class="docutils literal notranslate"><span class="pre">KMeans.fit()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="gamac.algorithms.html#gamac.algorithms.kmeans.KMeansConfig"><code class="docutils literal notranslate"><span class="pre">KMeansConfig</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="gamac.algorithms.html#gamac.algorithms.kmeans.KMeansModel"><code class="docutils literal notranslate"><span class="pre">KMeansModel</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="gamac.algorithms.html#gamac.algorithms.kmeans.KMeansModel.predict"><code class="docutils literal notranslate"><span class="pre">KMeansModel.predict()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="gamac.algorithms.html#module-gamac.algorithms.meanshift">gamac.algorithms.meanshift module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="gamac.algorithms.html#gamac.algorithms.meanshift.MeanShift"><code class="docutils literal notranslate"><span class="pre">MeanShift</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="gamac.algorithms.html#gamac.algorithms.meanshift.MeanShift.fit"><code class="docutils literal notranslate"><span class="pre">MeanShift.fit()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="gamac.algorithms.html#gamac.algorithms.meanshift.MeanShiftConfig"><code class="docutils literal notranslate"><span class="pre">MeanShiftConfig</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="gamac.algorithms.html#gamac.algorithms.meanshift.MeanShiftModel"><code class="docutils literal notranslate"><span class="pre">MeanShiftModel</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="gamac.algorithms.html#gamac.algorithms.meanshift.MeanShiftModel.predict"><code class="docutils literal notranslate"><span class="pre">MeanShiftModel.predict()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="gamac.bin.html">gamac.bin package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="gamac.data.html">gamac.data package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="gamac.data.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="gamac.data.html#module-gamac.data.data_enrichment">gamac.data.data_enrichment module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="gamac.data.html#gamac.data.data_enrichment.enrich_nginx_data"><code class="docutils literal notranslate"><span class="pre">enrich_nginx_data()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="gamac.data.html#gamac.data.data_enrichment.get_linux_data"><code class="docutils literal notranslate"><span class="pre">get_linux_data()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="gamac.data.html#gamac.data.data_enrichment.get_nginx_data"><code class="docutils literal notranslate"><span class="pre">get_nginx_data()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="gamac.data.html#gamac.data.data_enrichment.k_means_clustering"><code class="docutils literal notranslate"><span class="pre">k_means_clustering()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="gamac.data.html#gamac.data.data_enrichment.main"><code class="docutils literal notranslate"><span class="pre">main()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="gamac.data.html#gamac.data.data_enrichment.preprocess_data"><code class="docutils literal notranslate"><span class="pre">preprocess_data()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="gamac.data.html#module-gamac.data.data_pipeline">gamac.data.data_pipeline module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="gamac.data.html#gamac.data.data_pipeline.DataHandler"><code class="docutils literal notranslate"><span class="pre">DataHandler</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="gamac.data.html#gamac.data.data_pipeline.DataHandler.concat_dataset"><code class="docutils literal notranslate"><span class="pre">DataHandler.concat_dataset()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="gamac.data.html#gamac.data.data_pipeline.DataHandler.run"><code class="docutils literal notranslate"><span class="pre">DataHandler.run()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="gamac.data.html#gamac.data.data_pipeline.DataHandler.table_preprocess"><code class="docutils literal notranslate"><span class="pre">DataHandler.table_preprocess()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="gamac.data.html#gamac.data.data_pipeline.DataHandler.text_image_preprocess"><code class="docutils literal notranslate"><span class="pre">DataHandler.text_image_preprocess()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="gamac.data.html#module-gamac.data.modal_preprocessing">gamac.data.modal_preprocessing module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="gamac.data.html#gamac.data.modal_preprocessing.get_clip_embeddings"><code class="docutils literal notranslate"><span class="pre">get_clip_embeddings()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="gamac.data.html#module-gamac.data.table_preprocessing">gamac.data.table_preprocessing module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="gamac.data.html#gamac.data.table_preprocessing.load_dataframe"><code class="docutils literal notranslate"><span class="pre">load_dataframe()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="gamac.data.html#gamac.data.table_preprocessing.table_preprocessing"><code class="docutils literal notranslate"><span class="pre">table_preprocessing()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="gamac.estimation.html">gamac.estimation package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="gamac.estimation.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="gamac.estimation.html#module-gamac.estimation.container">gamac.estimation.container module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="gamac.estimation.html#gamac.estimation.container.EstimationContainer"><code class="docutils literal notranslate"><span class="pre">EstimationContainer</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="gamac.estimation.html#gamac.estimation.container.EstimationContainer.NOISE_THRESHOLD"><code class="docutils literal notranslate"><span class="pre">EstimationContainer.NOISE_THRESHOLD</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="gamac.estimation.html#gamac.estimation.container.EstimationContainer.cent_dists"><code class="docutils literal notranslate"><span class="pre">EstimationContainer.cent_dists</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="gamac.estimation.html#gamac.estimation.container.EstimationContainer.cent_matrix"><code class="docutils literal notranslate"><span class="pre">EstimationContainer.cent_matrix</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="gamac.estimation.html#gamac.estimation.container.EstimationContainer.centroids"><code class="docutils literal notranslate"><span class="pre">EstimationContainer.centroids</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="gamac.estimation.html#gamac.estimation.container.EstimationContainer.clusters"><code class="docutils literal notranslate"><span class="pre">EstimationContainer.clusters</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="gamac.estimation.html#gamac.estimation.container.EstimationContainer.create"><code class="docutils literal notranslate"><span class="pre">EstimationContainer.create()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="gamac.estimation.html#gamac.estimation.container.EstimationContainer.k"><code class="docutils literal notranslate"><span class="pre">EstimationContainer.k</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="gamac.estimation.html#gamac.estimation.container.EstimationContainer.n_b"><code class="docutils literal notranslate"><span class="pre">EstimationContainer.n_b</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="gamac.estimation.html#gamac.estimation.container.EstimationContainer.n_w"><code class="docutils literal notranslate"><span class="pre">EstimationContainer.n_w</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="gamac.estimation.html#gamac.estimation.container.EstimationContainer.sym_dists"><code class="docutils literal notranslate"><span class="pre">EstimationContainer.sym_dists</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="gamac.estimation.html#module-gamac.estimation.external">gamac.estimation.external module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="gamac.estimation.html#gamac.estimation.external.External"><code class="docutils literal notranslate"><span class="pre">External</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="gamac.estimation.html#gamac.estimation.external.External.F1"><code class="docutils literal notranslate"><span class="pre">External.F1()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="gamac.estimation.html#module-gamac.estimation.functions">gamac.estimation.functions module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="gamac.estimation.html#gamac.estimation.functions.br"><code class="docutils literal notranslate"><span class="pre">br()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="gamac.estimation.html#gamac.estimation.functions.c_index"><code class="docutils literal notranslate"><span class="pre">c_index()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="gamac.estimation.html#gamac.estimation.functions.f1"><code class="docutils literal notranslate"><span class="pre">f1()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="gamac.estimation.html#gamac.estimation.functions.mcr"><code class="docutils literal notranslate"><span class="pre">mcr()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="gamac.estimation.html#gamac.estimation.functions.os"><code class="docutils literal notranslate"><span class="pre">os()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="gamac.estimation.html#gamac.estimation.functions.sym"><code class="docutils literal notranslate"><span class="pre">sym()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="gamac.estimation.html#module-gamac.estimation.internal">gamac.estimation.internal module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="gamac.estimation.html#gamac.estimation.internal.Internal"><code class="docutils literal notranslate"><span class="pre">Internal</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="gamac.estimation.html#gamac.estimation.internal.Internal.BR"><code class="docutils literal notranslate"><span class="pre">Internal.BR</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="gamac.estimation.html#gamac.estimation.internal.Internal.MCR"><code class="docutils literal notranslate"><span class="pre">Internal.MCR</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="gamac.estimation.html#gamac.estimation.internal.Internal.OS"><code class="docutils literal notranslate"><span class="pre">Internal.OS</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="gamac.estimation.html#gamac.estimation.internal.Internal.SYM"><code class="docutils literal notranslate"><span class="pre">Internal.SYM</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="gamac.estimation.html#gamac.estimation.internal.InternalEvaluator"><code class="docutils literal notranslate"><span class="pre">InternalEvaluator</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="gamac.estimation.html#gamac.estimation.internal.InternalEvaluator.compare"><code class="docutils literal notranslate"><span class="pre">InternalEvaluator.compare()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="gamac.estimation.html#gamac.estimation.internal.InternalEvaluator.create"><code class="docutils literal notranslate"><span class="pre">InternalEvaluator.create()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="gamac.estimation.html#gamac.estimation.internal.InternalEvaluator.create_container"><code class="docutils literal notranslate"><span class="pre">InternalEvaluator.create_container()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="gamac.estimation.html#gamac.estimation.internal.InternalEvaluator.eval_internal"><code class="docutils literal notranslate"><span class="pre">InternalEvaluator.eval_internal()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="gamac.estimation.html#gamac.estimation.internal.InternalEvaluator.evaluate"><code class="docutils literal notranslate"><span class="pre">InternalEvaluator.evaluate()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="gamac.estimation.html#gamac.estimation.internal.InternalEvaluator.is_better"><code class="docutils literal notranslate"><span class="pre">InternalEvaluator.is_better()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="gamac.estimation.html#gamac.estimation.internal.InternalEvaluator.rewards"><code class="docutils literal notranslate"><span class="pre">InternalEvaluator.rewards()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="gamac.kernels.html">gamac.kernels package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="gamac.kernels.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="gamac.kernels.html#module-gamac.kernels.middleware">gamac.kernels.middleware module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="gamac.kernels.html#gamac.kernels.middleware.KernelInvocation"><code class="docutils literal notranslate"><span class="pre">KernelInvocation</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="gamac.kernels.html#gamac.kernels.middleware.KernelInvocation.invoke"><code class="docutils literal notranslate"><span class="pre">KernelInvocation.invoke()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="gamac.kernels.html#gamac.kernels.middleware.Middleware"><code class="docutils literal notranslate"><span class="pre">Middleware</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="gamac.kernels.html#gamac.kernels.middleware.Middleware.c_index"><code class="docutils literal notranslate"><span class="pre">Middleware.c_index()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="gamac.kernels.html#gamac.kernels.middleware.Middleware.crosstab"><code class="docutils literal notranslate"><span class="pre">Middleware.crosstab()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="gamac.kernels.html#gamac.kernels.middleware.Middleware.get_cent_dists"><code class="docutils literal notranslate"><span class="pre">Middleware.get_cent_dists()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="gamac.kernels.html#gamac.kernels.middleware.Middleware.get_cent_matrix"><code class="docutils literal notranslate"><span class="pre">Middleware.get_cent_matrix()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="gamac.kernels.html#gamac.kernels.middleware.Middleware.get_centroids"><code class="docutils literal notranslate"><span class="pre">Middleware.get_centroids()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="gamac.kernels.html#gamac.kernels.middleware.Middleware.get_sym_data"><code class="docutils literal notranslate"><span class="pre">Middleware.get_sym_data()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="gamac.kernels.html#gamac.kernels.middleware.Middleware.get_sym_dists"><code class="docutils literal notranslate"><span class="pre">Middleware.get_sym_dists()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="gamac.kernels.html#gamac.kernels.middleware.Middleware.kmeans_labels"><code class="docutils literal notranslate"><span class="pre">Middleware.kmeans_labels()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="gamac.kernels.html#gamac.kernels.middleware.Middleware.kmeans_sse"><code class="docutils literal notranslate"><span class="pre">Middleware.kmeans_sse()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="gamac.kernels.html#gamac.kernels.middleware.Middleware.mcr"><code class="docutils literal notranslate"><span class="pre">Middleware.mcr()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="gamac.kernels.html#gamac.kernels.middleware.Middleware.meta_dist_partial"><code class="docutils literal notranslate"><span class="pre">Middleware.meta_dist_partial()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="gamac.kernels.html#gamac.kernels.middleware.Middleware.meta_dist_stat"><code class="docutils literal notranslate"><span class="pre">Middleware.meta_dist_stat()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="gamac.kernels.html#gamac.kernels.middleware.Middleware.os"><code class="docutils literal notranslate"><span class="pre">Middleware.os()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="gamac.kernels.html#gamac.kernels.middleware.load_module"><code class="docutils literal notranslate"><span class="pre">load_module()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="gamac.meta.html">gamac.meta package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="gamac.meta.html#subpackages">Subpackages</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="gamac.meta.impl.html">gamac.meta.impl package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="gamac.meta.impl.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="gamac.meta.impl.html#module-gamac.meta.impl.cvi">gamac.meta.impl.cvi module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="gamac.meta.impl.html#module-gamac.meta.impl.mfs">gamac.meta.impl.mfs module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="gamac.meta.impl.html#module-gamac.meta.impl.models">gamac.meta.impl.models module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="gamac.meta.impl.html#module-gamac.meta.impl.ord">gamac.meta.impl.ord module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="gamac.meta.impl.html#module-gamac.meta.impl.producers">gamac.meta.impl.producers module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="gamac.meta.impl.html#module-gamac.meta.impl.reducers">gamac.meta.impl.reducers module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="gamac.meta.impl.html#module-gamac.meta.impl.utils">gamac.meta.impl.utils module</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="gamac.meta.storage.html">gamac.meta.storage package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="gamac.meta.storage.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="gamac.meta.storage.html#module-gamac.meta.storage.binaries">gamac.meta.storage.binaries module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="gamac.meta.storage.html#module-gamac.meta.storage.computed">gamac.meta.storage.computed module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="gamac.meta.storage.html#module-gamac.meta.storage.contents">gamac.meta.storage.contents module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="gamac.meta.storage.html#module-gamac.meta.storage.gathered">gamac.meta.storage.gathered module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="gamac.meta.storage.html#module-gamac.meta.storage.markups">gamac.meta.storage.markups module</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="gamac.meta.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="gamac.meta.html#module-gamac.meta.build">gamac.meta.build module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="gamac.meta.html#gamac.meta.build.build_binaries"><code class="docutils literal notranslate"><span class="pre">build_binaries()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="gamac.meta.html#gamac.meta.build.build_classifier"><code class="docutils literal notranslate"><span class="pre">build_classifier()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="gamac.meta.html#gamac.meta.build.build_extractor"><code class="docutils literal notranslate"><span class="pre">build_extractor()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="gamac.meta.html#gamac.meta.build.build_regressor"><code class="docutils literal notranslate"><span class="pre">build_regressor()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="gamac.meta.html#gamac.meta.build.collect_raw_meta_dataset"><code class="docutils literal notranslate"><span class="pre">collect_raw_meta_dataset()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="gamac.meta.html#gamac.meta.build.get_smooth_labels"><code class="docutils literal notranslate"><span class="pre">get_smooth_labels()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="gamac.meta.html#gamac.meta.build.shuffle_data"><code class="docutils literal notranslate"><span class="pre">shuffle_data()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="gamac.meta.html#module-gamac.meta.collector">gamac.meta.collector module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="gamac.meta.html#gamac.meta.collector.DatasetForMetaCVI"><code class="docutils literal notranslate"><span class="pre">DatasetForMetaCVI</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="gamac.meta.html#gamac.meta.collector.DatasetInfoCollector"><code class="docutils literal notranslate"><span class="pre">DatasetInfoCollector</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="gamac.meta.html#gamac.meta.collector.DatasetInfoCollector.persist"><code class="docutils literal notranslate"><span class="pre">DatasetInfoCollector.persist()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="gamac.meta.html#gamac.meta.collector.DatasetInfoCollector.save"><code class="docutils literal notranslate"><span class="pre">DatasetInfoCollector.save()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="gamac.meta.html#module-gamac.meta.features">gamac.meta.features module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="gamac.meta.html#gamac.meta.features.compute_meta_features"><code class="docutils literal notranslate"><span class="pre">compute_meta_features()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="gamac.meta.html#module-gamac.meta.generator">gamac.meta.generator module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="gamac.meta.html#gamac.meta.generator.launch"><code class="docutils literal notranslate"><span class="pre">launch()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="gamac.meta.html#module-gamac.meta.gui">gamac.meta.gui module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="gamac.meta.html#gamac.meta.gui.Application"><code class="docutils literal notranslate"><span class="pre">Application</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="gamac.meta.html#gamac.meta.gui.Application.data_ctx"><code class="docutils literal notranslate"><span class="pre">Application.data_ctx()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="gamac.meta.html#gamac.meta.gui.Application.next_data_ctx"><code class="docutils literal notranslate"><span class="pre">Application.next_data_ctx()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="gamac.meta.html#gamac.meta.gui.ComparisonContext"><code class="docutils literal notranslate"><span class="pre">ComparisonContext</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="gamac.meta.html#gamac.meta.gui.ComparisonContext.colour"><code class="docutils literal notranslate"><span class="pre">ComparisonContext.colour()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="gamac.meta.html#gamac.meta.gui.ComparisonContext.label"><code class="docutils literal notranslate"><span class="pre">ComparisonContext.label()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="gamac.meta.html#gamac.meta.gui.ComparisonContext.rendered_image_idx"><code class="docutils literal notranslate"><span class="pre">ComparisonContext.rendered_image_idx()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="gamac.meta.html#gamac.meta.gui.ComparisonContext.shift"><code class="docutils literal notranslate"><span class="pre">ComparisonContext.shift()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="gamac.meta.html#gamac.meta.gui.ComparisonContext.swap"><code class="docutils literal notranslate"><span class="pre">ComparisonContext.swap()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="gamac.meta.html#gamac.meta.gui.DataContext"><code class="docutils literal notranslate"><span class="pre">DataContext</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="gamac.meta.html#gamac.meta.gui.DataContext.choose"><code class="docutils literal notranslate"><span class="pre">DataContext.choose()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="gamac.meta.html#gamac.meta.gui.DataContext.comp_ctx"><code class="docutils literal notranslate"><span class="pre">DataContext.comp_ctx()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="gamac.meta.html#gamac.meta.gui.DataContext.has_next"><code class="docutils literal notranslate"><span class="pre">DataContext.has_next()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="gamac.meta.html#gamac.meta.gui.DataContext.next_comp_ctx"><code class="docutils literal notranslate"><span class="pre">DataContext.next_comp_ctx()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="gamac.meta.html#gamac.meta.gui.DataContext.persist"><code class="docutils literal notranslate"><span class="pre">DataContext.persist()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="gamac.meta.html#gamac.meta.gui.is_estimated"><code class="docutils literal notranslate"><span class="pre">is_estimated()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="gamac.meta.html#module-gamac.meta.measures">gamac.meta.measures module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="gamac.meta.html#gamac.meta.measures.compute_measures"><code class="docutils literal notranslate"><span class="pre">compute_measures()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="gamac.meta.html#gamac.meta.measures.traverse_measures"><code class="docutils literal notranslate"><span class="pre">traverse_measures()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="gamac.meta.html#module-gamac.meta.orderings">gamac.meta.orderings module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="gamac.meta.html#gamac.meta.orderings.compute_orderings"><code class="docutils literal notranslate"><span class="pre">compute_orderings()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="gamac.meta.html#gamac.meta.orderings.filter_accessors"><code class="docutils literal notranslate"><span class="pre">filter_accessors()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="gamac.meta.html#gamac.meta.orderings.order_measures"><code class="docutils literal notranslate"><span class="pre">order_measures()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="gamac.meta.html#module-gamac.meta.premeta">gamac.meta.premeta module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="gamac.meta.html#gamac.meta.premeta.compute_pre_meta_dataset"><code class="docutils literal notranslate"><span class="pre">compute_pre_meta_dataset()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="gamac.meta.html#gamac.meta.premeta.estimate_popularity"><code class="docutils literal notranslate"><span class="pre">estimate_popularity()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="gamac.meta.html#gamac.meta.premeta.estimate_weights"><code class="docutils literal notranslate"><span class="pre">estimate_weights()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="gamac.meta.html#gamac.meta.premeta.select_measures"><code class="docutils literal notranslate"><span class="pre">select_measures()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="gamac.meta.html#module-gamac.meta.render">gamac.meta.render module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="gamac.meta.html#gamac.meta.render.scatter_image"><code class="docutils literal notranslate"><span class="pre">scatter_image()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="gamac.meta.html#module-gamac.meta.scorings">gamac.meta.scorings module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="gamac.meta.html#gamac.meta.scorings.calc_disagreement"><code class="docutils literal notranslate"><span class="pre">calc_disagreement()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="gamac.meta.html#gamac.meta.scorings.calc_measures_scores"><code class="docutils literal notranslate"><span class="pre">calc_measures_scores()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="gamac.meta.html#gamac.meta.scorings.compute_scorings"><code class="docutils literal notranslate"><span class="pre">compute_scorings()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="gamac.meta.html#module-gamac.meta.tuning">gamac.meta.tuning module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="gamac.meta.html#gamac.meta.tuning.smape_loss"><code class="docutils literal notranslate"><span class="pre">smape_loss()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="gamac.meta.html#gamac.meta.tuning.tune"><code class="docutils literal notranslate"><span class="pre">tune()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="gamac.meta.html#gamac.meta.tuning.tune_classifier"><code class="docutils literal notranslate"><span class="pre">tune_classifier()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="gamac.meta.html#gamac.meta.tuning.tune_regressors"><code class="docutils literal notranslate"><span class="pre">tune_regressors()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="gamac.pipeline.html">gamac.pipeline package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="gamac.pipeline.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="gamac.pipeline.html#module-gamac.pipeline.config_samplers">gamac.pipeline.config_samplers module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="gamac.pipeline.html#gamac.pipeline.config_samplers.ConfigSampler"><code class="docutils literal notranslate"><span class="pre">ConfigSampler</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="gamac.pipeline.html#gamac.pipeline.config_samplers.ConfigSampler.suggest"><code class="docutils literal notranslate"><span class="pre">ConfigSampler.suggest()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="gamac.pipeline.html#gamac.pipeline.config_samplers.OptunaSampler"><code class="docutils literal notranslate"><span class="pre">OptunaSampler</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="gamac.pipeline.html#gamac.pipeline.config_samplers.RandomSampler"><code class="docutils literal notranslate"><span class="pre">RandomSampler</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="gamac.pipeline.html#module-gamac.pipeline.cvi_predictor">gamac.pipeline.cvi_predictor module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="gamac.pipeline.html#gamac.pipeline.cvi_predictor.CVIPredictor"><code class="docutils literal notranslate"><span class="pre">CVIPredictor</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="gamac.pipeline.html#gamac.pipeline.cvi_predictor.CVIPredictor.BUCKETS"><code class="docutils literal notranslate"><span class="pre">CVIPredictor.BUCKETS</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="gamac.pipeline.html#gamac.pipeline.cvi_predictor.CVIPredictor.MEASURES_BY_INDEX"><code class="docutils literal notranslate"><span class="pre">CVIPredictor.MEASURES_BY_INDEX</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="gamac.pipeline.html#gamac.pipeline.cvi_predictor.CVIPredictor.run"><code class="docutils literal notranslate"><span class="pre">CVIPredictor.run()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="gamac.pipeline.html#gamac.pipeline.cvi_predictor.load_pickle"><code class="docutils literal notranslate"><span class="pre">load_pickle()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="gamac.pipeline.html#module-gamac.pipeline.hyper_optimisers">gamac.pipeline.hyper_optimisers module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="gamac.pipeline.html#gamac.pipeline.hyper_optimisers.HyperOptimiser"><code class="docutils literal notranslate"><span class="pre">HyperOptimiser</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="gamac.pipeline.html#gamac.pipeline.hyper_optimisers.HyperOptimiser.WARMUP_TRIALS"><code class="docutils literal notranslate"><span class="pre">HyperOptimiser.WARMUP_TRIALS</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="gamac.pipeline.html#gamac.pipeline.hyper_optimisers.HyperOptimiser.step"><code class="docutils literal notranslate"><span class="pre">HyperOptimiser.step()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="gamac.pipeline.html#gamac.pipeline.hyper_optimisers.HyperOptimiser.success_runs"><code class="docutils literal notranslate"><span class="pre">HyperOptimiser.success_runs</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="gamac.pipeline.html#gamac.pipeline.hyper_optimisers.HyperOptimisers"><code class="docutils literal notranslate"><span class="pre">HyperOptimisers</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="gamac.pipeline.html#gamac.pipeline.hyper_optimisers.HyperOptimisers.OPTUNA"><code class="docutils literal notranslate"><span class="pre">HyperOptimisers.OPTUNA</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="gamac.pipeline.html#gamac.pipeline.hyper_optimisers.HyperOptimisers.RANDOM"><code class="docutils literal notranslate"><span class="pre">HyperOptimisers.RANDOM</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="gamac.pipeline.html#gamac.pipeline.hyper_optimisers.OptunaOptimiser"><code class="docutils literal notranslate"><span class="pre">OptunaOptimiser</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="gamac.pipeline.html#gamac.pipeline.hyper_optimisers.RandomOptimiser"><code class="docutils literal notranslate"><span class="pre">RandomOptimiser</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="gamac.pipeline.html#module-gamac.pipeline.mab_solvers">gamac.pipeline.mab_solvers module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="gamac.pipeline.html#gamac.pipeline.mab_solvers.MabSolver"><code class="docutils literal notranslate"><span class="pre">MabSolver</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="gamac.pipeline.html#gamac.pipeline.mab_solvers.MabSolver.pick_arm"><code class="docutils literal notranslate"><span class="pre">MabSolver.pick_arm()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="gamac.pipeline.html#gamac.pipeline.mab_solvers.MabSolver.run"><code class="docutils literal notranslate"><span class="pre">MabSolver.run()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="gamac.pipeline.html#gamac.pipeline.mab_solvers.MabSolvers"><code class="docutils literal notranslate"><span class="pre">MabSolvers</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="gamac.pipeline.html#gamac.pipeline.mab_solvers.MabSolvers.RANDOM"><code class="docutils literal notranslate"><span class="pre">MabSolvers.RANDOM</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="gamac.pipeline.html#gamac.pipeline.mab_solvers.MabSolvers.SOFTMAX"><code class="docutils literal notranslate"><span class="pre">MabSolvers.SOFTMAX</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="gamac.pipeline.html#gamac.pipeline.mab_solvers.RandomMab"><code class="docutils literal notranslate"><span class="pre">RandomMab</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="gamac.pipeline.html#gamac.pipeline.mab_solvers.RandomMab.pick_arm"><code class="docutils literal notranslate"><span class="pre">RandomMab.pick_arm()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="gamac.pipeline.html#gamac.pipeline.mab_solvers.SoftmaxMab"><code class="docutils literal notranslate"><span class="pre">SoftmaxMab</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="gamac.pipeline.html#gamac.pipeline.mab_solvers.SoftmaxMab.pick_arm"><code class="docutils literal notranslate"><span class="pre">SoftmaxMab.pick_arm()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="gamac.pipeline.html#module-gamac.pipeline.run_types">gamac.pipeline.run_types module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="gamac.pipeline.html#gamac.pipeline.run_types.FailedRun"><code class="docutils literal notranslate"><span class="pre">FailedRun</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="gamac.pipeline.html#gamac.pipeline.run_types.GamacResult"><code class="docutils literal notranslate"><span class="pre">GamacResult</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="gamac.pipeline.html#gamac.pipeline.run_types.GamacResult.labels"><code class="docutils literal notranslate"><span class="pre">GamacResult.labels</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="gamac.pipeline.html#gamac.pipeline.run_types.HistoryRun"><code class="docutils literal notranslate"><span class="pre">HistoryRun</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="gamac.pipeline.html#gamac.pipeline.run_types.Optimal"><code class="docutils literal notranslate"><span class="pre">Optimal</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="gamac.pipeline.html#gamac.pipeline.run_types.SuccessRun"><code class="docutils literal notranslate"><span class="pre">SuccessRun</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+</section>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Ссылка на этот заголовок"></a></h2>
+</section>
+<section id="module-gamac.autoclustering">
+<span id="gamac-autoclustering-module"></span><h2>gamac.autoclustering module<a class="headerlink" href="#module-gamac.autoclustering" title="Ссылка на этот заголовок"></a></h2>
+<p>Основной скрипт класса Gamac</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="gamac.autoclustering.Gamac">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gamac.autoclustering.</span></span><span class="sig-name descname"><span class="pre">Gamac</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mab_solver</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="gamac.pipeline.html#gamac.pipeline.mab_solvers.MabSolvers" title="gamac.pipeline.mab_solvers.MabSolvers"><span class="pre">MabSolvers</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">MabSolvers.SOFTMAX</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hyper_optimiser</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="gamac.pipeline.html#gamac.pipeline.hyper_optimisers.HyperOptimisers" title="gamac.pipeline.hyper_optimisers.HyperOptimisers"><span class="pre">HyperOptimisers</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">HyperOptimisers.OPTUNA</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target_measures</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Set</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="gamac.estimation.html#gamac.estimation.internal.Internal" title="gamac.estimation.internal.Internal"><span class="pre">Internal</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time_limit</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">iter_limit</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">50</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batch_size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">32</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'openai/clip-vit-large-patch14'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gamac/autoclustering.html#Gamac"><span class="viewcode-link"><span class="pre">[исходный</span> <span class="pre">код]</span></span></a><a class="headerlink" href="#gamac.autoclustering.Gamac" title="Ссылка на это определение"></a></dt>
+<dd><p>Базовые классы: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Основной класс Gamac для автоматической кластеризации мультимодальных данных.</p>
+<p>Класс реализует пайплайн для автоматического выбора алгоритма кластеризации и его гиперпараметров
+на основе многорукого бандита (MAB) и мета-обучения. Поддерживает обработку текстовых,
+изобразительных и табличных данных.</p>
+<p>Основные возможности:
+- Автоматический подбор алгоритма кластеризации (K-means, DBSCAN, HDBSCAN и др.)
+- Оптимизация гиперпараметров выбранного алгоритма
+- Подбор метрик качества кластеризации (CVI)
+- Обработка мультимодальных данных (текст, изображения, таблицы)
+- Интеграция с моделями CLIP для получения векторных представлений</p>
+<dl>
+<dt>Пример использования:</dt><dd><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">gamac</span> <span class="o">=</span> <span class="n">Gamac</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">result</span> <span class="o">=</span> <span class="n">gamac</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">text</span><span class="o">=</span><span class="n">text_data</span><span class="p">,</span> <span class="n">image</span><span class="o">=</span><span class="n">image_data</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">labels</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="gamac.autoclustering.Gamac.batch_size">
+<span class="sig-name descname"><span class="pre">batch_size</span></span><a class="headerlink" href="#gamac.autoclustering.Gamac.batch_size" title="Ссылка на это определение"></a></dt>
+<dd><p>Размер батча для обработки данных</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="gamac.autoclustering.Gamac.model_name">
+<span class="sig-name descname"><span class="pre">model_name</span></span><a class="headerlink" href="#gamac.autoclustering.Gamac.model_name" title="Ссылка на это определение"></a></dt>
+<dd><p>Название модели CLIP</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="gamac.autoclustering.Gamac.verbose">
+<span class="sig-name descname"><span class="pre">verbose</span></span><a class="headerlink" href="#gamac.autoclustering.Gamac.verbose" title="Ссылка на это определение"></a></dt>
+<dd><p>Флаг вывода дополнительной информации</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="gamac.autoclustering.Gamac.run">
+<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">table:</span> <span class="pre">~pandas.core.frame.DataFrame</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">text:</span> <span class="pre">list[str]</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">image:</span> <span class="pre">list[&lt;module</span> <span class="pre">'PIL.Image'</span> <span class="pre">from</span> <span class="pre">'C:\\Users\\157015\\AppData\\Local\\anaconda3\\Lib\\site-packages\\PIL\\Image.py'&gt;]</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">classes:</span> <span class="pre">list[int]</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="gamac.pipeline.html#gamac.pipeline.run_types.GamacResult" title="gamac.pipeline.run_types.GamacResult"><span class="pre">GamacResult</span></a></span></span><a class="reference internal" href="_modules/gamac/autoclustering.html#Gamac.run"><span class="viewcode-link"><span class="pre">[исходный</span> <span class="pre">код]</span></span></a><a class="headerlink" href="#gamac.autoclustering.Gamac.run" title="Ссылка на это определение"></a></dt>
+<dd><p>Запуск пайплайна</p>
+<dl class="field-list simple">
+<dt class="field-odd">Параметры<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>table</strong> (<em>DataFrame</em>) – Таблица из которой брать данные</p></li>
+<li><p><strong>text</strong> (<em>list</em><em>[</em><em>str</em><em>]</em>) – Текстовые данные</p></li>
+<li><p><strong>image</strong> (<em>list</em><em>[</em><em>Image</em><em>]</em>) – Картинки из которых брать данные</p></li>
+<li><p><strong>classes</strong> (<em>list</em><em>[</em><em>int</em><em>]</em>) – Внешняя разметка набора данных</p></li>
+</ul>
+</dd>
+<dt class="field-even">Результат<span class="colon">:</span></dt>
+<dd class="field-even"><p>Найденное разбиение с дополнительной мета-информацией</p>
+</dd>
+<dt class="field-odd">Тип результата<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="gamac.pipeline.html#gamac.pipeline.run_types.GamacResult" title="gamac.pipeline.run_types.GamacResult">GamacResult</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Нижняя область">
+        <a href="modules.html" class="btn btn-neutral float-left" title="gamac" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Предыдущая</a>
+        <a href="gamac.algorithms.html" class="btn btn-neutral float-right" title="gamac.algorithms package" accesskey="n" rel="next">Следующая <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Авторские права 2025, Sergey Muravyov, Nikita Kulin, Ivan Usov, Olga Muravyova, Simar Muratov. </p>
+  </div>
+
+  Собрано при помощи <a href="https://www.sphinx-doc.org/">Sphinx</a> с использованием
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">темы,</a>
+    предоставленной <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

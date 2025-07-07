@@ -17,6 +17,7 @@ __pycache__/
 .idea
 .Python
 build/
+!docs/build/
 develop-eggs/
 dist/
 downloads/
@@ -76,7 +77,7 @@ instance/
 # Scrapy stuff:
 .scrapy
 
-# Sphinx documentation
+# Sphinx documentation (exclude _build but allow build)
 docs/_build/
 
 # PyBuilder

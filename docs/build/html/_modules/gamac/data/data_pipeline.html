@@ -1,0 +1,219 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="ru" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>gamac.data.data_pipeline &mdash; документация GaMAC 1.0.0</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=e35015f7"></script>
+      <script src="../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../../_static/translations.js?v=cd1d70c9"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Алфавитный указатель" href="../../../genindex.html" />
+    <link rel="search" title="Поиск" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            GaMAC
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Поиск в документации" aria-label="Поиск в документации" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Меню навигации">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../modules.html">gamac</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Меню навигации для мобильных устройств" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">GaMAC</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Навигация по страницам">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Код модуля</a></li>
+      <li class="breadcrumb-item active">gamac.data.data_pipeline</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Исходный код gamac.data.data_pipeline</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Основной скрипт этапа предобработки данных&quot;&quot;&quot;</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">torch</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">cupy.typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">NDArray</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="kn">import</span> <span class="n">ndarray</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="kn">import</span> <span class="n">DataFrame</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">PIL</span><span class="w"> </span><span class="kn">import</span> <span class="n">Image</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">transformers</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">CLIPProcessor</span><span class="p">,</span>
+    <span class="n">CLIPModel</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">gamac.data.table_preprocessing</span><span class="w"> </span><span class="kn">import</span> <span class="n">table_preprocessing</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">gamac.data.modal_preprocessing</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_clip_embeddings</span>
+
+<span class="n">DataFrameType</span> <span class="o">=</span> <span class="n">NDArray</span>
+<span class="n">LabelsType</span> <span class="o">=</span> <span class="n">NDArray</span>
+
+
+<div class="viewcode-block" id="DataHandler">
+<a class="viewcode-back" href="../../../gamac.data.html#gamac.data.data_pipeline.DataHandler">[документация]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">DataHandler</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Класс обработчика данных для дальнейшей кластеризации&quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">clip_model</span><span class="p">,</span> <span class="n">clip_processor</span><span class="p">,</span> <span class="n">device</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">32</span><span class="p">,</span> <span class="n">verbose</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Инициализация класса</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            batch_size (int): размер батча для обработки</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">clip_model</span> <span class="o">=</span> <span class="n">clip_model</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">clip_processor</span> <span class="o">=</span> <span class="n">clip_processor</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">device</span> <span class="o">=</span> <span class="n">device</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">batch_size</span> <span class="o">=</span> <span class="n">batch_size</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span> <span class="o">=</span> <span class="n">verbose</span>
+
+<div class="viewcode-block" id="DataHandler.table_preprocess">
+<a class="viewcode-back" href="../../../gamac.data.html#gamac.data.data_pipeline.DataHandler.table_preprocess">[документация]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">table_preprocess</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">table</span><span class="p">:</span> <span class="n">DataFrame</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ndarray</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Предобработка таблицы</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            table (DataFrame): табличные данные</span>
+<span class="sd">        Returns:</span>
+<span class="sd">            ndarray</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">table_preprocessing</span><span class="p">(</span><span class="n">df</span><span class="o">=</span><span class="n">table</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">verbose</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="DataHandler.text_image_preprocess">
+<a class="viewcode-back" href="../../../gamac.data.html#gamac.data.data_pipeline.DataHandler.text_image_preprocess">[документация]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">text_image_preprocess</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">image</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Image</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">ndarray</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Предобработка текста и изображения</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            text (list[str]): Список текстовых данных</span>
+<span class="sd">            image (list[Image]): Список изображений</span>
+<span class="sd">        Returns:</span>
+<span class="sd">            ndarray</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">get_clip_embeddings</span><span class="p">(</span>
+            <span class="n">model</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">clip_model</span><span class="p">,</span>
+            <span class="n">processor</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">clip_processor</span><span class="p">,</span>
+            <span class="n">img_inputs</span><span class="o">=</span><span class="n">image</span><span class="p">,</span>
+            <span class="n">txt_inputs</span><span class="o">=</span><span class="n">text</span><span class="p">,</span>
+            <span class="n">batch_size</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">batch_size</span><span class="p">,</span>
+            <span class="n">device</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">device</span>
+        <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="DataHandler.concat_dataset">
+<a class="viewcode-back" href="../../../gamac.data.html#gamac.data.data_pipeline.DataHandler.concat_dataset">[документация]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">concat_dataset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">table_dataset</span><span class="p">:</span> <span class="n">ndarray</span><span class="p">,</span> <span class="n">img_txt_dataset</span><span class="p">:</span> <span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ndarray</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Конкатенация двух датафреймов</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            table_dataset (ndarray): массив таблички</span>
+<span class="sd">            img_txt_dataset (ndarray): массив текста и изображений</span>
+<span class="sd">        Returns:</span>
+<span class="sd">            ndarray: конкатенированный датафрейм</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">((</span><span class="n">table_dataset</span><span class="p">,</span> <span class="n">img_txt_dataset</span><span class="p">),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="DataHandler.run">
+<a class="viewcode-back" href="../../../gamac.data.html#gamac.data.data_pipeline.DataHandler.run">[документация]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">table</span><span class="p">:</span> <span class="n">DataFrame</span><span class="p">,</span> <span class="n">text</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">image</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Image</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">DataFrameType</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Запуск обработки</span>
+<span class="sd">        Args:</span>
+<span class="sd">            table (DataFrame): датафрейм таблицы</span>
+<span class="sd">            text (list[str]): Список текстовых данных</span>
+<span class="sd">            image (list[Image]): Список изображений</span>
+<span class="sd">        Returns:</span>
+<span class="sd">            np.array: единый датафрейм</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">dataset</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">table_dataset</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">img_txt_dataset</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="k">if</span> <span class="n">table</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">table_dataset</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">table_preprocess</span><span class="p">(</span><span class="n">table</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">text</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">image</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">img_txt_dataset</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">text_image_preprocess</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="n">image</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">table_dataset</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">img_txt_dataset</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">dataset</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">concat_dataset</span><span class="p">(</span><span class="n">table_dataset</span><span class="p">,</span> <span class="n">img_txt_dataset</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">dataset</span> <span class="k">if</span> <span class="n">dataset</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">table_dataset</span> <span class="k">if</span> <span class="n">table_dataset</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">img_txt_dataset</span></div>
+</div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Авторские права 2025, Sergey Muravyov, Nikita Kulin, Ivan Usov, Olga Muravyova, Simar Muratov. </p>
+  </div>
+
+  Собрано при помощи <a href="https://www.sphinx-doc.org/">Sphinx</a> с использованием
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">темы,</a>
+    предоставленной <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

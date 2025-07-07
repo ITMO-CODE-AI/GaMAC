@@ -1,0 +1,224 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="ru" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>gamac.meta.build &mdash; документация GaMAC 1.0.0</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=e35015f7"></script>
+      <script src="../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../../_static/translations.js?v=cd1d70c9"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Алфавитный указатель" href="../../../genindex.html" />
+    <link rel="search" title="Поиск" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            GaMAC
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Поиск в документации" aria-label="Поиск в документации" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Меню навигации">
+              <p class="caption" role="heading"><span class="caption-text">API Reference:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../modules.html">gamac</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Меню навигации для мобильных устройств" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">GaMAC</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Навигация по страницам">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Код модуля</a></li>
+      <li class="breadcrumb-item active">gamac.meta.build</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Исходный код gamac.meta.build</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Persists pickle binaries for fitted meta-classifier and meta-regressor</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">random</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">List</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">scipy.special</span><span class="w"> </span><span class="kn">import</span> <span class="n">softmax</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.metrics</span><span class="w"> </span><span class="kn">import</span> <span class="n">pairwise_distances</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">gamac.meta.impl.models</span><span class="w"> </span><span class="kn">import</span> <span class="n">ModelProvider</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">gamac.meta.storage</span><span class="w"> </span><span class="kn">import</span> <span class="n">GATHERED</span><span class="p">,</span> <span class="n">traverse_data</span><span class="p">,</span> <span class="n">COMPUTED</span><span class="p">,</span> <span class="n">BINARIES</span>
+
+<span class="n">SMOOTH_NEIGHBOURS</span> <span class="o">=</span> <span class="mi">12</span>
+
+
+<div class="viewcode-block" id="get_smooth_labels">
+<a class="viewcode-back" href="../../../gamac.meta.html#gamac.meta.build.get_smooth_labels">[документация]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_smooth_labels</span><span class="p">(</span><span class="n">xs</span><span class="p">,</span> <span class="n">ys</span><span class="p">,</span> <span class="n">ws</span><span class="p">):</span>
+    <span class="n">dists</span><span class="p">,</span> <span class="n">labels</span> <span class="o">=</span> <span class="n">pairwise_distances</span><span class="p">(</span><span class="n">xs</span><span class="p">),</span> <span class="nb">list</span><span class="p">()</span>
+    <span class="n">m_scores</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">softmax</span><span class="p">(</span><span class="o">-</span><span class="n">y</span><span class="p">)</span> <span class="k">for</span> <span class="n">y</span> <span class="ow">in</span> <span class="n">ys</span><span class="p">])</span>
+
+    <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">own_m</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">m_scores</span><span class="p">):</span>
+        <span class="n">d_row</span> <span class="o">=</span> <span class="n">dists</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span>
+        <span class="n">nearest</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argsort</span><span class="p">(</span><span class="n">d_row</span><span class="p">)[:</span><span class="n">SMOOTH_NEIGHBOURS</span><span class="p">]</span>
+
+        <span class="n">neighbours_d</span> <span class="o">=</span> <span class="n">d_row</span><span class="p">[</span><span class="n">nearest</span><span class="p">]</span>
+        <span class="n">d_scores</span> <span class="o">=</span> <span class="n">softmax</span><span class="p">(</span><span class="o">-</span><span class="n">neighbours_d</span><span class="p">)</span>
+
+        <span class="n">neighbours_w</span> <span class="o">=</span> <span class="n">ws</span><span class="p">[</span><span class="n">nearest</span><span class="p">]</span>
+        <span class="n">w_scores</span> <span class="o">=</span> <span class="n">softmax</span><span class="p">(</span><span class="n">neighbours_w</span><span class="p">)</span>
+
+        <span class="n">m_matrix</span> <span class="o">=</span> <span class="n">m_scores</span><span class="p">[</span><span class="n">nearest</span><span class="p">]</span>
+        <span class="n">wd_scores</span> <span class="o">=</span> <span class="n">w_scores</span> <span class="o">*</span> <span class="n">d_scores</span>
+
+        <span class="n">label_scores</span> <span class="o">=</span> <span class="n">wd_scores</span> <span class="o">@</span> <span class="n">m_matrix</span>
+        <span class="n">labels</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">label_scores</span><span class="p">))</span>
+
+    <span class="k">return</span> <span class="n">labels</span></div>
+
+
+<div class="viewcode-block" id="shuffle_data">
+<a class="viewcode-back" href="../../../gamac.meta.html#gamac.meta.build.shuffle_data">[документация]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">shuffle_data</span><span class="p">(</span><span class="n">l1</span><span class="p">,</span> <span class="n">l2</span><span class="p">):</span>
+    <span class="n">spliced</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">l1</span><span class="p">,</span> <span class="n">l2</span><span class="p">))</span>
+    <span class="n">random</span><span class="o">.</span><span class="n">shuffle</span><span class="p">(</span><span class="n">spliced</span><span class="p">)</span>
+    <span class="n">u1</span><span class="p">,</span> <span class="n">u2</span> <span class="o">=</span> <span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="n">spliced</span><span class="p">)</span>
+    <span class="n">v1</span><span class="p">,</span> <span class="n">v2</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">u1</span><span class="p">),</span> <span class="nb">list</span><span class="p">(</span><span class="n">u2</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">v1</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">v2</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="collect_raw_meta_dataset">
+<a class="viewcode-back" href="../../../gamac.meta.html#gamac.meta.build.collect_raw_meta_dataset">[документация]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">collect_raw_meta_dataset</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]:</span>
+    <span class="n">pre_meta_dataset</span> <span class="o">=</span> <span class="n">GATHERED</span><span class="o">.</span><span class="n">read_pre_meta_dataset</span><span class="p">()</span>
+    <span class="n">meta_features</span> <span class="o">=</span> <span class="n">traverse_data</span><span class="p">(</span><span class="n">COMPUTED</span><span class="o">.</span><span class="n">read_meta_features</span><span class="p">)</span>
+
+    <span class="n">xs</span><span class="p">,</span> <span class="n">ys</span><span class="p">,</span> <span class="n">ws</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(),</span> <span class="nb">list</span><span class="p">(),</span> <span class="nb">list</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">data_path</span><span class="p">,</span> <span class="n">data_item</span> <span class="ow">in</span> <span class="n">pre_meta_dataset</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="n">mfs</span> <span class="o">=</span> <span class="n">meta_features</span><span class="p">[</span><span class="n">data_path</span><span class="p">]</span>
+        <span class="n">vals</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">data_item</span><span class="o">.</span><span class="n">values</span><span class="p">)</span>
+        <span class="n">xs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">mfs</span><span class="p">),</span> <span class="n">ys</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">vals</span><span class="p">)</span>
+        <span class="n">ws</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">data_item</span><span class="o">.</span><span class="n">weight</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">pre_meta_dataset</span><span class="o">.</span><span class="n">measures</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">xs</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">ys</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">ws</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="build_extractor">
+<a class="viewcode-back" href="../../../gamac.meta.html#gamac.meta.build.build_extractor">[документация]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">build_extractor</span><span class="p">(</span><span class="n">xs</span><span class="p">):</span>
+    <span class="n">extractor</span> <span class="o">=</span> <span class="n">ModelProvider</span><span class="o">.</span><span class="n">get_best_extractor</span><span class="p">()</span>
+    <span class="n">fitted_extractor</span> <span class="o">=</span> <span class="n">extractor</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">xs</span><span class="p">)</span>
+    <span class="n">BINARIES</span><span class="o">.</span><span class="n">write_extractor</span><span class="p">(</span><span class="n">fitted_extractor</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">fitted_extractor</span></div>
+
+
+<div class="viewcode-block" id="build_classifier">
+<a class="viewcode-back" href="../../../gamac.meta.html#gamac.meta.build.build_classifier">[документация]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">build_classifier</span><span class="p">(</span><span class="n">extractor</span><span class="p">,</span> <span class="n">ms</span><span class="p">,</span> <span class="n">xs</span><span class="p">,</span> <span class="n">ys</span><span class="p">,</span> <span class="n">ws</span><span class="p">):</span>
+    <span class="n">classifier</span> <span class="o">=</span> <span class="n">ModelProvider</span><span class="o">.</span><span class="n">get_best_xgb_classifier</span><span class="p">()</span>
+
+    <span class="n">x_reduced</span> <span class="o">=</span> <span class="n">extractor</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">xs</span><span class="p">)</span>
+    <span class="n">z_smooth</span> <span class="o">=</span> <span class="n">get_smooth_labels</span><span class="p">(</span><span class="n">x_reduced</span><span class="p">,</span> <span class="n">ys</span><span class="p">,</span> <span class="n">ws</span><span class="p">)</span>
+    <span class="n">x</span><span class="p">,</span> <span class="n">z</span> <span class="o">=</span> <span class="n">shuffle_data</span><span class="p">(</span><span class="n">x_reduced</span><span class="p">,</span> <span class="n">z_smooth</span><span class="p">)</span>
+
+    <span class="n">fitted_classifier</span> <span class="o">=</span> <span class="n">classifier</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">z</span><span class="p">)</span>
+
+    <span class="n">GATHERED</span><span class="o">.</span><span class="n">write_classifier_dataset</span><span class="p">(</span><span class="n">ms</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">z</span><span class="p">)</span>
+    <span class="n">BINARIES</span><span class="o">.</span><span class="n">write_classifier</span><span class="p">(</span><span class="n">fitted_classifier</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="build_regressor">
+<a class="viewcode-back" href="../../../gamac.meta.html#gamac.meta.build.build_regressor">[документация]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">build_regressor</span><span class="p">(</span><span class="n">extractor</span><span class="p">,</span> <span class="n">ms</span><span class="p">,</span> <span class="n">xs</span><span class="p">,</span> <span class="n">ys</span><span class="p">):</span>
+    <span class="n">regressor</span> <span class="o">=</span> <span class="n">ModelProvider</span><span class="o">.</span><span class="n">get_best_xgb_regressor</span><span class="p">()</span>
+
+    <span class="n">x_reduced</span> <span class="o">=</span> <span class="n">extractor</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">xs</span><span class="p">)</span>
+    <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">shuffle_data</span><span class="p">(</span><span class="n">x_reduced</span><span class="p">,</span> <span class="n">ys</span><span class="p">)</span>
+
+    <span class="n">fitted_regressor</span> <span class="o">=</span> <span class="n">regressor</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+
+    <span class="n">GATHERED</span><span class="o">.</span><span class="n">write_regressor_dataset</span><span class="p">(</span><span class="n">ms</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+    <span class="n">BINARIES</span><span class="o">.</span><span class="n">write_regressor</span><span class="p">(</span><span class="n">fitted_regressor</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="build_binaries">
+<a class="viewcode-back" href="../../../gamac.meta.html#gamac.meta.build.build_binaries">[документация]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">build_binaries</span><span class="p">():</span>
+    <span class="n">ms</span><span class="p">,</span> <span class="n">xs</span><span class="p">,</span> <span class="n">ys</span><span class="p">,</span> <span class="n">ws</span> <span class="o">=</span> <span class="n">collect_raw_meta_dataset</span><span class="p">()</span>
+
+    <span class="n">extractor</span> <span class="o">=</span> <span class="n">build_extractor</span><span class="p">(</span><span class="n">xs</span><span class="p">)</span>
+
+    <span class="n">build_classifier</span><span class="p">(</span><span class="n">extractor</span><span class="p">,</span> <span class="n">ms</span><span class="p">,</span> <span class="n">xs</span><span class="p">,</span> <span class="n">ys</span><span class="p">,</span> <span class="n">ws</span><span class="p">)</span>
+    <span class="n">build_regressor</span><span class="p">(</span><span class="n">extractor</span><span class="p">,</span> <span class="n">ms</span><span class="p">,</span> <span class="n">xs</span><span class="p">,</span> <span class="n">ys</span><span class="p">)</span></div>
+
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="n">build_binaries</span><span class="p">()</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Авторские права 2025, Sergey Muravyov, Nikita Kulin, Ivan Usov, Olga Muravyova, Simar Muratov. </p>
+  </div>
+
+  Собрано при помощи <a href="https://www.sphinx-doc.org/">Sphinx</a> с использованием
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">темы,</a>
+    предоставленной <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

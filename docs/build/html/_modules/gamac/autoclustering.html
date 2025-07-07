@@ -1,0 +1,335 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="ru" data-content_root="../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>gamac.autoclustering &mdash; документация GaMAC 1.0.0</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=e35015f7"></script>
+      <script src="../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../_static/translations.js?v=cd1d70c9"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Алфавитный указатель" href="../../genindex.html" />
+    <link rel="search" title="Поиск" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            GaMAC
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Поиск в документации" aria-label="Поиск в документации" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Меню навигации">
+              <p class="caption" role="heading"><span class="caption-text">API Reference:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../modules.html">gamac</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Меню навигации для мобильных устройств" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">GaMAC</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Навигация по страницам">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Код модуля</a></li>
+      <li class="breadcrumb-item active">gamac.autoclustering</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Исходный код gamac.autoclustering</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Основной скрипт класса Gamac&quot;&quot;&quot;</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">time</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Set</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">cupy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">cp</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">torch</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">PIL</span><span class="w"> </span><span class="kn">import</span> <span class="n">Image</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="kn">import</span> <span class="n">DataFrame</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">transformers</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">CLIPProcessor</span><span class="p">,</span>
+    <span class="n">CLIPModel</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">gamac.algorithms.birch</span><span class="w"> </span><span class="kn">import</span> <span class="n">BirchConfig</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">gamac.algorithms.bisecting_kmeans</span><span class="w"> </span><span class="kn">import</span> <span class="n">BisectingKMeansConfig</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">gamac.algorithms.dbscan</span><span class="w"> </span><span class="kn">import</span> <span class="n">DBSCANConfig</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">gamac.algorithms.hdbscan</span><span class="w"> </span><span class="kn">import</span> <span class="n">HDBSCANConfig</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">gamac.algorithms.kmeans</span><span class="w"> </span><span class="kn">import</span> <span class="n">KMeansConfig</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">gamac.algorithms.meanshift</span><span class="w"> </span><span class="kn">import</span> <span class="n">MeanShiftConfig</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">gamac.data.data_pipeline</span><span class="w"> </span><span class="kn">import</span> <span class="n">DataHandler</span><span class="p">,</span> <span class="n">DataFrameType</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">gamac.estimation.functions</span><span class="w"> </span><span class="kn">import</span> <span class="n">f1</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">gamac.estimation.internal</span><span class="w"> </span><span class="kn">import</span> <span class="n">Internal</span><span class="p">,</span> <span class="n">InternalEvaluator</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">gamac.pipeline.cvi_predictor</span><span class="w"> </span><span class="kn">import</span> <span class="n">CVIPredictor</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">gamac.pipeline.hyper_optimisers</span><span class="w"> </span><span class="kn">import</span> <span class="n">HyperOptimisers</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">gamac.pipeline.mab_solvers</span><span class="w"> </span><span class="kn">import</span> <span class="n">MabSolvers</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">gamac.pipeline.run_types</span><span class="w"> </span><span class="kn">import</span> <span class="n">Optimal</span><span class="p">,</span> <span class="n">GamacResult</span>
+
+
+<div class="viewcode-block" id="Gamac">
+<a class="viewcode-back" href="../../gamac.html#gamac.autoclustering.Gamac">[документация]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">Gamac</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Основной класс Gamac для автоматической кластеризации мультимодальных данных.</span>
+
+<span class="sd">    Класс реализует пайплайн для автоматического выбора алгоритма кластеризации и его гиперпараметров</span>
+<span class="sd">    на основе многорукого бандита (MAB) и мета-обучения. Поддерживает обработку текстовых, </span>
+<span class="sd">    изобразительных и табличных данных.</span>
+
+<span class="sd">    Основные возможности:</span>
+<span class="sd">    - Автоматический подбор алгоритма кластеризации (K-means, DBSCAN, HDBSCAN и др.)</span>
+<span class="sd">    - Оптимизация гиперпараметров выбранного алгоритма</span>
+<span class="sd">    - Подбор метрик качества кластеризации (CVI)</span>
+<span class="sd">    - Обработка мультимодальных данных (текст, изображения, таблицы)</span>
+<span class="sd">    - Интеграция с моделями CLIP для получения векторных представлений</span>
+
+<span class="sd">    Пример использования:</span>
+<span class="sd">        &gt;&gt;&gt; gamac = Gamac()</span>
+<span class="sd">        &gt;&gt;&gt; result = gamac.run(text=text_data, image=image_data)</span>
+<span class="sd">        &gt;&gt;&gt; print(result.labels)</span>
+
+<span class="sd">    Attributes:</span>
+<span class="sd">        batch_size (int): Размер батча для обработки данных</span>
+<span class="sd">        model_name (str): Название модели CLIP</span>
+<span class="sd">        verbose (bool): Флаг вывода дополнительной информации</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="bp">self</span><span class="p">,</span>
+            <span class="n">mab_solver</span><span class="p">:</span> <span class="n">MabSolvers</span> <span class="o">=</span> <span class="n">MabSolvers</span><span class="o">.</span><span class="n">SOFTMAX</span><span class="p">,</span>
+            <span class="n">hyper_optimiser</span><span class="p">:</span> <span class="n">HyperOptimisers</span> <span class="o">=</span> <span class="n">HyperOptimisers</span><span class="o">.</span><span class="n">OPTUNA</span><span class="p">,</span>
+            <span class="n">target_measures</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Set</span><span class="p">[</span><span class="n">Internal</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="n">time_limit</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="n">iter_limit</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="mi">50</span><span class="p">,</span>
+            <span class="n">batch_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">32</span><span class="p">,</span>
+            <span class="n">model_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;openai/clip-vit-large-patch14&quot;</span><span class="p">,</span>
+            <span class="n">verbose</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Запускает основной пайплайн кластеризации.</span>
+
+<span class="sd">        Обрабатывает входные данные, предсказывает оптимальные метрики качества,</span>
+<span class="sd">        выполняет автоматический подбор алгоритма кластеризации и его параметров.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            table: Датафрейм с табличными данными (опционально)</span>
+<span class="sd">            text: Список текстовых данных (опционально)</span>
+<span class="sd">            image: Список изображений в формате PIL.Image (опционально)</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            Кортеж из:</span>
+<span class="sd">            - Обработанные данные в виде массива numpy/cupy</span>
+<span class="sd">            - Результат кластеризации (метки кластеров)</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            AssertionError: Если не передано ни одного типа данных или переданы</span>
+<span class="sd">                        только текст или только изображения без таблицы</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_mab_arg</span> <span class="o">=</span> <span class="n">mab_solver</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_hyper_arg</span> <span class="o">=</span> <span class="n">hyper_optimiser</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_algorithms</span> <span class="o">=</span> <span class="p">[</span><span class="n">BisectingKMeansConfig</span><span class="p">(),</span> <span class="n">MeanShiftConfig</span><span class="p">(),</span> <span class="n">DBSCANConfig</span><span class="p">(),</span>
+                            <span class="n">HDBSCANConfig</span><span class="p">(),</span> <span class="n">BirchConfig</span><span class="p">(),</span> <span class="n">KMeansConfig</span><span class="p">()]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_time_limit_arg</span> <span class="o">=</span> <span class="n">time_limit</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_iter_limit_arg</span> <span class="o">=</span> <span class="n">iter_limit</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_measures_arg</span> <span class="o">=</span> <span class="n">target_measures</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">batch_size</span> <span class="o">=</span> <span class="n">batch_size</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model_name</span> <span class="o">=</span> <span class="n">model_name</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span> <span class="o">=</span> <span class="n">verbose</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_init_clip_model</span><span class="p">()</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_init_clip_model</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># Загрузка модели и процессора</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">device</span> <span class="o">=</span> <span class="s2">&quot;cuda&quot;</span> <span class="k">if</span> <span class="n">torch</span><span class="o">.</span><span class="n">cuda</span><span class="o">.</span><span class="n">is_available</span><span class="p">()</span> <span class="k">else</span> <span class="s2">&quot;cpu&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">clip_model</span> <span class="o">=</span> <span class="n">CLIPModel</span><span class="o">.</span><span class="n">from_pretrained</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_name</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">clip_processor</span> <span class="o">=</span> <span class="n">CLIPProcessor</span><span class="o">.</span><span class="n">from_pretrained</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_name</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_check_input</span><span class="p">(</span>
+            <span class="bp">self</span><span class="p">,</span>
+            <span class="n">table</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">DataFrame</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="n">text</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="n">image</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="n">Image</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="k">if</span> <span class="nb">all</span><span class="p">([</span><span class="n">var</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">for</span> <span class="n">var</span> <span class="ow">in</span> <span class="p">[</span><span class="n">text</span><span class="p">,</span> <span class="n">image</span><span class="p">,</span> <span class="n">table</span><span class="p">]]):</span>
+            <span class="k">assert</span> <span class="s2">&quot;There is not data included&quot;</span>
+        <span class="k">if</span> <span class="n">table</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="p">(</span><span class="n">text</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">image</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">):</span>
+            <span class="k">assert</span> <span class="s2">&quot;text and image must be specified&quot;</span>
+
+<div class="viewcode-block" id="Gamac.run">
+<a class="viewcode-back" href="../../gamac.html#gamac.autoclustering.Gamac.run">[документация]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">run</span><span class="p">(</span>
+            <span class="bp">self</span><span class="p">,</span>
+            <span class="n">table</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">DataFrame</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="n">text</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="n">image</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="n">Image</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="n">classes</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">GamacResult</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Запуск пайплайна</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            table (DataFrame): Таблица из которой брать данные</span>
+<span class="sd">            text (list[str]): Текстовые данные</span>
+<span class="sd">            image (list[Image]): Картинки из которых брать данные</span>
+<span class="sd">            classes (list[int]): Внешняя разметка набора данных</span>
+<span class="sd">        Returns:</span>
+<span class="sd">            GamacResult: Найденное разбиение с дополнительной мета-информацией</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_check_input</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="n">text</span><span class="p">,</span> <span class="n">image</span><span class="p">)</span>
+
+        <span class="c1"># Обработка данных в единый датасет</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data_handler</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="n">text</span><span class="p">,</span> <span class="n">image</span><span class="p">)</span>
+
+        <span class="n">df</span> <span class="o">=</span> <span class="n">cp</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">cp</span><span class="o">.</span><span class="n">float32</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="s1">&#39;C&#39;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_measures_arg</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">measures</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cvi_predictor</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">measures</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_measures_arg</span>
+
+        <span class="c1"># Кластеризация датасета с применением рекомендованной меры качества</span>
+        <span class="n">optimal</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_auto_clustering</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">measures</span><span class="p">)</span>
+
+        <span class="n">f1_score</span> <span class="o">=</span> <span class="kc">None</span> <span class="k">if</span> <span class="n">classes</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">_eval_f1</span><span class="p">(</span><span class="n">classes</span><span class="p">,</span> <span class="n">optimal</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">GamacResult</span><span class="p">(</span>
+            <span class="n">df</span><span class="o">=</span><span class="n">df</span><span class="p">,</span>
+            <span class="n">algo</span><span class="o">=</span><span class="n">optimal</span><span class="o">.</span><span class="n">algo</span><span class="p">,</span>
+            <span class="n">model</span><span class="o">=</span><span class="n">optimal</span><span class="o">.</span><span class="n">model</span><span class="p">,</span>
+            <span class="n">estimation</span><span class="o">=</span><span class="n">optimal</span><span class="o">.</span><span class="n">estimation</span><span class="p">,</span>
+            <span class="n">f1_score</span><span class="o">=</span><span class="n">f1_score</span>
+        <span class="p">)</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_data_handler</span><span class="p">(</span>
+            <span class="bp">self</span><span class="p">,</span>
+            <span class="n">table</span><span class="p">:</span> <span class="n">DataFrame</span><span class="p">,</span>
+            <span class="n">text</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+            <span class="n">image</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Image</span><span class="p">],</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DataFrameType</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Обработка данных в единый датасет</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            table (DataFrame): Таблица из которой брать данные</span>
+<span class="sd">            text (list[str]): Текстовые данные</span>
+<span class="sd">            image (list[Image]): Картинки из которых брать данные</span>
+<span class="sd">        Returns:</span>
+<span class="sd">            ndarray: Данные для обработки</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">handler</span> <span class="o">=</span> <span class="n">DataHandler</span><span class="p">(</span>
+            <span class="n">clip_model</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">clip_model</span><span class="p">,</span>
+            <span class="n">clip_processor</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">clip_processor</span><span class="p">,</span>
+            <span class="n">batch_size</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">batch_size</span><span class="p">,</span>
+            <span class="n">verbose</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">verbose</span><span class="p">,</span>
+            <span class="n">device</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">device</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">handler</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="n">text</span><span class="p">,</span> <span class="n">image</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_cvi_predictor</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">df</span><span class="p">:</span> <span class="n">DataFrameType</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Set</span><span class="p">[</span><span class="n">Internal</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Получение рекомендации мер качества</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            df (ndarray): Данные для обработки</span>
+<span class="sd">        Returns:</span>
+<span class="sd">            str: Рекомендованная мера качества</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">meta_start</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;=== Started CVI prediction ===&quot;</span><span class="p">)</span>
+        <span class="n">cvi_predictor</span> <span class="o">=</span> <span class="n">CVIPredictor</span><span class="p">()</span>
+        <span class="n">single_prediction</span> <span class="o">=</span> <span class="n">cvi_predictor</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
+        <span class="n">meta_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">meta_start</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;=== Picked </span><span class="si">{</span><span class="n">single_prediction</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2"> in </span><span class="si">{</span><span class="n">meta_time</span><span class="si">}</span><span class="s2">s ===&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="p">{</span><span class="n">single_prediction</span><span class="p">}</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_eval_f1</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">classes</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span> <span class="n">optimal</span><span class="p">:</span> <span class="n">Optimal</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+       <span class="n">classes_gpu</span> <span class="o">=</span> <span class="n">cp</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">classes</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">cp</span><span class="o">.</span><span class="n">int32</span><span class="p">)</span>
+       <span class="k">return</span> <span class="n">f1</span><span class="p">(</span><span class="n">classes_gpu</span><span class="p">,</span> <span class="n">optimal</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">labels_</span><span class="p">)</span>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_auto_clustering</span><span class="p">(</span>
+            <span class="bp">self</span><span class="p">,</span>
+            <span class="n">df</span><span class="p">:</span> <span class="n">DataFrameType</span><span class="p">,</span>
+            <span class="n">measures</span><span class="p">:</span> <span class="n">Set</span><span class="p">[</span><span class="n">Internal</span><span class="p">],</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optimal</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Кластеризация датасета с применением рекомендованной меры качества</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            dataset (ndarray): Преображенный датасет</span>
+<span class="sd">            advised_measure (str): Рекомендованная мера качества</span>
+<span class="sd">        Returns:</span>
+<span class="sd">            list[int]: Список кластеров</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">evaluator</span> <span class="o">=</span> <span class="n">InternalEvaluator</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">measures</span><span class="p">)</span>
+        <span class="n">mab_builder</span><span class="p">,</span> <span class="n">opt_builder</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_mab_arg</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_hyper_arg</span><span class="o">.</span><span class="n">value</span>
+        <span class="n">optimisers</span> <span class="o">=</span> <span class="p">[</span><span class="n">opt_builder</span><span class="p">(</span><span class="n">algo</span><span class="p">,</span> <span class="n">df</span><span class="p">,</span> <span class="n">evaluator</span><span class="p">)</span> <span class="k">for</span> <span class="n">algo</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_algorithms</span><span class="p">]</span>
+        <span class="n">mab_solver</span> <span class="o">=</span> <span class="n">mab_builder</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">optimisers</span><span class="p">,</span> <span class="n">evaluator</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">mab_solver</span><span class="o">.</span><span class="n">run</span><span class="p">(</span>
+            <span class="n">time_limit</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_time_limit_arg</span><span class="p">,</span>
+            <span class="n">iter_limit</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_iter_limit_arg</span><span class="p">,</span>
+        <span class="p">)</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Авторские права 2025, Sergey Muravyov, Nikita Kulin, Ivan Usov, Olga Muravyova, Simar Muratov. </p>
+  </div>
+
+  Собрано при помощи <a href="https://www.sphinx-doc.org/">Sphinx</a> с использованием
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">темы,</a>
+    предоставленной <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

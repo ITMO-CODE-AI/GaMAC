@@ -1,0 +1,301 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="ru" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>gamac.estimation.internal &mdash; документация GaMAC 1.0.0</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=e35015f7"></script>
+      <script src="../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../../_static/translations.js?v=cd1d70c9"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Алфавитный указатель" href="../../../genindex.html" />
+    <link rel="search" title="Поиск" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            GaMAC
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Поиск в документации" aria-label="Поиск в документации" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Меню навигации">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../modules.html">gamac</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Меню навигации для мобильных устройств" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">GaMAC</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Навигация по страницам">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Код модуля</a></li>
+      <li class="breadcrumb-item active">gamac.estimation.internal</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Исходный код gamac.estimation.internal</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">time</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">enum</span><span class="w"> </span><span class="kn">import</span> <span class="n">Enum</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Set</span><span class="p">,</span> <span class="n">List</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">cupy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">cp</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">gamac.data.data_pipeline</span><span class="w"> </span><span class="kn">import</span> <span class="n">DataFrameType</span><span class="p">,</span> <span class="n">LabelsType</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">gamac.estimation.container</span><span class="w"> </span><span class="kn">import</span> <span class="n">EstimationContainer</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">gamac.estimation.functions</span><span class="w"> </span><span class="kn">import</span> <span class="n">br</span><span class="p">,</span> <span class="n">mcr</span><span class="p">,</span> <span class="n">sym</span><span class="p">,</span> <span class="n">os</span>
+
+
+<div class="viewcode-block" id="Internal">
+<a class="viewcode-back" href="../../../gamac.estimation.html#gamac.estimation.internal.Internal">[документация]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">Internal</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Перечисление внутренних метрик оценки качества кластеризации.</span>
+<span class="sd">    </span>
+<span class="sd">    Атрибуты:</span>
+<span class="sd">        BR: Метрика Banfield-Raftery</span>
+<span class="sd">        OS: Метрика OS (относительная разделимость)</span>
+<span class="sd">        MCR: Метрика McClain-Rao</span>
+<span class="sd">        SYM: Симметричная метрика</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">BR</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;banfield_raftery&#39;</span><span class="p">,</span> <span class="n">br</span><span class="p">)</span>
+    <span class="c1"># C_INDEX = (&#39;c_index&#39;, c_index)</span>
+    <span class="n">OS</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;os&#39;</span><span class="p">,</span> <span class="n">os</span><span class="p">)</span>
+    <span class="n">MCR</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;mc_clain_rao&#39;</span><span class="p">,</span> <span class="n">mcr</span><span class="p">)</span>
+    <span class="n">SYM</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;sym&#39;</span><span class="p">,</span> <span class="n">sym</span><span class="p">)</span></div>
+
+
+
+<span class="n">EstimationResult</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">[</span><span class="n">Internal</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span>  <span class="c1"># Тип для хранения результатов оценки метрик</span>
+
+
+<div class="viewcode-block" id="InternalEvaluator">
+<a class="viewcode-back" href="../../../gamac.estimation.html#gamac.estimation.internal.InternalEvaluator">[документация]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">InternalEvaluator</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Класс для оценки качества кластеризации с использованием внутренних метрик.</span>
+<span class="sd">    </span>
+<span class="sd">    Позволяет сравнивать различные кластеризации на основе заданных метрик.</span>
+<span class="sd">    </span>
+<span class="sd">    Атрибуты:</span>
+<span class="sd">        df (DataFrameType): Исходные данные</span>
+<span class="sd">        pivots (EstimationResult): Опорные значения метрик для случайной кластеризации</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">df</span><span class="p">:</span> <span class="n">DataFrameType</span><span class="p">,</span> <span class="n">pivots</span><span class="p">:</span> <span class="n">EstimationResult</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Инициализация оценщика.</span>
+<span class="sd">        </span>
+<span class="sd">        Аргументы:</span>
+<span class="sd">            df (DataFrameType): Исходные данные</span>
+<span class="sd">            pivots (EstimationResult): Опорные значения метрик</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">pivots</span> <span class="o">=</span> <span class="n">df</span><span class="p">,</span> <span class="n">pivots</span>
+
+<div class="viewcode-block" id="InternalEvaluator.create">
+<a class="viewcode-back" href="../../../gamac.estimation.html#gamac.estimation.internal.InternalEvaluator.create">[документация]</a>
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">create</span><span class="p">(</span><span class="n">df</span><span class="p">:</span> <span class="n">DataFrameType</span><span class="p">,</span> <span class="n">measures</span><span class="p">:</span> <span class="n">Set</span><span class="p">[</span><span class="n">Internal</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="s1">&#39;InternalEvaluator&#39;</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Фабричный метод для создания оценщика.</span>
+<span class="sd">        </span>
+<span class="sd">        Вычисляет опорные значения метрик для случайной кластеризации.</span>
+<span class="sd">        </span>
+<span class="sd">        Аргументы:</span>
+<span class="sd">            df (DataFrameType): Исходные данные</span>
+<span class="sd">            measures (Set[Internal]): Набор метрик для оценки</span>
+<span class="sd">            </span>
+<span class="sd">        Возвращает:</span>
+<span class="sd">            InternalEvaluator: Инициализированный оценщик</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">random_labels</span> <span class="o">=</span> <span class="n">cp</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="n">low</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">high</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">df</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">)</span>
+        <span class="n">pivots</span> <span class="o">=</span> <span class="n">InternalEvaluator</span><span class="o">.</span><span class="n">eval_internal</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">measures</span><span class="p">,</span> <span class="n">random_labels</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">InternalEvaluator</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">pivots</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="InternalEvaluator.create_container">
+<a class="viewcode-back" href="../../../gamac.estimation.html#gamac.estimation.internal.InternalEvaluator.create_container">[документация]</a>
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">create_container</span><span class="p">(</span><span class="n">df</span><span class="p">:</span> <span class="n">DataFrameType</span><span class="p">,</span> <span class="n">labels</span><span class="p">:</span> <span class="n">LabelsType</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">EstimationContainer</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Создает контейнер для вычисления метрик.</span>
+<span class="sd">        </span>
+<span class="sd">        Аргументы:</span>
+<span class="sd">            df (DataFrameType): Исходные данные</span>
+<span class="sd">            labels (LabelsType): Метки кластеров</span>
+<span class="sd">            </span>
+<span class="sd">        Возвращает:</span>
+<span class="sd">            EstimationContainer: Контейнер с данными кластеризации</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">EstimationContainer</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">labels</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="InternalEvaluator.evaluate">
+<a class="viewcode-back" href="../../../gamac.estimation.html#gamac.estimation.internal.InternalEvaluator.evaluate">[документация]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">evaluate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">labels</span><span class="p">:</span> <span class="n">LabelsType</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">EstimationResult</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Вычисляет значения метрик для заданной кластеризации.</span>
+<span class="sd">        </span>
+<span class="sd">        Аргументы:</span>
+<span class="sd">            labels (LabelsType): Метки кластеров для оценки</span>
+<span class="sd">            </span>
+<span class="sd">        Возвращает:</span>
+<span class="sd">            EstimationResult: Словарь со значениями метрик</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">measures</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pivots</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">eval_internal</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="p">,</span> <span class="n">measures</span><span class="p">,</span> <span class="n">labels</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="InternalEvaluator.rewards">
+<a class="viewcode-back" href="../../../gamac.estimation.html#gamac.estimation.internal.InternalEvaluator.rewards">[документация]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">rewards</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">estimates</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">EstimationResult</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Вычисляет оценки &quot;полезности&quot; для списка результатов.</span>
+<span class="sd">        </span>
+<span class="sd">        Аргументы:</span>
+<span class="sd">            estimates (List[EstimationResult]): Список результатов оценки</span>
+<span class="sd">            </span>
+<span class="sd">        Возвращает:</span>
+<span class="sd">            List[float]: Список оценок полезности</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">[</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">([</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">compare</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span> <span class="k">for</span> <span class="n">y</span> <span class="ow">in</span> <span class="n">estimates</span>
+            <span class="p">])</span><span class="o">.</span><span class="fm">__float__</span><span class="p">()</span>
+            <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">estimates</span>
+        <span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="InternalEvaluator.compare">
+<a class="viewcode-back" href="../../../gamac.estimation.html#gamac.estimation.internal.InternalEvaluator.compare">[документация]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">compare</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">EstimationResult</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="n">EstimationResult</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Сравнивает два результата оценки.</span>
+<span class="sd">        </span>
+<span class="sd">        Аргументы:</span>
+<span class="sd">            x (EstimationResult): Первый результат</span>
+<span class="sd">            y (EstimationResult): Второй результат</span>
+<span class="sd">            </span>
+<span class="sd">        Возвращает:</span>
+<span class="sd">            float: Суммарная оценка сравнения по всем метрикам</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">sum</span><span class="p">([</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_compare_sym</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="n">measure</span><span class="p">],</span> <span class="n">y</span><span class="p">[</span><span class="n">measure</span><span class="p">],</span> <span class="n">pivot</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">measure</span><span class="p">,</span> <span class="n">pivot</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">pivots</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+        <span class="p">])</span></div>
+
+
+<div class="viewcode-block" id="InternalEvaluator.is_better">
+<a class="viewcode-back" href="../../../gamac.estimation.html#gamac.estimation.internal.InternalEvaluator.is_better">[документация]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">is_better</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">EstimationResult</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="n">EstimationResult</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Определяет, является ли первый результат лучше второго.</span>
+<span class="sd">        </span>
+<span class="sd">        Аргументы:</span>
+<span class="sd">            x (EstimationResult): Первый результат</span>
+<span class="sd">            y (EstimationResult): Второй результат</span>
+<span class="sd">            </span>
+<span class="sd">        Возвращает:</span>
+<span class="sd">            bool: True если x лучше y, иначе False</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">compare</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">compare</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span></div>
+
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_compare_sym</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">pivot</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Симметричное сравнение значений метрики относительно опорного значения.</span>
+<span class="sd">        </span>
+<span class="sd">        Аргументы:</span>
+<span class="sd">            x (float): Первое значение метрики</span>
+<span class="sd">            y (float): Второе значение метрики</span>
+<span class="sd">            pivot (float): Опорное значение</span>
+<span class="sd">            </span>
+<span class="sd">        Возвращает:</span>
+<span class="sd">            float: Нормализованная разница между значениями</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">normaliser</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span> <span class="o">-</span> <span class="n">pivot</span>
+        <span class="k">if</span> <span class="n">normaliser</span> <span class="o">&lt;</span> <span class="mf">1e-6</span><span class="p">:</span>
+            <span class="k">return</span> <span class="mf">0.0</span>
+        <span class="k">return</span> <span class="p">(</span><span class="n">x</span> <span class="o">-</span> <span class="n">y</span><span class="p">)</span> <span class="o">/</span> <span class="n">normaliser</span>
+
+<div class="viewcode-block" id="InternalEvaluator.eval_internal">
+<a class="viewcode-back" href="../../../gamac.estimation.html#gamac.estimation.internal.InternalEvaluator.eval_internal">[документация]</a>
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">eval_internal</span><span class="p">(</span><span class="n">df</span><span class="p">:</span> <span class="n">DataFrameType</span><span class="p">,</span> <span class="n">measures</span><span class="p">:</span> <span class="n">Set</span><span class="p">[</span><span class="n">Internal</span><span class="p">],</span> <span class="n">labels</span><span class="p">:</span> <span class="n">LabelsType</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">EstimationResult</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Вычисляет значения внутренних метрик для заданной кластеризации.</span>
+<span class="sd">        </span>
+<span class="sd">        Аргументы:</span>
+<span class="sd">            df (DataFrameType): Исходные данные</span>
+<span class="sd">            measures (Set[Internal]): Набор метрик для вычисления</span>
+<span class="sd">            labels (LabelsType): Метки кластеров</span>
+<span class="sd">            </span>
+<span class="sd">        Возвращает:</span>
+<span class="sd">            EstimationResult: Словарь со значениями метрик</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">t_start</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+        <span class="n">container</span> <span class="o">=</span> <span class="n">EstimationContainer</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">labels</span><span class="p">)</span>
+        <span class="n">values</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="n">measure</span><span class="p">:</span> <span class="n">measure</span><span class="o">.</span><span class="n">value</span><span class="p">[</span><span class="mi">1</span><span class="p">](</span><span class="n">container</span><span class="p">)</span> <span class="k">for</span> <span class="n">measure</span> <span class="ow">in</span> <span class="n">measures</span>
+        <span class="p">}</span>
+        <span class="n">serialised</span> <span class="o">=</span> <span class="p">{</span><span class="n">m</span><span class="o">.</span><span class="n">name</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">m</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">values</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;=== MEASURES </span><span class="si">{</span><span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">t_start</span><span class="si">}</span><span class="s2">s, </span><span class="si">{</span><span class="n">serialised</span><span class="si">}</span><span class="s2"> ===&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">EstimationResult</span><span class="p">(</span><span class="n">values</span><span class="p">)</span></div>
+</div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Авторские права 2025, Sergey Muravyov, Nikita Kulin, Ivan Usov, Olga Muravyova, Simar Muratov. </p>
+  </div>
+
+  Собрано при помощи <a href="https://www.sphinx-doc.org/">Sphinx</a> с использованием
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">темы,</a>
+    предоставленной <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

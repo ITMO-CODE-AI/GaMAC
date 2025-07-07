@@ -1,0 +1,1202 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="ru" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>gamac.algorithms package &mdash; документация GaMAC 1.0.0</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=e35015f7"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="_static/translations.js?v=cd1d70c9"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Алфавитный указатель" href="genindex.html" />
+    <link rel="search" title="Поиск" href="search.html" />
+    <link rel="next" title="gamac.bin package" href="gamac.bin.html" />
+    <link rel="prev" title="gamac package" href="gamac.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            GaMAC
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Поиск в документации" aria-label="Поиск в документации" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Меню навигации">
+              <p class="caption" role="heading"><span class="caption-text">API Reference:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">gamac</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="gamac.html">gamac package</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="gamac.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l4 current"><a class="current reference internal" href="#">gamac.algorithms package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="gamac.bin.html">gamac.bin package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="gamac.data.html">gamac.data package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="gamac.estimation.html">gamac.estimation package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="gamac.kernels.html">gamac.kernels package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="gamac.meta.html">gamac.meta package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="gamac.pipeline.html">gamac.pipeline package</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="gamac.html#submodules">Submodules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="gamac.html#module-gamac.autoclustering">gamac.autoclustering module</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Меню навигации для мобильных устройств" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">GaMAC</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Навигация по страницам">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="modules.html">gamac</a></li>
+          <li class="breadcrumb-item"><a href="gamac.html">gamac package</a></li>
+      <li class="breadcrumb-item active">gamac.algorithms package</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/gamac.algorithms.rst.txt" rel="nofollow"> Просмотреть исходный код страницы</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="gamac-algorithms-package">
+<h1>gamac.algorithms package<a class="headerlink" href="#gamac-algorithms-package" title="Ссылка на этот заголовок"></a></h1>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Ссылка на этот заголовок"></a></h2>
+</section>
+<section id="module-gamac.algorithms.base">
+<span id="gamac-algorithms-base-module"></span><h2>gamac.algorithms.base module<a class="headerlink" href="#module-gamac.algorithms.base" title="Ссылка на этот заголовок"></a></h2>
+<p>Модуль с абстрактными классами для реализации алгоритмов кластеризации.</p>
+<p>Определяет базовые интерфейсы для:
+- Конфигурации алгоритмов (AlgoConfig)
+- Реализаций алгоритмов (ClusteringAlgo)
+- Моделей кластеризации (ClusteringModel)</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="gamac.algorithms.base.AlgoConfig">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gamac.algorithms.base.</span></span><span class="sig-name descname"><span class="pre">AlgoConfig</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">builder</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gamac/algorithms/base.html#AlgoConfig"><span class="viewcode-link"><span class="pre">[исходный</span> <span class="pre">код]</span></span></a><a class="headerlink" href="#gamac.algorithms.base.AlgoConfig" title="Ссылка на это определение"></a></dt>
+<dd><p>Базовые классы: <code class="xref py py-class docutils literal notranslate"><span class="pre">ABC</span></code></p>
+<p>Абстрактный класс конфигурации алгоритма.</p>
+<p>Содержит пространство параметров и builder для создания экземпляров алгоритмов.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="gamac.algorithms.base.AlgoConfig.config_space">
+<span class="sig-name descname"><span class="pre">config_space</span></span><a class="headerlink" href="#gamac.algorithms.base.AlgoConfig.config_space" title="Ссылка на это определение"></a></dt>
+<dd><p>Пространство параметров алгоритма.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="gamac.algorithms.base.AlgoConfig.builder">
+<span class="sig-name descname"><span class="pre">builder</span></span><a class="headerlink" href="#gamac.algorithms.base.AlgoConfig.builder" title="Ссылка на это определение"></a></dt>
+<dd><p>Функция для создания экземпляра алгоритма.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Callable</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="gamac.algorithms.base.AlgoConfig.algo_name">
+<span class="sig-name descname"><span class="pre">algo_name</span></span><a class="headerlink" href="#gamac.algorithms.base.AlgoConfig.algo_name" title="Ссылка на это определение"></a></dt>
+<dd><p>Название алгоритма.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="gamac.algorithms.base.AlgoConfig.build">
+<span class="sig-name descname"><span class="pre">build</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#gamac.algorithms.base.ClusteringAlgo" title="gamac.algorithms.base.ClusteringAlgo"><span class="pre">ClusteringAlgo</span></a></span></span><a class="reference internal" href="_modules/gamac/algorithms/base.html#AlgoConfig.build"><span class="viewcode-link"><span class="pre">[исходный</span> <span class="pre">код]</span></span></a><a class="headerlink" href="#gamac.algorithms.base.AlgoConfig.build" title="Ссылка на это определение"></a></dt>
+<dd><p>Создает экземпляр алгоритма с заданными параметрами.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Параметры<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>**kwargs</strong> – Параметры для создания алгоритма.</p>
+</dd>
+<dt class="field-even">Результат<span class="colon">:</span></dt>
+<dd class="field-even"><p>Экземпляр алгоритма кластеризации.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="gamac.algorithms.base.ClusteringAlgo">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gamac.algorithms.base.</span></span><span class="sig-name descname"><span class="pre">ClusteringAlgo</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gamac/algorithms/base.html#ClusteringAlgo"><span class="viewcode-link"><span class="pre">[исходный</span> <span class="pre">код]</span></span></a><a class="headerlink" href="#gamac.algorithms.base.ClusteringAlgo" title="Ссылка на это определение"></a></dt>
+<dd><p>Базовые классы: <code class="xref py py-class docutils literal notranslate"><span class="pre">ABC</span></code></p>
+<p>Абстрактный класс алгоритма кластеризации.</p>
+<p>Определяет интерфейс для алгоритмов кластеризации, включая:
+- Обучение модели (fit)
+- Обучение и предсказание в одном методе (fit_predict)
+- Генерацию случайного seed (make_seed)</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="gamac.algorithms.base.ClusteringAlgo.name">
+<span class="sig-name descname"><span class="pre">name</span></span><a class="headerlink" href="#gamac.algorithms.base.ClusteringAlgo.name" title="Ссылка на это определение"></a></dt>
+<dd><p>Название класса алгоритма.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="gamac.algorithms.base.ClusteringAlgo.fit">
+<em class="property"><span class="k"><span class="pre">abstractmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">fit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">cupy.typing.NDArray</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#gamac.algorithms.base.ClusteringModel" title="gamac.algorithms.base.ClusteringModel"><span class="pre">ClusteringModel</span></a></span></span><a class="reference internal" href="_modules/gamac/algorithms/base.html#ClusteringAlgo.fit"><span class="viewcode-link"><span class="pre">[исходный</span> <span class="pre">код]</span></span></a><a class="headerlink" href="#gamac.algorithms.base.ClusteringAlgo.fit" title="Ссылка на это определение"></a></dt>
+<dd><p>Обучает модель кластеризации на данных.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Параметры<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>df</strong> – Данные для обучения.</p>
+</dd>
+<dt class="field-even">Результат<span class="colon">:</span></dt>
+<dd class="field-even"><p>Обученная модель кластеризации.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="gamac.algorithms.base.ClusteringAlgo.fit_predict">
+<span class="sig-name descname"><span class="pre">fit_predict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">cupy.typing.NDArray</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">cupy.typing.NDArray</span></span></span><a class="reference internal" href="_modules/gamac/algorithms/base.html#ClusteringAlgo.fit_predict"><span class="viewcode-link"><span class="pre">[исходный</span> <span class="pre">код]</span></span></a><a class="headerlink" href="#gamac.algorithms.base.ClusteringAlgo.fit_predict" title="Ссылка на это определение"></a></dt>
+<dd><p>Обучает модель и сразу предсказывает метки кластеров.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Параметры<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>df</strong> – Данные для кластеризации.</p>
+</dd>
+<dt class="field-even">Результат<span class="colon">:</span></dt>
+<dd class="field-even"><p>Метки кластеров для входных данных.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="gamac.algorithms.base.ClusteringAlgo.make_seed">
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">make_seed</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">int</span></span></span><a class="reference internal" href="_modules/gamac/algorithms/base.html#ClusteringAlgo.make_seed"><span class="viewcode-link"><span class="pre">[исходный</span> <span class="pre">код]</span></span></a><a class="headerlink" href="#gamac.algorithms.base.ClusteringAlgo.make_seed" title="Ссылка на это определение"></a></dt>
+<dd><p>Генерирует случайный seed, если не задан.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Параметры<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>seed</strong> – Опциональное значение seed.</p>
+</dd>
+<dt class="field-even">Результат<span class="colon">:</span></dt>
+<dd class="field-even"><p>Заданный seed или случайно сгенерированный.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="gamac.algorithms.base.ClusteringModel">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gamac.algorithms.base.</span></span><span class="sig-name descname"><span class="pre">ClusteringModel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">labels_</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">cupy.typing.NDArray</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gamac/algorithms/base.html#ClusteringModel"><span class="viewcode-link"><span class="pre">[исходный</span> <span class="pre">код]</span></span></a><a class="headerlink" href="#gamac.algorithms.base.ClusteringModel" title="Ссылка на это определение"></a></dt>
+<dd><p>Базовые классы: <code class="xref py py-class docutils literal notranslate"><span class="pre">ABC</span></code></p>
+<p>Абстрактный класс модели кластеризации.</p>
+<p>Содержит метки кластеров и метод для предсказания кластеров на новых данных.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="gamac.algorithms.base.ClusteringModel.labels_">
+<span class="sig-name descname"><span class="pre">labels_</span></span><a class="headerlink" href="#gamac.algorithms.base.ClusteringModel.labels_" title="Ссылка на это определение"></a></dt>
+<dd><p>Метки кластеров, полученные при обучении модели.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>LabelsType</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="gamac.algorithms.base.ClusteringModel.predict">
+<em class="property"><span class="k"><span class="pre">abstractmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">predict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">cupy.typing.NDArray</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">cupy.typing.NDArray</span></span></span><a class="reference internal" href="_modules/gamac/algorithms/base.html#ClusteringModel.predict"><span class="viewcode-link"><span class="pre">[исходный</span> <span class="pre">код]</span></span></a><a class="headerlink" href="#gamac.algorithms.base.ClusteringModel.predict" title="Ссылка на это определение"></a></dt>
+<dd><p>Предсказывает метки кластеров для новых данных.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Параметры<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>df</strong> – Данные для кластеризации.</p>
+</dd>
+<dt class="field-even">Результат<span class="colon">:</span></dt>
+<dd class="field-even"><p>Метки кластеров для входных данных.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-gamac.algorithms.birch">
+<span id="gamac-algorithms-birch-module"></span><h2>gamac.algorithms.birch module<a class="headerlink" href="#module-gamac.algorithms.birch" title="Ссылка на этот заголовок"></a></h2>
+<p>Реализация алгоритма BIRCH (Balanced Iterative Reducing and Clustering using Hierarchies) для GPU.</p>
+<p>Модуль содержит:
+- Класс BirchModel: модель кластеризации BIRCH
+- Класс ClusteringFeatureGPU: признаки кластеризации для GPU
+- Класс CFNodeGPU: узел дерева CF (Clustering Feature)
+- Класс CFTreeGPU: дерево CF для GPU
+- Класс Birch: основной алгоритм BIRCH
+- Класс BirchConfig: конфигурация алгоритма BIRCH</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="gamac.algorithms.birch.Birch">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gamac.algorithms.birch.</span></span><span class="sig-name descname"><span class="pre">Birch</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">threshold</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">branching_factor</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">50</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_clusters</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gamac/algorithms/birch.html#Birch"><span class="viewcode-link"><span class="pre">[исходный</span> <span class="pre">код]</span></span></a><a class="headerlink" href="#gamac.algorithms.birch.Birch" title="Ссылка на это определение"></a></dt>
+<dd><p>Базовые классы: <a class="reference internal" href="#gamac.algorithms.base.ClusteringAlgo" title="gamac.algorithms.base.ClusteringAlgo"><code class="xref py py-class docutils literal notranslate"><span class="pre">ClusteringAlgo</span></code></a></p>
+<p>Алгоритм BIRCH для GPU.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="gamac.algorithms.birch.Birch.threshold">
+<span class="sig-name descname"><span class="pre">threshold</span></span><a class="headerlink" href="#gamac.algorithms.birch.Birch.threshold" title="Ссылка на это определение"></a></dt>
+<dd><p>Порог для объединения CF.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="gamac.algorithms.birch.Birch.branching_factor">
+<span class="sig-name descname"><span class="pre">branching_factor</span></span><a class="headerlink" href="#gamac.algorithms.birch.Birch.branching_factor" title="Ссылка на это определение"></a></dt>
+<dd><p>Максимальное количество потомков.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="gamac.algorithms.birch.Birch.n_clusters">
+<span class="sig-name descname"><span class="pre">n_clusters</span></span><a class="headerlink" href="#gamac.algorithms.birch.Birch.n_clusters" title="Ссылка на это определение"></a></dt>
+<dd><p>Количество кластеров.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="gamac.algorithms.birch.Birch.subcluster_labels">
+<span class="sig-name descname"><span class="pre">subcluster_labels</span></span><a class="headerlink" href="#gamac.algorithms.birch.Birch.subcluster_labels" title="Ссылка на это определение"></a></dt>
+<dd><p>Метки подкластеров.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>LabelsType</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="gamac.algorithms.birch.Birch.tree">
+<span class="sig-name descname"><span class="pre">tree</span></span><a class="headerlink" href="#gamac.algorithms.birch.Birch.tree" title="Ссылка на это определение"></a></dt>
+<dd><p>Построенное дерево CF.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#gamac.algorithms.birch.CFTreeGPU" title="gamac.algorithms.birch.CFTreeGPU">CFTreeGPU</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="gamac.algorithms.birch.Birch.fit">
+<span class="sig-name descname"><span class="pre">fit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gamac/algorithms/birch.html#Birch.fit"><span class="viewcode-link"><span class="pre">[исходный</span> <span class="pre">код]</span></span></a><a class="headerlink" href="#gamac.algorithms.birch.Birch.fit" title="Ссылка на это определение"></a></dt>
+<dd><p>Обучает модель BIRCH на данных.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Параметры<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>X</strong> – Данные для обучения.</p>
+</dd>
+<dt class="field-even">Результат<span class="colon">:</span></dt>
+<dd class="field-even"><p>Обученная модель BirchModel.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="gamac.algorithms.birch.BirchConfig">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gamac.algorithms.birch.</span></span><span class="sig-name descname"><span class="pre">BirchConfig</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">threshold</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(0.1,</span> <span class="pre">0.9)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">branching_factor</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(10,</span> <span class="pre">80)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_clusters</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(2,</span> <span class="pre">15)</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gamac/algorithms/birch.html#BirchConfig"><span class="viewcode-link"><span class="pre">[исходный</span> <span class="pre">код]</span></span></a><a class="headerlink" href="#gamac.algorithms.birch.BirchConfig" title="Ссылка на это определение"></a></dt>
+<dd><p>Базовые классы: <a class="reference internal" href="#gamac.algorithms.base.AlgoConfig" title="gamac.algorithms.base.AlgoConfig"><code class="xref py py-class docutils literal notranslate"><span class="pre">AlgoConfig</span></code></a></p>
+<p>Конфигурация алгоритма BIRCH.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="gamac.algorithms.birch.BirchConfig.config_space">
+<span class="sig-name descname"><span class="pre">config_space</span></span><a class="headerlink" href="#gamac.algorithms.birch.BirchConfig.config_space" title="Ссылка на это определение"></a></dt>
+<dd><p>Пространство параметров:
+- threshold: Диапазон порогов (по умолчанию (0.1, 0.9))
+- branching_factor: Диапазон branching factors (по умолчанию (10, 80))
+- n_clusters: Диапазон количества кластеров (по умолчанию (2, 15))</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="gamac.algorithms.birch.BirchModel">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gamac.algorithms.birch.</span></span><span class="sig-name descname"><span class="pre">BirchModel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">labels_</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">subcluster_labels</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tree</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gamac/algorithms/birch.html#BirchModel"><span class="viewcode-link"><span class="pre">[исходный</span> <span class="pre">код]</span></span></a><a class="headerlink" href="#gamac.algorithms.birch.BirchModel" title="Ссылка на это определение"></a></dt>
+<dd><p>Базовые классы: <a class="reference internal" href="#gamac.algorithms.base.ClusteringModel" title="gamac.algorithms.base.ClusteringModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">ClusteringModel</span></code></a></p>
+<p>Модель кластеризации BIRCH.</p>
+<p>Хранит метки кластеров, подкластеров и структуру дерева для предсказания.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="gamac.algorithms.birch.BirchModel.subcluster_labels">
+<span class="sig-name descname"><span class="pre">subcluster_labels</span></span><a class="headerlink" href="#gamac.algorithms.birch.BirchModel.subcluster_labels" title="Ссылка на это определение"></a></dt>
+<dd><p>Метки подкластеров.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>LabelsType</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="gamac.algorithms.birch.BirchModel.tree">
+<span class="sig-name descname"><span class="pre">tree</span></span><a class="headerlink" href="#gamac.algorithms.birch.BirchModel.tree" title="Ссылка на это определение"></a></dt>
+<dd><p>Построенное дерево CF.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#gamac.algorithms.birch.CFTreeGPU" title="gamac.algorithms.birch.CFTreeGPU">CFTreeGPU</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="gamac.algorithms.birch.BirchModel.predict">
+<span class="sig-name descname"><span class="pre">predict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">cupy.typing.NDArray</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">cupy.typing.NDArray</span></span></span><a class="reference internal" href="_modules/gamac/algorithms/birch.html#BirchModel.predict"><span class="viewcode-link"><span class="pre">[исходный</span> <span class="pre">код]</span></span></a><a class="headerlink" href="#gamac.algorithms.birch.BirchModel.predict" title="Ссылка на это определение"></a></dt>
+<dd><p>Предсказывает метки кластеров для новых данных.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Параметры<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>X</strong> – Данные для предсказания.</p>
+</dd>
+<dt class="field-even">Результат<span class="colon">:</span></dt>
+<dd class="field-even"><p>Метки кластеров для входных данных.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="gamac.algorithms.birch.CFNodeGPU">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gamac.algorithms.birch.</span></span><span class="sig-name descname"><span class="pre">CFNodeGPU</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">threshold</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">branching_factor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">is_leaf</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gamac/algorithms/birch.html#CFNodeGPU"><span class="viewcode-link"><span class="pre">[исходный</span> <span class="pre">код]</span></span></a><a class="headerlink" href="#gamac.algorithms.birch.CFNodeGPU" title="Ссылка на это определение"></a></dt>
+<dd><p>Базовые классы: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Узел дерева CF для GPU.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="gamac.algorithms.birch.CFNodeGPU.threshold">
+<span class="sig-name descname"><span class="pre">threshold</span></span><a class="headerlink" href="#gamac.algorithms.birch.CFNodeGPU.threshold" title="Ссылка на это определение"></a></dt>
+<dd><p>Порог для объединения CF.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="gamac.algorithms.birch.CFNodeGPU.branching_factor">
+<span class="sig-name descname"><span class="pre">branching_factor</span></span><a class="headerlink" href="#gamac.algorithms.birch.CFNodeGPU.branching_factor" title="Ссылка на это определение"></a></dt>
+<dd><p>Максимальное количество потомков.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="gamac.algorithms.birch.CFNodeGPU.is_leaf">
+<span class="sig-name descname"><span class="pre">is_leaf</span></span><a class="headerlink" href="#gamac.algorithms.birch.CFNodeGPU.is_leaf" title="Ссылка на это определение"></a></dt>
+<dd><p>Является ли узел листом.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="gamac.algorithms.birch.CFNodeGPU.cfs">
+<span class="sig-name descname"><span class="pre">cfs</span></span><a class="headerlink" href="#gamac.algorithms.birch.CFNodeGPU.cfs" title="Ссылка на это определение"></a></dt>
+<dd><p>Список CF в узле.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="gamac.algorithms.birch.CFNodeGPU.children">
+<span class="sig-name descname"><span class="pre">children</span></span><a class="headerlink" href="#gamac.algorithms.birch.CFNodeGPU.children" title="Ссылка на это определение"></a></dt>
+<dd><p>Список дочерних узлов.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="gamac.algorithms.birch.CFNodeGPU.next">
+<span class="sig-name descname"><span class="pre">next</span></span><a class="headerlink" href="#gamac.algorithms.birch.CFNodeGPU.next" title="Ссылка на это определение"></a></dt>
+<dd><p>Ссылка на следующий узел-лист.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="gamac.algorithms.birch.CFNodeGPU.find_closest_child">
+<span class="sig-name descname"><span class="pre">find_closest_child</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gamac/algorithms/birch.html#CFNodeGPU.find_closest_child"><span class="viewcode-link"><span class="pre">[исходный</span> <span class="pre">код]</span></span></a><a class="headerlink" href="#gamac.algorithms.birch.CFNodeGPU.find_closest_child" title="Ссылка на это определение"></a></dt>
+<dd><p>Находит ближайший дочерний узел.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Параметры<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>data</strong> – Точка данных.</p>
+</dd>
+<dt class="field-even">Результат<span class="colon">:</span></dt>
+<dd class="field-even"><p>Индекс ближайшего дочернего узла.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="gamac.algorithms.birch.CFNodeGPU.insert">
+<span class="sig-name descname"><span class="pre">insert</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cf</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gamac/algorithms/birch.html#CFNodeGPU.insert"><span class="viewcode-link"><span class="pre">[исходный</span> <span class="pre">код]</span></span></a><a class="headerlink" href="#gamac.algorithms.birch.CFNodeGPU.insert" title="Ссылка на это определение"></a></dt>
+<dd><p>Вставляет CF в узел.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Параметры<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>cf</strong> – CF для вставки.</p></li>
+<li><p><strong>data</strong> – Соответствующие данные.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="gamac.algorithms.birch.CFNodeGPU.split">
+<span class="sig-name descname"><span class="pre">split</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/gamac/algorithms/birch.html#CFNodeGPU.split"><span class="viewcode-link"><span class="pre">[исходный</span> <span class="pre">код]</span></span></a><a class="headerlink" href="#gamac.algorithms.birch.CFNodeGPU.split" title="Ссылка на это определение"></a></dt>
+<dd><p>Разделяет узел при превышении branching_factor.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="gamac.algorithms.birch.CFTreeGPU">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gamac.algorithms.birch.</span></span><span class="sig-name descname"><span class="pre">CFTreeGPU</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">threshold</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">branching_factor</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gamac/algorithms/birch.html#CFTreeGPU"><span class="viewcode-link"><span class="pre">[исходный</span> <span class="pre">код]</span></span></a><a class="headerlink" href="#gamac.algorithms.birch.CFTreeGPU" title="Ссылка на это определение"></a></dt>
+<dd><p>Базовые классы: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Дерево CF для GPU.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="gamac.algorithms.birch.CFTreeGPU.threshold">
+<span class="sig-name descname"><span class="pre">threshold</span></span><a class="headerlink" href="#gamac.algorithms.birch.CFTreeGPU.threshold" title="Ссылка на это определение"></a></dt>
+<dd><p>Порог для объединения CF.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="gamac.algorithms.birch.CFTreeGPU.branching_factor">
+<span class="sig-name descname"><span class="pre">branching_factor</span></span><a class="headerlink" href="#gamac.algorithms.birch.CFTreeGPU.branching_factor" title="Ссылка на это определение"></a></dt>
+<dd><p>Максимальное количество потомков.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="gamac.algorithms.birch.CFTreeGPU.root">
+<span class="sig-name descname"><span class="pre">root</span></span><a class="headerlink" href="#gamac.algorithms.birch.CFTreeGPU.root" title="Ссылка на это определение"></a></dt>
+<dd><p>Корневой узел дерева.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#gamac.algorithms.birch.CFNodeGPU" title="gamac.algorithms.birch.CFNodeGPU">CFNodeGPU</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="gamac.algorithms.birch.CFTreeGPU.insert">
+<span class="sig-name descname"><span class="pre">insert</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gamac/algorithms/birch.html#CFTreeGPU.insert"><span class="viewcode-link"><span class="pre">[исходный</span> <span class="pre">код]</span></span></a><a class="headerlink" href="#gamac.algorithms.birch.CFTreeGPU.insert" title="Ссылка на это определение"></a></dt>
+<dd><p>Вставляет точку данных в дерево.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Параметры<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>data</strong> – Точка данных для вставки.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="gamac.algorithms.birch.ClusteringFeatureGPU">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gamac.algorithms.birch.</span></span><span class="sig-name descname"><span class="pre">ClusteringFeatureGPU</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">point</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gamac/algorithms/birch.html#ClusteringFeatureGPU"><span class="viewcode-link"><span class="pre">[исходный</span> <span class="pre">код]</span></span></a><a class="headerlink" href="#gamac.algorithms.birch.ClusteringFeatureGPU" title="Ссылка на это определение"></a></dt>
+<dd><p>Базовые классы: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Признак кластеризации (CF) для GPU.</p>
+<p>Хранит статистику для группы точек:
+- n: количество точек
+- LS: линейная сумма
+- SS: квадратичная сумма</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="gamac.algorithms.birch.ClusteringFeatureGPU.n">
+<span class="sig-name descname"><span class="pre">n</span></span><a class="headerlink" href="#gamac.algorithms.birch.ClusteringFeatureGPU.n" title="Ссылка на это определение"></a></dt>
+<dd><p>Количество точек в CF.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="gamac.algorithms.birch.ClusteringFeatureGPU.LS">
+<span class="sig-name descname"><span class="pre">LS</span></span><a class="headerlink" href="#gamac.algorithms.birch.ClusteringFeatureGPU.LS" title="Ссылка на это определение"></a></dt>
+<dd><p>Линейная сумма точек.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>cp.ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="gamac.algorithms.birch.ClusteringFeatureGPU.SS">
+<span class="sig-name descname"><span class="pre">SS</span></span><a class="headerlink" href="#gamac.algorithms.birch.ClusteringFeatureGPU.SS" title="Ссылка на это определение"></a></dt>
+<dd><p>Квадратичная сумма точек.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>cp.ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="gamac.algorithms.birch.ClusteringFeatureGPU.add_point">
+<span class="sig-name descname"><span class="pre">add_point</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">point</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gamac/algorithms/birch.html#ClusteringFeatureGPU.add_point"><span class="viewcode-link"><span class="pre">[исходный</span> <span class="pre">код]</span></span></a><a class="headerlink" href="#gamac.algorithms.birch.ClusteringFeatureGPU.add_point" title="Ссылка на это определение"></a></dt>
+<dd><p>Добавляет точку к CF.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Параметры<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>point</strong> – Точка для добавления.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="gamac.algorithms.birch.ClusteringFeatureGPU.centroid">
+<span class="sig-name descname"><span class="pre">centroid</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/gamac/algorithms/birch.html#ClusteringFeatureGPU.centroid"><span class="viewcode-link"><span class="pre">[исходный</span> <span class="pre">код]</span></span></a><a class="headerlink" href="#gamac.algorithms.birch.ClusteringFeatureGPU.centroid" title="Ссылка на это определение"></a></dt>
+<dd><p>Вычисляет центроид CF.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Результат<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Центроид CF.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="gamac.algorithms.birch.ClusteringFeatureGPU.merge">
+<span class="sig-name descname"><span class="pre">merge</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">other</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gamac/algorithms/birch.html#ClusteringFeatureGPU.merge"><span class="viewcode-link"><span class="pre">[исходный</span> <span class="pre">код]</span></span></a><a class="headerlink" href="#gamac.algorithms.birch.ClusteringFeatureGPU.merge" title="Ссылка на это определение"></a></dt>
+<dd><p>Объединяет два CF.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Параметры<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>other</strong> – Другой CF для объединения.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="gamac.algorithms.birch.ClusteringFeatureGPU.radius">
+<span class="sig-name descname"><span class="pre">radius</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/gamac/algorithms/birch.html#ClusteringFeatureGPU.radius"><span class="viewcode-link"><span class="pre">[исходный</span> <span class="pre">код]</span></span></a><a class="headerlink" href="#gamac.algorithms.birch.ClusteringFeatureGPU.radius" title="Ссылка на это определение"></a></dt>
+<dd><p>Вычисляет радиус CF.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Результат<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Радиус CF.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-gamac.algorithms.bisecting_kmeans">
+<span id="gamac-algorithms-bisecting-kmeans-module"></span><h2>gamac.algorithms.bisecting_kmeans module<a class="headerlink" href="#module-gamac.algorithms.bisecting_kmeans" title="Ссылка на этот заголовок"></a></h2>
+<p>Реализация алгоритма Bisecting K-Means для GPU.</p>
+<p>Модуль содержит:
+- Класс BisectingKMeansModel: модель кластеризации Bisecting K-Means
+- Класс BisectingKMeans: основной алгоритм Bisecting K-Means
+- Класс BisectingKMeansConfig: конфигурация алгоритма</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="gamac.algorithms.bisecting_kmeans.BisectingKMeans">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gamac.algorithms.bisecting_kmeans.</span></span><span class="sig-name descname"><span class="pre">BisectingKMeans</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n_clusters</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_iter</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">init</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'k-means++'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0001</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gamac/algorithms/bisecting_kmeans.html#BisectingKMeans"><span class="viewcode-link"><span class="pre">[исходный</span> <span class="pre">код]</span></span></a><a class="headerlink" href="#gamac.algorithms.bisecting_kmeans.BisectingKMeans" title="Ссылка на это определение"></a></dt>
+<dd><p>Базовые классы: <a class="reference internal" href="#gamac.algorithms.base.ClusteringAlgo" title="gamac.algorithms.base.ClusteringAlgo"><code class="xref py py-class docutils literal notranslate"><span class="pre">ClusteringAlgo</span></code></a></p>
+<p>Алгоритм Bisecting K-Means для GPU.</p>
+<p>Иерархический алгоритм кластеризации, который рекурсивно делит данные
+на две части, используя K-Means с K=2 на каждом шаге.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="gamac.algorithms.bisecting_kmeans.BisectingKMeans.n_clusters">
+<span class="sig-name descname"><span class="pre">n_clusters</span></span><a class="headerlink" href="#gamac.algorithms.bisecting_kmeans.BisectingKMeans.n_clusters" title="Ссылка на это определение"></a></dt>
+<dd><p>Количество кластеров.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="gamac.algorithms.bisecting_kmeans.BisectingKMeans.max_iter">
+<span class="sig-name descname"><span class="pre">max_iter</span></span><a class="headerlink" href="#gamac.algorithms.bisecting_kmeans.BisectingKMeans.max_iter" title="Ссылка на это определение"></a></dt>
+<dd><p>Максимальное количество итераций.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="gamac.algorithms.bisecting_kmeans.BisectingKMeans.init">
+<span class="sig-name descname"><span class="pre">init</span></span><a class="headerlink" href="#gamac.algorithms.bisecting_kmeans.BisectingKMeans.init" title="Ссылка на это определение"></a></dt>
+<dd><p>Метод инициализации центроидов („k-means++“ или „random“).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="gamac.algorithms.bisecting_kmeans.BisectingKMeans.tol">
+<span class="sig-name descname"><span class="pre">tol</span></span><a class="headerlink" href="#gamac.algorithms.bisecting_kmeans.BisectingKMeans.tol" title="Ссылка на это определение"></a></dt>
+<dd><p>Порог сходимости.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="gamac.algorithms.bisecting_kmeans.BisectingKMeans.fit">
+<span class="sig-name descname"><span class="pre">fit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">cupy.typing.NDArray</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#gamac.algorithms.bisecting_kmeans.BisectingKMeansModel" title="gamac.algorithms.bisecting_kmeans.BisectingKMeansModel"><span class="pre">BisectingKMeansModel</span></a></span></span><a class="reference internal" href="_modules/gamac/algorithms/bisecting_kmeans.html#BisectingKMeans.fit"><span class="viewcode-link"><span class="pre">[исходный</span> <span class="pre">код]</span></span></a><a class="headerlink" href="#gamac.algorithms.bisecting_kmeans.BisectingKMeans.fit" title="Ссылка на это определение"></a></dt>
+<dd><p>Обучает модель Bisecting K-Means на данных.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Параметры<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>df</strong> – Данные для обучения.</p>
+</dd>
+<dt class="field-even">Результат<span class="colon">:</span></dt>
+<dd class="field-even"><p>Обученная модель BisectingKMeansModel.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="gamac.algorithms.bisecting_kmeans.BisectingKMeansConfig">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gamac.algorithms.bisecting_kmeans.</span></span><span class="sig-name descname"><span class="pre">BisectingKMeansConfig</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_clusters</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(2,</span> <span class="pre">15)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">init</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">frozenset({'k-means++',</span> <span class="pre">'random'})</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_iter</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0001</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gamac/algorithms/bisecting_kmeans.html#BisectingKMeansConfig"><span class="viewcode-link"><span class="pre">[исходный</span> <span class="pre">код]</span></span></a><a class="headerlink" href="#gamac.algorithms.bisecting_kmeans.BisectingKMeansConfig" title="Ссылка на это определение"></a></dt>
+<dd><p>Базовые классы: <a class="reference internal" href="#gamac.algorithms.base.AlgoConfig" title="gamac.algorithms.base.AlgoConfig"><code class="xref py py-class docutils literal notranslate"><span class="pre">AlgoConfig</span></code></a></p>
+<p>Конфигурация алгоритма Bisecting K-Means.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="gamac.algorithms.bisecting_kmeans.BisectingKMeansConfig.config_space">
+<span class="sig-name descname"><span class="pre">config_space</span></span><a class="headerlink" href="#gamac.algorithms.bisecting_kmeans.BisectingKMeansConfig.config_space" title="Ссылка на это определение"></a></dt>
+<dd><p>Пространство параметров:
+- n_clusters: Диапазон количества кластеров (по умолчанию (2, 15))
+- init: Методы инициализации (по умолчанию {„random“, „k-means++“})
+- max_iter: Максимальное количество итераций (по умолчанию 100)
+- tol: Порог сходимости (по умолчанию 1e-4)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="gamac.algorithms.bisecting_kmeans.BisectingKMeansModel">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gamac.algorithms.bisecting_kmeans.</span></span><span class="sig-name descname"><span class="pre">BisectingKMeansModel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">labels_</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">centroids_</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gamac/algorithms/bisecting_kmeans.html#BisectingKMeansModel"><span class="viewcode-link"><span class="pre">[исходный</span> <span class="pre">код]</span></span></a><a class="headerlink" href="#gamac.algorithms.bisecting_kmeans.BisectingKMeansModel" title="Ссылка на это определение"></a></dt>
+<dd><p>Базовые классы: <a class="reference internal" href="#gamac.algorithms.base.ClusteringModel" title="gamac.algorithms.base.ClusteringModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">ClusteringModel</span></code></a></p>
+<p>Модель кластеризации Bisecting K-Means.</p>
+<p>Хранит метки кластеров и центроиды для предсказания.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="gamac.algorithms.bisecting_kmeans.BisectingKMeansModel.centroids_">
+<span class="sig-name descname"><span class="pre">centroids_</span></span><a class="headerlink" href="#gamac.algorithms.bisecting_kmeans.BisectingKMeansModel.centroids_" title="Ссылка на это определение"></a></dt>
+<dd><p>Центроиды кластеров.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>cp.ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="gamac.algorithms.bisecting_kmeans.BisectingKMeansModel.predict">
+<span class="sig-name descname"><span class="pre">predict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">cupy.typing.NDArray</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">cupy.typing.NDArray</span></span></span><a class="reference internal" href="_modules/gamac/algorithms/bisecting_kmeans.html#BisectingKMeansModel.predict"><span class="viewcode-link"><span class="pre">[исходный</span> <span class="pre">код]</span></span></a><a class="headerlink" href="#gamac.algorithms.bisecting_kmeans.BisectingKMeansModel.predict" title="Ссылка на это определение"></a></dt>
+<dd><p>Предсказывает метки кластеров для новых данных.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Параметры<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>df</strong> – Данные для предсказания.</p>
+</dd>
+<dt class="field-even">Результат<span class="colon">:</span></dt>
+<dd class="field-even"><p>Метки кластеров для входных данных.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-gamac.algorithms.dbscan">
+<span id="gamac-algorithms-dbscan-module"></span><h2>gamac.algorithms.dbscan module<a class="headerlink" href="#module-gamac.algorithms.dbscan" title="Ссылка на этот заголовок"></a></h2>
+<p>Реализация алгоритма DBSCAN (Density-Based Spatial Clustering of Applications with Noise) для GPU.</p>
+<p>Модуль содержит:
+- Класс DBSCANModel: модель кластеризации DBSCAN
+- Класс DBSCAN: основной алгоритм DBSCAN
+- Класс DBSCANConfig: конфигурация алгоритма</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="gamac.algorithms.dbscan.DBSCAN">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gamac.algorithms.dbscan.</span></span><span class="sig-name descname"><span class="pre">DBSCAN</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">eps</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_samples</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gamac/algorithms/dbscan.html#DBSCAN"><span class="viewcode-link"><span class="pre">[исходный</span> <span class="pre">код]</span></span></a><a class="headerlink" href="#gamac.algorithms.dbscan.DBSCAN" title="Ссылка на это определение"></a></dt>
+<dd><p>Базовые классы: <a class="reference internal" href="#gamac.algorithms.base.ClusteringAlgo" title="gamac.algorithms.base.ClusteringAlgo"><code class="xref py py-class docutils literal notranslate"><span class="pre">ClusteringAlgo</span></code></a></p>
+<p>Алгоритм DBSCAN для GPU.</p>
+<p>Алгоритм кластеризации на основе плотности, который группирует точки в кластеры,
+если они находятся в плотной области, и помечает выбросы как шум.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="gamac.algorithms.dbscan.DBSCAN.eps">
+<span class="sig-name descname"><span class="pre">eps</span></span><a class="headerlink" href="#gamac.algorithms.dbscan.DBSCAN.eps" title="Ссылка на это определение"></a></dt>
+<dd><p>Радиус окрестности.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="gamac.algorithms.dbscan.DBSCAN.eps_sq">
+<span class="sig-name descname"><span class="pre">eps_sq</span></span><a class="headerlink" href="#gamac.algorithms.dbscan.DBSCAN.eps_sq" title="Ссылка на это определение"></a></dt>
+<dd><p>Квадрат радиуса (для оптимизации).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="gamac.algorithms.dbscan.DBSCAN.min_samples">
+<span class="sig-name descname"><span class="pre">min_samples</span></span><a class="headerlink" href="#gamac.algorithms.dbscan.DBSCAN.min_samples" title="Ссылка на это определение"></a></dt>
+<dd><p>Минимальное количество соседей для core-точки.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="gamac.algorithms.dbscan.DBSCAN.X">
+<span class="sig-name descname"><span class="pre">X</span></span><a class="headerlink" href="#gamac.algorithms.dbscan.DBSCAN.X" title="Ссылка на это определение"></a></dt>
+<dd><p>Обучающие данные.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>cp.ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="gamac.algorithms.dbscan.DBSCAN.fit">
+<span class="sig-name descname"><span class="pre">fit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gamac/algorithms/dbscan.html#DBSCAN.fit"><span class="viewcode-link"><span class="pre">[исходный</span> <span class="pre">код]</span></span></a><a class="headerlink" href="#gamac.algorithms.dbscan.DBSCAN.fit" title="Ссылка на это определение"></a></dt>
+<dd><p>Обучает модель DBSCAN на данных.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Параметры<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>X</strong> – Данные для обучения.</p>
+</dd>
+<dt class="field-even">Результат<span class="colon">:</span></dt>
+<dd class="field-even"><p>Обученная модель DBSCANModel.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="gamac.algorithms.dbscan.DBSCANConfig">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gamac.algorithms.dbscan.</span></span><span class="sig-name descname"><span class="pre">DBSCANConfig</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">eps</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(0.01,</span> <span class="pre">1.5)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_samples</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(5,</span> <span class="pre">15)</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gamac/algorithms/dbscan.html#DBSCANConfig"><span class="viewcode-link"><span class="pre">[исходный</span> <span class="pre">код]</span></span></a><a class="headerlink" href="#gamac.algorithms.dbscan.DBSCANConfig" title="Ссылка на это определение"></a></dt>
+<dd><p>Базовые классы: <a class="reference internal" href="#gamac.algorithms.base.AlgoConfig" title="gamac.algorithms.base.AlgoConfig"><code class="xref py py-class docutils literal notranslate"><span class="pre">AlgoConfig</span></code></a></p>
+<p>Конфигурация алгоритма DBSCAN.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="gamac.algorithms.dbscan.DBSCANConfig.config_space">
+<span class="sig-name descname"><span class="pre">config_space</span></span><a class="headerlink" href="#gamac.algorithms.dbscan.DBSCANConfig.config_space" title="Ссылка на это определение"></a></dt>
+<dd><p>Пространство параметров:
+- eps: Диапазон радиуса окрестности (по умолчанию (0.01, 1.5))
+- min_samples: Диапазон минимального количества соседей (по умолчанию (5, 15))</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="gamac.algorithms.dbscan.DBSCANModel">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gamac.algorithms.dbscan.</span></span><span class="sig-name descname"><span class="pre">DBSCANModel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">labels_</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">X_</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">eps</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gamac/algorithms/dbscan.html#DBSCANModel"><span class="viewcode-link"><span class="pre">[исходный</span> <span class="pre">код]</span></span></a><a class="headerlink" href="#gamac.algorithms.dbscan.DBSCANModel" title="Ссылка на это определение"></a></dt>
+<dd><p>Базовые классы: <a class="reference internal" href="#gamac.algorithms.base.ClusteringModel" title="gamac.algorithms.base.ClusteringModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">ClusteringModel</span></code></a></p>
+<p>Модель кластеризации DBSCAN.</p>
+<p>Хранит метки кластеров, обучающие данные и параметр eps для предсказания.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="gamac.algorithms.dbscan.DBSCANModel.X_">
+<span class="sig-name descname"><span class="pre">X_</span></span><a class="headerlink" href="#gamac.algorithms.dbscan.DBSCANModel.X_" title="Ссылка на это определение"></a></dt>
+<dd><p>Обучающие данные.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>cp.ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="gamac.algorithms.dbscan.DBSCANModel.eps_sq">
+<span class="sig-name descname"><span class="pre">eps_sq</span></span><a class="headerlink" href="#gamac.algorithms.dbscan.DBSCANModel.eps_sq" title="Ссылка на это определение"></a></dt>
+<dd><p>Квадрат радиуса окрестности (для оптимизации расчетов).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="gamac.algorithms.dbscan.DBSCANModel.predict">
+<span class="sig-name descname"><span class="pre">predict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">cupy.typing.NDArray</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">cupy.typing.NDArray</span></span></span><a class="reference internal" href="_modules/gamac/algorithms/dbscan.html#DBSCANModel.predict"><span class="viewcode-link"><span class="pre">[исходный</span> <span class="pre">код]</span></span></a><a class="headerlink" href="#gamac.algorithms.dbscan.DBSCANModel.predict" title="Ссылка на это определение"></a></dt>
+<dd><p>Предсказывает метки кластеров для новых данных.</p>
+<p>Использует батчевую обработку для эффективной работы с большими данными.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Параметры<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>df</strong> – Данные для предсказания.</p>
+</dd>
+<dt class="field-even">Результат<span class="colon">:</span></dt>
+<dd class="field-even"><p>Метки кластеров для входных данных.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-gamac.algorithms.hdbscan">
+<span id="gamac-algorithms-hdbscan-module"></span><h2>gamac.algorithms.hdbscan module<a class="headerlink" href="#module-gamac.algorithms.hdbscan" title="Ссылка на этот заголовок"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="gamac.algorithms.hdbscan.HDBSCAN">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gamac.algorithms.hdbscan.</span></span><span class="sig-name descname"><span class="pre">HDBSCAN</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">min_cluster_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_samples</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gamac/algorithms/hdbscan.html#HDBSCAN"><span class="viewcode-link"><span class="pre">[исходный</span> <span class="pre">код]</span></span></a><a class="headerlink" href="#gamac.algorithms.hdbscan.HDBSCAN" title="Ссылка на это определение"></a></dt>
+<dd><p>Базовые классы: <a class="reference internal" href="#gamac.algorithms.base.ClusteringAlgo" title="gamac.algorithms.base.ClusteringAlgo"><code class="xref py py-class docutils literal notranslate"><span class="pre">ClusteringAlgo</span></code></a></p>
+<p>HDBSCAN clustering algorithm implementation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Параметры<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>min_cluster_size</strong> (<em>int</em><em>, </em><em>optional</em>) – Minimum size of clusters. Defaults to 5.</p></li>
+<li><p><strong>min_samples</strong> (<em>int</em><em>, </em><em>optional</em>) – Number of samples in neighborhood for core point.
+If None, set to min_cluster_size. Defaults to None.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="gamac.algorithms.hdbscan.HDBSCAN.fit">
+<span class="sig-name descname"><span class="pre">fit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gamac/algorithms/hdbscan.html#HDBSCAN.fit"><span class="viewcode-link"><span class="pre">[исходный</span> <span class="pre">код]</span></span></a><a class="headerlink" href="#gamac.algorithms.hdbscan.HDBSCAN.fit" title="Ссылка на это определение"></a></dt>
+<dd><p>Fit HDBSCAN clustering model to the data.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Параметры<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>X</strong> (<em>cupy.ndarray</em>) – Training data to cluster.</p>
+</dd>
+<dt class="field-even">Результат<span class="colon">:</span></dt>
+<dd class="field-even"><p>Fitted clustering model.</p>
+</dd>
+<dt class="field-odd">Тип результата<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#gamac.algorithms.hdbscan.HDBSCANModel" title="gamac.algorithms.hdbscan.HDBSCANModel">HDBSCANModel</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="gamac.algorithms.hdbscan.HDBSCANConfig">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gamac.algorithms.hdbscan.</span></span><span class="sig-name descname"><span class="pre">HDBSCANConfig</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_cluster_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(5,</span> <span class="pre">15)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_samples</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(5,</span> <span class="pre">15)</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gamac/algorithms/hdbscan.html#HDBSCANConfig"><span class="viewcode-link"><span class="pre">[исходный</span> <span class="pre">код]</span></span></a><a class="headerlink" href="#gamac.algorithms.hdbscan.HDBSCANConfig" title="Ссылка на это определение"></a></dt>
+<dd><p>Базовые классы: <a class="reference internal" href="#gamac.algorithms.base.AlgoConfig" title="gamac.algorithms.base.AlgoConfig"><code class="xref py py-class docutils literal notranslate"><span class="pre">AlgoConfig</span></code></a></p>
+<p>Configuration for HDBSCAN algorithm hyperparameter optimization.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Параметры<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>min_cluster_size</strong> (<em>tuple</em><em>, </em><em>optional</em>) – Range for min_cluster_size parameter. Defaults to (5, 15).</p></li>
+<li><p><strong>min_samples</strong> (<em>tuple</em><em>, </em><em>optional</em>) – Range for min_samples parameter. Defaults to (5, 15).</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="gamac.algorithms.hdbscan.HDBSCANModel">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gamac.algorithms.hdbscan.</span></span><span class="sig-name descname"><span class="pre">HDBSCANModel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">labels_</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">X_</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gamac/algorithms/hdbscan.html#HDBSCANModel"><span class="viewcode-link"><span class="pre">[исходный</span> <span class="pre">код]</span></span></a><a class="headerlink" href="#gamac.algorithms.hdbscan.HDBSCANModel" title="Ссылка на это определение"></a></dt>
+<dd><p>Базовые классы: <a class="reference internal" href="#gamac.algorithms.base.ClusteringModel" title="gamac.algorithms.base.ClusteringModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">ClusteringModel</span></code></a></p>
+<p>A clustering model trained by HDBSCAN algorithm.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="gamac.algorithms.hdbscan.HDBSCANModel.labels_">
+<span class="sig-name descname"><span class="pre">labels_</span></span><a class="headerlink" href="#gamac.algorithms.hdbscan.HDBSCANModel.labels_" title="Ссылка на это определение"></a></dt>
+<dd><p>Cluster labels for each point in the training set.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>cupy.ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="gamac.algorithms.hdbscan.HDBSCANModel.X_">
+<span class="sig-name descname"><span class="pre">X_</span></span><a class="headerlink" href="#gamac.algorithms.hdbscan.HDBSCANModel.X_" title="Ссылка на это определение"></a></dt>
+<dd><p>The training data used to fit the model.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>cupy.ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="gamac.algorithms.hdbscan.HDBSCANModel.predict">
+<span class="sig-name descname"><span class="pre">predict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gamac/algorithms/hdbscan.html#HDBSCANModel.predict"><span class="viewcode-link"><span class="pre">[исходный</span> <span class="pre">код]</span></span></a><a class="headerlink" href="#gamac.algorithms.hdbscan.HDBSCANModel.predict" title="Ссылка на это определение"></a></dt>
+<dd><p>Predict cluster labels for new data points using nearest core points.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Параметры<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>X</strong> (<em>cupy.ndarray</em>) – New data points to predict clusters for.</p>
+</dd>
+<dt class="field-even">Результат<span class="colon">:</span></dt>
+<dd class="field-even"><p>Predicted cluster labels for each point in X.</p>
+</dd>
+<dt class="field-odd">Тип результата<span class="colon">:</span></dt>
+<dd class="field-odd"><p>cupy.ndarray</p>
+</dd>
+<dt class="field-even">Исключение<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>Exception</strong> – If model hasn’t been fitted yet.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-gamac.algorithms.kmeans">
+<span id="gamac-algorithms-kmeans-module"></span><h2>gamac.algorithms.kmeans module<a class="headerlink" href="#module-gamac.algorithms.kmeans" title="Ссылка на этот заголовок"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="gamac.algorithms.kmeans.KMeans">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gamac.algorithms.kmeans.</span></span><span class="sig-name descname"><span class="pre">KMeans</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n_clusters</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_iter</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0001</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">random_state</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gamac/algorithms/kmeans.html#KMeans"><span class="viewcode-link"><span class="pre">[исходный</span> <span class="pre">код]</span></span></a><a class="headerlink" href="#gamac.algorithms.kmeans.KMeans" title="Ссылка на это определение"></a></dt>
+<dd><p>Базовые классы: <a class="reference internal" href="#gamac.algorithms.base.ClusteringAlgo" title="gamac.algorithms.base.ClusteringAlgo"><code class="xref py py-class docutils literal notranslate"><span class="pre">ClusteringAlgo</span></code></a></p>
+<p>Алгоритм K-средних для кластеризации с использованием GPU.</p>
+<p>Простой метод кластеризации, который формирует k кластеров, итеративно перераспределяя
+точки к ближайшим центроидам и затем перемещая центроиды в центр новых кластеров.</p>
+<section id="id1">
+<h3>Параметры:<a class="headerlink" href="#id1" title="Ссылка на этот заголовок"></a></h3>
+<dl class="simple">
+<dt>n_clusters: int, по умолчанию=2</dt><dd><p>Количество кластеров, которые нужно сформировать.</p>
+</dd>
+<dt>max_iter: int, по умолчанию=100</dt><dd><p>Максимальное количество итераций алгоритма, если раньше не достигнута сходимость.</p>
+</dd>
+<dt>tol: float, по умолчанию=1e-4</dt><dd><p>Допустимое изменение центроидов для определения сходимости.</p>
+</dd>
+<dt>random_state: int, по умолчанию=None</dt><dd><p>Зерно для генератора случайных чисел для воспроизводимости.</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="gamac.algorithms.kmeans.KMeans.fit">
+<span class="sig-name descname"><span class="pre">fit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gamac/algorithms/kmeans.html#KMeans.fit"><span class="viewcode-link"><span class="pre">[исходный</span> <span class="pre">код]</span></span></a><a class="headerlink" href="#gamac.algorithms.kmeans.KMeans.fit" title="Ссылка на это определение"></a></dt>
+<dd><p>Обучение модели K-средних на переданных данных.</p>
+<dl class="simple">
+<dt>Аргументы:</dt><dd><p>X (cupy.ndarray): Обучающие данные для кластеризации.</p>
+</dd>
+<dt>Возвращает:</dt><dd><p>KMeansModel: Обученная модель кластеризации.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="gamac.algorithms.kmeans.KMeansConfig">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gamac.algorithms.kmeans.</span></span><span class="sig-name descname"><span class="pre">KMeansConfig</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_clusters</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(2,</span> <span class="pre">15)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_iter</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0001</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gamac/algorithms/kmeans.html#KMeansConfig"><span class="viewcode-link"><span class="pre">[исходный</span> <span class="pre">код]</span></span></a><a class="headerlink" href="#gamac.algorithms.kmeans.KMeansConfig" title="Ссылка на это определение"></a></dt>
+<dd><p>Базовые классы: <a class="reference internal" href="#gamac.algorithms.base.AlgoConfig" title="gamac.algorithms.base.AlgoConfig"><code class="xref py py-class docutils literal notranslate"><span class="pre">AlgoConfig</span></code></a></p>
+<p>Конфигурация для подбора гиперпараметров алгоритма K-средних.</p>
+<section id="id2">
+<h3>Параметры:<a class="headerlink" href="#id2" title="Ссылка на этот заголовок"></a></h3>
+<dl class="simple">
+<dt>n_clusters: tuple, по умолчанию=(2, 15)</dt><dd><p>Диапазон для подбора оптимального количества кластеров.</p>
+</dd>
+<dt>max_iter: int, по умолчанию=100</dt><dd><p>Максимальное количество итераций алгоритма.</p>
+</dd>
+<dt>tol: float, по умолчанию=1e-4</dt><dd><p>Допустимое изменение центроидов для определения сходимости.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="gamac.algorithms.kmeans.KMeansModel">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gamac.algorithms.kmeans.</span></span><span class="sig-name descname"><span class="pre">KMeansModel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">labels_</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">centroids_</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gamac/algorithms/kmeans.html#KMeansModel"><span class="viewcode-link"><span class="pre">[исходный</span> <span class="pre">код]</span></span></a><a class="headerlink" href="#gamac.algorithms.kmeans.KMeansModel" title="Ссылка на это определение"></a></dt>
+<dd><p>Базовые классы: <a class="reference internal" href="#gamac.algorithms.base.ClusteringModel" title="gamac.algorithms.base.ClusteringModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">ClusteringModel</span></code></a></p>
+<p>Модель кластеризации, обученная алгоритмом K-средних.</p>
+<dl class="simple">
+<dt>Атрибуты:</dt><dd><p>labels_ (cupy.ndarray): Метки кластеров для каждой точки обучающей выборки.
+centroids_ (cupy.ndarray): Координаты центроидов кластеров.</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="gamac.algorithms.kmeans.KMeansModel.predict">
+<span class="sig-name descname"><span class="pre">predict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">cupy.typing.NDArray</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">cupy.typing.NDArray</span></span></span><a class="reference internal" href="_modules/gamac/algorithms/kmeans.html#KMeansModel.predict"><span class="viewcode-link"><span class="pre">[исходный</span> <span class="pre">код]</span></span></a><a class="headerlink" href="#gamac.algorithms.kmeans.KMeansModel.predict" title="Ссылка на это определение"></a></dt>
+<dd><p>Предсказание меток кластеров для новых данных.</p>
+<dl class="simple">
+<dt>Аргументы:</dt><dd><p>X (DataFrameType): Массив новых данных для предсказания.</p>
+</dd>
+<dt>Возвращает:</dt><dd><p>LabelsType: Массив предсказанных меток кластеров.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-gamac.algorithms.meanshift">
+<span id="gamac-algorithms-meanshift-module"></span><h2>gamac.algorithms.meanshift module<a class="headerlink" href="#module-gamac.algorithms.meanshift" title="Ссылка на этот заголовок"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="gamac.algorithms.meanshift.MeanShift">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gamac.algorithms.meanshift.</span></span><span class="sig-name descname"><span class="pre">MeanShift</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">bandwidth</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_iter</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">300</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.001</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gamac/algorithms/meanshift.html#MeanShift"><span class="viewcode-link"><span class="pre">[исходный</span> <span class="pre">код]</span></span></a><a class="headerlink" href="#gamac.algorithms.meanshift.MeanShift" title="Ссылка на это определение"></a></dt>
+<dd><p>Базовые классы: <a class="reference internal" href="#gamac.algorithms.base.ClusteringAlgo" title="gamac.algorithms.base.ClusteringAlgo"><code class="xref py py-class docutils literal notranslate"><span class="pre">ClusteringAlgo</span></code></a></p>
+<p>Реализация алгоритма MeanShift для кластеризации с использованием GPU.</p>
+<p>Алгоритм основан на сдвиге точек в направлении увеличения плотности распределения данных.</p>
+<dl class="simple">
+<dt>Параметры:</dt><dd><p>bandwidth (float): Ширина окна для поиска соседей (по умолчанию 1.0).
+max_iter (int): Максимальное количество итераций (по умолчанию 300).
+tol (float): Допустимое изменение центроидов для остановки (по умолчанию 1e-3).</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="gamac.algorithms.meanshift.MeanShift.fit">
+<span class="sig-name descname"><span class="pre">fit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gamac/algorithms/meanshift.html#MeanShift.fit"><span class="viewcode-link"><span class="pre">[исходный</span> <span class="pre">код]</span></span></a><a class="headerlink" href="#gamac.algorithms.meanshift.MeanShift.fit" title="Ссылка на это определение"></a></dt>
+<dd><p>Обучение модели MeanShift на переданных данных.</p>
+<dl class="simple">
+<dt>Аргументы:</dt><dd><p>X (cupy.ndarray): Обучающие данные для кластеризации.</p>
+</dd>
+<dt>Возвращает:</dt><dd><p>MeanShiftModel: Обученная модель кластеризации.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="gamac.algorithms.meanshift.MeanShiftConfig">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gamac.algorithms.meanshift.</span></span><span class="sig-name descname"><span class="pre">MeanShiftConfig</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">bandwidth</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(0.0001,</span> <span class="pre">1.0)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_iter</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(50,</span> <span class="pre">300)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(1e-05,</span> <span class="pre">0.0001)</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gamac/algorithms/meanshift.html#MeanShiftConfig"><span class="viewcode-link"><span class="pre">[исходный</span> <span class="pre">код]</span></span></a><a class="headerlink" href="#gamac.algorithms.meanshift.MeanShiftConfig" title="Ссылка на это определение"></a></dt>
+<dd><p>Базовые классы: <a class="reference internal" href="#gamac.algorithms.base.AlgoConfig" title="gamac.algorithms.base.AlgoConfig"><code class="xref py py-class docutils literal notranslate"><span class="pre">AlgoConfig</span></code></a></p>
+<p>Конфигурация для подбора гиперпараметров алгоритма MeanShift.</p>
+<dl class="simple">
+<dt>Параметры:</dt><dd><p>bandwidth (tuple): Диапазон для подбора ширины окна (по умолчанию (1e-4, 1.0)).
+max_iter (tuple): Диапазон для подбора максимального числа итераций (по умолчанию (50, 300)).
+tol (tuple): Диапазон для подбора допустимого изменения центроидов (по умолчанию (1e-5, 1e-4)).</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="gamac.algorithms.meanshift.MeanShiftModel">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gamac.algorithms.meanshift.</span></span><span class="sig-name descname"><span class="pre">MeanShiftModel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">labels_</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">centroids_</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gamac/algorithms/meanshift.html#MeanShiftModel"><span class="viewcode-link"><span class="pre">[исходный</span> <span class="pre">код]</span></span></a><a class="headerlink" href="#gamac.algorithms.meanshift.MeanShiftModel" title="Ссылка на это определение"></a></dt>
+<dd><p>Базовые классы: <a class="reference internal" href="#gamac.algorithms.base.ClusteringModel" title="gamac.algorithms.base.ClusteringModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">ClusteringModel</span></code></a></p>
+<p>Модель кластеризации, обученная алгоритмом MeanShift.</p>
+<dl class="simple">
+<dt>Атрибуты:</dt><dd><p>labels_ (cupy.ndarray): Метки кластеров для каждой точки обучающей выборки.
+centroids_ (cupy.ndarray): Координаты центроидов кластеров.</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="gamac.algorithms.meanshift.MeanShiftModel.predict">
+<span class="sig-name descname"><span class="pre">predict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">cupy.typing.NDArray</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">cupy.typing.NDArray</span></span></span><a class="reference internal" href="_modules/gamac/algorithms/meanshift.html#MeanShiftModel.predict"><span class="viewcode-link"><span class="pre">[исходный</span> <span class="pre">код]</span></span></a><a class="headerlink" href="#gamac.algorithms.meanshift.MeanShiftModel.predict" title="Ссылка на это определение"></a></dt>
+<dd><p>Предсказание меток кластеров для новых данных.</p>
+<dl class="simple">
+<dt>Аргументы:</dt><dd><p>X (DataFrameType): Массив новых данных для предсказания.</p>
+</dd>
+<dt>Возвращает:</dt><dd><p>LabelsType: Массив предсказанных меток кластеров.</p>
+</dd>
+<dt>Выбрасывает:</dt><dd><p>ValueError: Если модель не была обучена (отсутствуют центроиды).</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Нижняя область">
+        <a href="gamac.html" class="btn btn-neutral float-left" title="gamac package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Предыдущая</a>
+        <a href="gamac.bin.html" class="btn btn-neutral float-right" title="gamac.bin package" accesskey="n" rel="next">Следующая <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Авторские права 2025, Sergey Muravyov, Nikita Kulin, Ivan Usov, Olga Muravyova, Simar Muratov. </p>
+  </div>
+
+  Собрано при помощи <a href="https://www.sphinx-doc.org/">Sphinx</a> с использованием
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">темы,</a>
+    предоставленной <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

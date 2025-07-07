@@ -1,0 +1,471 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="ru" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>gamac.algorithms.birch &mdash; документация GaMAC 1.0.0</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=e35015f7"></script>
+      <script src="../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../../_static/translations.js?v=cd1d70c9"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Алфавитный указатель" href="../../../genindex.html" />
+    <link rel="search" title="Поиск" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            GaMAC
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Поиск в документации" aria-label="Поиск в документации" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Меню навигации">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../modules.html">gamac</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Меню навигации для мобильных устройств" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">GaMAC</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Навигация по страницам">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Код модуля</a></li>
+      <li class="breadcrumb-item active">gamac.algorithms.birch</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Исходный код gamac.algorithms.birch</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Реализация алгоритма BIRCH (Balanced Iterative Reducing and Clustering using Hierarchies) для GPU.</span>
+
+<span class="sd">Модуль содержит:</span>
+<span class="sd">- Класс BirchModel: модель кластеризации BIRCH</span>
+<span class="sd">- Класс ClusteringFeatureGPU: признаки кластеризации для GPU</span>
+<span class="sd">- Класс CFNodeGPU: узел дерева CF (Clustering Feature)</span>
+<span class="sd">- Класс CFTreeGPU: дерево CF для GPU</span>
+<span class="sd">- Класс Birch: основной алгоритм BIRCH</span>
+<span class="sd">- Класс BirchConfig: конфигурация алгоритма BIRCH</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">cupy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">cp</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pylibraft.config</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">gamac.algorithms.kmeans</span><span class="w"> </span><span class="kn">import</span> <span class="n">KMeans</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">gamac.algorithms.base</span><span class="w"> </span><span class="kn">import</span> <span class="n">ClusteringModel</span><span class="p">,</span> <span class="n">ClusteringAlgo</span><span class="p">,</span> <span class="n">AlgoConfig</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">gamac.data.data_pipeline</span><span class="w"> </span><span class="kn">import</span> <span class="n">DataFrameType</span><span class="p">,</span> <span class="n">LabelsType</span>
+
+<span class="n">pylibraft</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">set_output_as</span><span class="p">(</span><span class="s2">&quot;cupy&quot;</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="BirchModel">
+<a class="viewcode-back" href="../../../gamac.algorithms.html#gamac.algorithms.birch.BirchModel">[документация]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">BirchModel</span><span class="p">(</span><span class="n">ClusteringModel</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Модель кластеризации BIRCH.</span>
+<span class="sd">    </span>
+<span class="sd">    Хранит метки кластеров, подкластеров и структуру дерева для предсказания.</span>
+<span class="sd">    </span>
+<span class="sd">    Attributes:</span>
+<span class="sd">        subcluster_labels (LabelsType): Метки подкластеров.</span>
+<span class="sd">        tree (CFTreeGPU): Построенное дерево CF.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">labels_</span><span class="p">,</span> <span class="n">subcluster_labels</span><span class="p">,</span> <span class="n">tree</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Инициализирует модель BIRCH.</span>
+<span class="sd">        </span>
+<span class="sd">        Args:</span>
+<span class="sd">            labels_: Метки кластеров для обучающих данных.</span>
+<span class="sd">            subcluster_labels: Метки подкластеров.</span>
+<span class="sd">            tree: Построенное дерево CF.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">labels_</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">subcluster_labels</span> <span class="o">=</span> <span class="n">subcluster_labels</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tree</span> <span class="o">=</span> <span class="n">tree</span>
+
+<div class="viewcode-block" id="BirchModel.predict">
+<a class="viewcode-back" href="../../../gamac.algorithms.html#gamac.algorithms.birch.BirchModel.predict">[документация]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">predict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">:</span> <span class="n">DataFrameType</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">LabelsType</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Предсказывает метки кластеров для новых данных.</span>
+<span class="sd">        </span>
+<span class="sd">        Args:</span>
+<span class="sd">            X: Данные для предсказания.</span>
+<span class="sd">            </span>
+<span class="sd">        Returns:</span>
+<span class="sd">            Метки кластеров для входных данных.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">subclusters</span> <span class="o">=</span> <span class="p">[</span><span class="n">cf</span><span class="o">.</span><span class="n">centroid</span><span class="p">()</span><span class="o">.</span><span class="n">get</span><span class="p">()</span> <span class="k">for</span> <span class="n">cf</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">tree</span><span class="o">.</span><span class="n">root</span><span class="o">.</span><span class="n">cfs</span><span class="p">]</span>
+        <span class="n">labels</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">point</span> <span class="ow">in</span> <span class="n">X</span><span class="p">:</span>
+            <span class="n">closest</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argmin</span><span class="p">([</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">point</span><span class="o">.</span><span class="n">get</span><span class="p">()</span> <span class="o">-</span> <span class="n">sc</span><span class="p">)</span> <span class="k">for</span> <span class="n">sc</span> <span class="ow">in</span> <span class="n">subclusters</span><span class="p">])</span>
+            <span class="n">labels</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">subcluster_labels</span><span class="p">[</span><span class="n">closest</span><span class="p">])</span>
+        <span class="k">return</span> <span class="n">cp</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">labels</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">cp</span><span class="o">.</span><span class="n">int32</span><span class="p">)</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="ClusteringFeatureGPU">
+<a class="viewcode-back" href="../../../gamac.algorithms.html#gamac.algorithms.birch.ClusteringFeatureGPU">[документация]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">ClusteringFeatureGPU</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Признак кластеризации (CF) для GPU.</span>
+<span class="sd">    </span>
+<span class="sd">    Хранит статистику для группы точек:</span>
+<span class="sd">    - n: количество точек</span>
+<span class="sd">    - LS: линейная сумма</span>
+<span class="sd">    - SS: квадратичная сумма</span>
+<span class="sd">    </span>
+<span class="sd">    Attributes:</span>
+<span class="sd">        n (int): Количество точек в CF.</span>
+<span class="sd">        LS (cp.ndarray): Линейная сумма точек.</span>
+<span class="sd">        SS (cp.ndarray): Квадратичная сумма точек.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">point</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Инициализирует CF с одной точкой.</span>
+<span class="sd">        </span>
+<span class="sd">        Args:</span>
+<span class="sd">            point: Начальная точка для CF.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">n</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">LS</span> <span class="o">=</span> <span class="n">cp</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">point</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">cp</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">SS</span> <span class="o">=</span> <span class="n">cp</span><span class="o">.</span><span class="n">square</span><span class="p">(</span><span class="n">point</span><span class="p">)</span>
+
+<div class="viewcode-block" id="ClusteringFeatureGPU.add_point">
+<a class="viewcode-back" href="../../../gamac.algorithms.html#gamac.algorithms.birch.ClusteringFeatureGPU.add_point">[документация]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">add_point</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">point</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Добавляет точку к CF.</span>
+<span class="sd">        </span>
+<span class="sd">        Args:</span>
+<span class="sd">            point: Точка для добавления.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">n</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">LS</span> <span class="o">+=</span> <span class="n">point</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">SS</span> <span class="o">+=</span> <span class="n">cp</span><span class="o">.</span><span class="n">square</span><span class="p">(</span><span class="n">point</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="ClusteringFeatureGPU.merge">
+<a class="viewcode-back" href="../../../gamac.algorithms.html#gamac.algorithms.birch.ClusteringFeatureGPU.merge">[документация]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">merge</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Объединяет два CF.</span>
+<span class="sd">        </span>
+<span class="sd">        Args:</span>
+<span class="sd">            other: Другой CF для объединения.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">n</span> <span class="o">+=</span> <span class="n">other</span><span class="o">.</span><span class="n">n</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">LS</span> <span class="o">+=</span> <span class="n">other</span><span class="o">.</span><span class="n">LS</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">SS</span> <span class="o">+=</span> <span class="n">other</span><span class="o">.</span><span class="n">SS</span></div>
+
+
+<div class="viewcode-block" id="ClusteringFeatureGPU.centroid">
+<a class="viewcode-back" href="../../../gamac.algorithms.html#gamac.algorithms.birch.ClusteringFeatureGPU.centroid">[документация]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">centroid</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Вычисляет центроид CF.</span>
+<span class="sd">        </span>
+<span class="sd">        Returns:</span>
+<span class="sd">            Центроид CF.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">LS</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">n</span></div>
+
+
+<div class="viewcode-block" id="ClusteringFeatureGPU.radius">
+<a class="viewcode-back" href="../../../gamac.algorithms.html#gamac.algorithms.birch.ClusteringFeatureGPU.radius">[документация]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">radius</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Вычисляет радиус CF.</span>
+<span class="sd">        </span>
+<span class="sd">        Returns:</span>
+<span class="sd">            Радиус CF.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">cp</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">cp</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">SS</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">n</span> <span class="o">-</span> <span class="n">cp</span><span class="o">.</span><span class="n">square</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">centroid</span><span class="p">())))</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="CFNodeGPU">
+<a class="viewcode-back" href="../../../gamac.algorithms.html#gamac.algorithms.birch.CFNodeGPU">[документация]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">CFNodeGPU</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Узел дерева CF для GPU.</span>
+<span class="sd">    </span>
+<span class="sd">    Attributes:</span>
+<span class="sd">        threshold (float): Порог для объединения CF.</span>
+<span class="sd">        branching_factor (int): Максимальное количество потомков.</span>
+<span class="sd">        is_leaf (bool): Является ли узел листом.</span>
+<span class="sd">        cfs (list): Список CF в узле.</span>
+<span class="sd">        children (list): Список дочерних узлов.</span>
+<span class="sd">        next: Ссылка на следующий узел-лист.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">threshold</span><span class="p">,</span> <span class="n">branching_factor</span><span class="p">,</span> <span class="n">is_leaf</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Инициализирует узел дерева CF.</span>
+<span class="sd">        </span>
+<span class="sd">        Args:</span>
+<span class="sd">            threshold: Порог для объединения CF.</span>
+<span class="sd">            branching_factor: Максимальное количество потомков.</span>
+<span class="sd">            is_leaf: Является ли узел листом.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">threshold</span> <span class="o">=</span> <span class="n">threshold</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">branching_factor</span> <span class="o">=</span> <span class="n">branching_factor</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">is_leaf</span> <span class="o">=</span> <span class="n">is_leaf</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cfs</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">children</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">next</span> <span class="o">=</span> <span class="kc">None</span>
+
+<div class="viewcode-block" id="CFNodeGPU.split">
+<a class="viewcode-back" href="../../../gamac.algorithms.html#gamac.algorithms.birch.CFNodeGPU.split">[документация]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">split</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Разделяет узел при превышении branching_factor.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_leaf</span><span class="p">:</span>
+            <span class="n">new_node</span> <span class="o">=</span> <span class="n">CFNodeGPU</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">threshold</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">branching_factor</span><span class="p">,</span> <span class="n">is_leaf</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="n">half</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cfs</span><span class="p">)</span> <span class="o">//</span> <span class="mi">2</span>
+            <span class="n">new_node</span><span class="o">.</span><span class="n">cfs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cfs</span><span class="p">[</span><span class="n">half</span><span class="p">:]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">cfs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cfs</span><span class="p">[:</span><span class="n">half</span><span class="p">]</span>
+            <span class="n">new_node</span><span class="o">.</span><span class="n">next</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">next</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">next</span> <span class="o">=</span> <span class="n">new_node</span></div>
+
+
+<div class="viewcode-block" id="CFNodeGPU.insert">
+<a class="viewcode-back" href="../../../gamac.algorithms.html#gamac.algorithms.birch.CFNodeGPU.insert">[документация]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">insert</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cf</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Вставляет CF в узел.</span>
+<span class="sd">        </span>
+<span class="sd">        Args:</span>
+<span class="sd">            cf: CF для вставки.</span>
+<span class="sd">            data: Соответствующие данные.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_leaf</span><span class="p">:</span>
+            <span class="n">closest</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">find_closest_child</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">children</span><span class="p">[</span><span class="n">closest</span><span class="p">]</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="n">cf</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">cfs</span><span class="p">:</span>
+                <span class="n">distances</span> <span class="o">=</span> <span class="p">[</span><span class="n">cp</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">cf</span><span class="o">.</span><span class="n">centroid</span><span class="p">()</span> <span class="o">-</span> <span class="n">existing_cf</span><span class="o">.</span><span class="n">centroid</span><span class="p">())</span> 
+                             <span class="k">for</span> <span class="n">existing_cf</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">cfs</span><span class="p">]</span>
+                <span class="n">closest</span> <span class="o">=</span> <span class="n">cp</span><span class="o">.</span><span class="n">argmin</span><span class="p">(</span><span class="n">cp</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">distances</span><span class="p">))</span><span class="o">.</span><span class="n">item</span><span class="p">()</span>
+
+                <span class="k">if</span> <span class="n">distances</span><span class="p">[</span><span class="n">closest</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">threshold</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">cfs</span><span class="p">[</span><span class="n">closest</span><span class="p">]</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">cf</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">cfs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">cf</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cfs</span><span class="p">)</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">branching_factor</span><span class="p">:</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">cfs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">cf</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="CFNodeGPU.find_closest_child">
+<a class="viewcode-back" href="../../../gamac.algorithms.html#gamac.algorithms.birch.CFNodeGPU.find_closest_child">[документация]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">find_closest_child</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Находит ближайший дочерний узел.</span>
+<span class="sd">        </span>
+<span class="sd">        Args:</span>
+<span class="sd">            data: Точка данных.</span>
+<span class="sd">            </span>
+<span class="sd">        Returns:</span>
+<span class="sd">            Индекс ближайшего дочернего узла.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">centroids</span> <span class="o">=</span> <span class="p">[</span><span class="n">cf</span><span class="o">.</span><span class="n">centroid</span><span class="p">()</span><span class="o">.</span><span class="n">get</span><span class="p">()</span> <span class="k">for</span> <span class="n">cf</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">cfs</span><span class="p">]</span>
+        <span class="n">distances</span> <span class="o">=</span> <span class="p">[</span><span class="n">cp</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">data</span> <span class="o">-</span> <span class="n">centroid</span><span class="p">)</span> <span class="k">for</span> <span class="n">centroid</span> <span class="ow">in</span> <span class="n">centroids</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">cp</span><span class="o">.</span><span class="n">argmin</span><span class="p">(</span><span class="n">cp</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">distances</span><span class="p">))</span><span class="o">.</span><span class="n">item</span><span class="p">()</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="CFTreeGPU">
+<a class="viewcode-back" href="../../../gamac.algorithms.html#gamac.algorithms.birch.CFTreeGPU">[документация]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">CFTreeGPU</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Дерево CF для GPU.</span>
+<span class="sd">    </span>
+<span class="sd">    Attributes:</span>
+<span class="sd">        threshold (float): Порог для объединения CF.</span>
+<span class="sd">        branching_factor (int): Максимальное количество потомков.</span>
+<span class="sd">        root (CFNodeGPU): Корневой узел дерева.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">threshold</span><span class="p">,</span> <span class="n">branching_factor</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Инициализирует дерево CF.</span>
+<span class="sd">        </span>
+<span class="sd">        Args:</span>
+<span class="sd">            threshold: Порог для объединения CF.</span>
+<span class="sd">            branching_factor: Максимальное количество потомков.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">threshold</span> <span class="o">=</span> <span class="n">threshold</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">branching_factor</span> <span class="o">=</span> <span class="n">branching_factor</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">root</span> <span class="o">=</span> <span class="n">CFNodeGPU</span><span class="p">(</span><span class="n">threshold</span><span class="p">,</span> <span class="n">branching_factor</span><span class="p">,</span> <span class="n">is_leaf</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<div class="viewcode-block" id="CFTreeGPU.insert">
+<a class="viewcode-back" href="../../../gamac.algorithms.html#gamac.algorithms.birch.CFTreeGPU.insert">[документация]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">insert</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Вставляет точку данных в дерево.</span>
+<span class="sd">        </span>
+<span class="sd">        Args:</span>
+<span class="sd">            data: Точка данных для вставки.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">cf</span> <span class="o">=</span> <span class="n">ClusteringFeatureGPU</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">root</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="n">cf</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="Birch">
+<a class="viewcode-back" href="../../../gamac.algorithms.html#gamac.algorithms.birch.Birch">[документация]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">Birch</span><span class="p">(</span><span class="n">ClusteringAlgo</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Алгоритм BIRCH для GPU.</span>
+<span class="sd">    </span>
+<span class="sd">    Attributes:</span>
+<span class="sd">        threshold (float): Порог для объединения CF.</span>
+<span class="sd">        branching_factor (int): Максимальное количество потомков.</span>
+<span class="sd">        n_clusters (int): Количество кластеров.</span>
+<span class="sd">        subcluster_labels (LabelsType): Метки подкластеров.</span>
+<span class="sd">        tree (CFTreeGPU): Построенное дерево CF.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">threshold</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">branching_factor</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span> <span class="n">n_clusters</span><span class="o">=</span><span class="mi">3</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Инициализирует алгоритм BIRCH.</span>
+<span class="sd">        </span>
+<span class="sd">        Args:</span>
+<span class="sd">            threshold: Порог для объединения CF.</span>
+<span class="sd">            branching_factor: Максимальное количество потомков.</span>
+<span class="sd">            n_clusters: Количество кластеров.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">threshold</span> <span class="o">=</span> <span class="n">threshold</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">branching_factor</span> <span class="o">=</span> <span class="n">branching_factor</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">n_clusters</span> <span class="o">=</span> <span class="n">n_clusters</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">subcluster_labels</span> <span class="o">=</span> <span class="kc">None</span>
+
+<div class="viewcode-block" id="Birch.fit">
+<a class="viewcode-back" href="../../../gamac.algorithms.html#gamac.algorithms.birch.Birch.fit">[документация]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Обучает модель BIRCH на данных.</span>
+<span class="sd">        </span>
+<span class="sd">        Args:</span>
+<span class="sd">            X: Данные для обучения.</span>
+<span class="sd">            </span>
+<span class="sd">        Returns:</span>
+<span class="sd">            Обученная модель BirchModel.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tree</span> <span class="o">=</span> <span class="n">CFTreeGPU</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">threshold</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">branching_factor</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">point</span> <span class="ow">in</span> <span class="n">X</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">tree</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="n">point</span><span class="p">)</span>
+
+        <span class="n">subclusters</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">node</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tree</span><span class="o">.</span><span class="n">root</span>
+        <span class="k">while</span> <span class="n">node</span><span class="p">:</span>
+            <span class="n">subclusters</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="n">cf</span><span class="o">.</span><span class="n">centroid</span><span class="p">()</span><span class="o">.</span><span class="n">get</span><span class="p">()</span> <span class="k">for</span> <span class="n">cf</span> <span class="ow">in</span> <span class="n">node</span><span class="o">.</span><span class="n">cfs</span><span class="p">])</span>
+            <span class="n">node</span> <span class="o">=</span> <span class="n">node</span><span class="o">.</span><span class="n">next</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">subclusters</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">subcluster_labels</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">subclusters</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
+            <span class="n">labels_</span> <span class="o">=</span> <span class="n">cp</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">X</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">cp</span><span class="o">.</span><span class="n">int32</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">BirchModel</span><span class="p">(</span><span class="n">labels_</span><span class="o">=</span><span class="n">labels_</span><span class="p">,</span> <span class="n">subcluster_labels</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">subcluster_labels</span><span class="p">,</span> <span class="n">tree</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">tree</span><span class="p">)</span>
+
+        <span class="n">n_clusters</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_clusters</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">subclusters</span><span class="p">))</span>
+        <span class="n">subclusters</span> <span class="o">=</span> <span class="n">cp</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">subclusters</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">cp</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+        <span class="n">clustering</span> <span class="o">=</span> <span class="n">KMeans</span><span class="p">(</span><span class="n">n_clusters</span><span class="o">=</span><span class="n">n_clusters</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">subcluster_labels</span> <span class="o">=</span> <span class="n">clustering</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">subclusters</span><span class="p">)</span><span class="o">.</span><span class="n">labels_</span>
+
+        <span class="n">labels_</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">subcluster_centers</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">cf</span><span class="o">.</span><span class="n">centroid</span><span class="p">()</span><span class="o">.</span><span class="n">get</span><span class="p">()</span> <span class="k">for</span> <span class="n">cf</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">tree</span><span class="o">.</span><span class="n">root</span><span class="o">.</span><span class="n">cfs</span><span class="p">])</span>
+        <span class="k">for</span> <span class="n">point</span> <span class="ow">in</span> <span class="n">X</span><span class="p">:</span>
+            <span class="n">point_cpu</span> <span class="o">=</span> <span class="n">point</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
+            <span class="n">closest</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argmin</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">subcluster_centers</span> <span class="o">-</span> <span class="n">point_cpu</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">))</span>
+            <span class="n">labels_</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">subcluster_labels</span><span class="p">[</span><span class="n">closest</span><span class="p">])</span>
+        <span class="n">labels_</span> <span class="o">=</span> <span class="n">cp</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">labels_</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">cp</span><span class="o">.</span><span class="n">int32</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">BirchModel</span><span class="p">(</span><span class="n">labels_</span><span class="o">=</span><span class="n">labels_</span><span class="p">,</span> <span class="n">subcluster_labels</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">subcluster_labels</span><span class="p">,</span> <span class="n">tree</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">tree</span><span class="p">)</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="BirchConfig">
+<a class="viewcode-back" href="../../../gamac.algorithms.html#gamac.algorithms.birch.BirchConfig">[документация]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">BirchConfig</span><span class="p">(</span><span class="n">AlgoConfig</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Конфигурация алгоритма BIRCH.</span>
+<span class="sd">    </span>
+<span class="sd">    Attributes:</span>
+<span class="sd">        config_space (dict): Пространство параметров:</span>
+<span class="sd">            - threshold: Диапазон порогов (по умолчанию (0.1, 0.9))</span>
+<span class="sd">            - branching_factor: Диапазон branching factors (по умолчанию (10, 80))</span>
+<span class="sd">            - n_clusters: Диапазон количества кластеров (по умолчанию (2, 15))</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span>
+            <span class="n">threshold</span><span class="o">=</span><span class="p">(</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.9</span><span class="p">),</span>
+            <span class="n">branching_factor</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">80</span><span class="p">),</span>
+            <span class="n">n_clusters</span><span class="o">=</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">15</span><span class="p">),</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Инициализирует конфигурацию BIRCH.</span>
+<span class="sd">        </span>
+<span class="sd">        Args:</span>
+<span class="sd">            threshold: Диапазон порогов.</span>
+<span class="sd">            branching_factor: Диапазон branching factors.</span>
+<span class="sd">            n_clusters: Диапазон количества кластеров.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="n">Birch</span><span class="p">,</span>
+            <span class="n">threshold</span><span class="o">=</span><span class="n">threshold</span><span class="p">,</span>
+            <span class="n">branching_factor</span><span class="o">=</span><span class="n">branching_factor</span><span class="p">,</span>
+            <span class="n">n_clusters</span><span class="o">=</span><span class="n">n_clusters</span><span class="p">,</span>
+        <span class="p">)</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Авторские права 2025, Sergey Muravyov, Nikita Kulin, Ivan Usov, Olga Muravyova, Simar Muratov. </p>
+  </div>
+
+  Собрано при помощи <a href="https://www.sphinx-doc.org/">Sphinx</a> с использованием
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">темы,</a>
+    предоставленной <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

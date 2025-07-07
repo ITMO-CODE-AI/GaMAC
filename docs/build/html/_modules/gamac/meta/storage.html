@@ -1,0 +1,141 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="ru" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>gamac.meta.storage &mdash; документация GaMAC 1.0.0</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=e35015f7"></script>
+      <script src="../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../../_static/translations.js?v=cd1d70c9"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Алфавитный указатель" href="../../../genindex.html" />
+    <link rel="search" title="Поиск" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            GaMAC
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Поиск в документации" aria-label="Поиск в документации" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Меню навигации">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../modules.html">gamac</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Меню навигации для мобильных устройств" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">GaMAC</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Навигация по страницам">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Код модуля</a></li>
+      <li class="breadcrumb-item active">gamac.meta.storage</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Исходный код gamac.meta.storage</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Provides utils to read and write meta-classifier data</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">gamac.meta.storage.computed</span><span class="w"> </span><span class="kn">import</span> <span class="n">Computed</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">gamac.meta.storage.contents</span><span class="w"> </span><span class="kn">import</span> <span class="n">Contents</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">gamac.meta.storage.binaries</span><span class="w"> </span><span class="kn">import</span> <span class="n">Binaries</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">gamac.meta.storage.gathered</span><span class="w"> </span><span class="kn">import</span> <span class="n">Gathered</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">gamac.meta.storage.markups</span><span class="w"> </span><span class="kn">import</span> <span class="n">Markups</span><span class="p">,</span> <span class="n">AccessorResult</span>
+
+<span class="n">DATA_ROOT</span> <span class="o">=</span> <span class="s2">&quot;data&quot;</span>
+<span class="n">COMMON_ROOT</span> <span class="o">=</span> <span class="s2">&quot;common&quot;</span>
+
+<span class="n">MARKUPS</span> <span class="o">=</span> <span class="n">Markups</span><span class="p">(</span><span class="n">data_root</span><span class="o">=</span><span class="n">DATA_ROOT</span><span class="p">)</span>
+<span class="n">CONTENTS</span> <span class="o">=</span> <span class="n">Contents</span><span class="p">(</span><span class="n">data_root</span><span class="o">=</span><span class="n">DATA_ROOT</span><span class="p">)</span>
+<span class="n">COMPUTED</span> <span class="o">=</span> <span class="n">Computed</span><span class="p">(</span><span class="n">data_root</span><span class="o">=</span><span class="n">DATA_ROOT</span><span class="p">)</span>
+<span class="n">GATHERED</span> <span class="o">=</span> <span class="n">Gathered</span><span class="p">(</span><span class="n">common_root</span><span class="o">=</span><span class="n">COMMON_ROOT</span><span class="p">)</span>
+<span class="n">BINARIES</span> <span class="o">=</span> <span class="n">Binaries</span><span class="p">(</span><span class="n">common_root</span><span class="o">=</span><span class="n">COMMON_ROOT</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="traverse_data">
+<a class="viewcode-back" href="../../../gamac.meta.storage.html#gamac.meta.storage.traverse_data">[документация]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">traverse_data</span><span class="p">(</span><span class="n">handler</span><span class="p">):</span>
+    <span class="n">result</span><span class="p">,</span> <span class="n">datasets</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(),</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">DATA_ROOT</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">dataset</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">datasets</span><span class="p">):</span>
+        <span class="n">contents</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">DATA_ROOT</span><span class="si">}</span><span class="s1">/</span><span class="si">{</span><span class="n">dataset</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">subdir</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">contents</span><span class="p">):</span>
+            <span class="n">data_path</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">dataset</span><span class="si">}</span><span class="s1">/</span><span class="si">{</span><span class="n">subdir</span><span class="si">}</span><span class="s1">&#39;</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">DATA_ROOT</span><span class="si">}</span><span class="s1">/</span><span class="si">{</span><span class="n">data_path</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">):</span>
+                <span class="k">continue</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">result</span><span class="p">[</span><span class="n">data_path</span><span class="p">]</span> <span class="o">=</span> <span class="n">handler</span><span class="p">(</span><span class="n">data_path</span><span class="p">)</span>
+                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;HANDLED </span><span class="si">{</span><span class="n">data_path</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">FileNotFoundError</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;SKIPPED </span><span class="si">{</span><span class="n">data_path</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">result</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Авторские права 2025, Sergey Muravyov, Nikita Kulin, Ivan Usov, Olga Muravyova, Simar Muratov. </p>
+  </div>
+
+  Собрано при помощи <a href="https://www.sphinx-doc.org/">Sphinx</a> с использованием
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">темы,</a>
+    предоставленной <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

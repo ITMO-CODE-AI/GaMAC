@@ -1,0 +1,375 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="ru" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>gamac.estimation.container &mdash; документация GaMAC 1.0.0</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=e35015f7"></script>
+      <script src="../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../../_static/translations.js?v=cd1d70c9"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Алфавитный указатель" href="../../../genindex.html" />
+    <link rel="search" title="Поиск" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            GaMAC
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Поиск в документации" aria-label="Поиск в документации" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Меню навигации">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../modules.html">gamac</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Меню навигации для мобильных устройств" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">GaMAC</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Навигация по страницам">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Код модуля</a></li>
+      <li class="breadcrumb-item active">gamac.estimation.container</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Исходный код gamac.estimation.container</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">cupy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">cp</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">cupy.typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">NDArray</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">gamac.kernels</span><span class="w"> </span><span class="kn">import</span> <span class="n">MIDDLEWARE</span><span class="p">,</span> <span class="n">BATCH_SIZE</span>
+
+
+<div class="viewcode-block" id="EstimationContainer">
+<a class="viewcode-back" href="../../../gamac.estimation.html#gamac.estimation.container.EstimationContainer">[документация]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">EstimationContainer</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Контейнер для хранения и обработки данных кластеризации с GPU-ускорением.</span>
+<span class="sd">    </span>
+<span class="sd">    Атрибуты:</span>
+<span class="sd">        NOISE_THRESHOLD (float): Пороговое значение для доли шумовых объектов (по умолчанию 0.1)</span>
+<span class="sd">        data (NDArray): Исходные данные для анализа</span>
+<span class="sd">        labels (NDArray): Метки кластеров для каждого объекта</span>
+<span class="sd">        uniq_labels_gpu (NDArray): Уникальные метки кластеров на GPU</span>
+<span class="sd">        uniq_labels_arr (np.ndarray): Уникальные метки кластеров на CPU</span>
+<span class="sd">        n (int): Количество объектов</span>
+<span class="sd">        d (int): Размерность данных</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="n">NOISE_THRESHOLD</span> <span class="o">=</span> <span class="mf">0.1</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="bp">self</span><span class="p">,</span>
+            <span class="n">data</span><span class="p">:</span> <span class="n">NDArray</span><span class="p">,</span>
+            <span class="n">labels</span><span class="p">:</span> <span class="n">NDArray</span><span class="p">,</span>
+            <span class="n">uniq_labels_gpu</span><span class="p">:</span> <span class="n">NDArray</span><span class="p">,</span>
+            <span class="n">uniq_labels_arr</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Инициализация контейнера с данными кластеризации.</span>
+<span class="sd">        </span>
+<span class="sd">        Аргументы:</span>
+<span class="sd">            data (NDArray): Массив с данными (N x D)</span>
+<span class="sd">            labels (NDArray): Метки кластеров для каждого объекта</span>
+<span class="sd">            uniq_labels_gpu (NDArray): Уникальные метки кластеров на GPU</span>
+<span class="sd">            uniq_labels_arr (np.ndarray): Уникальные метки кластеров на CPU</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">data</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">labels</span> <span class="o">=</span> <span class="n">labels</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">uniq_labels_gpu</span> <span class="o">=</span> <span class="n">uniq_labels_gpu</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">uniq_labels_arr</span> <span class="o">=</span> <span class="n">uniq_labels_arr</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">n</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">d</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">shape</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_clusters</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_centroids</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_cent_dists</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_sym_dists</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_cent_matrix</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_denoise</span><span class="p">(</span><span class="n">df</span><span class="p">:</span> <span class="n">NDArray</span><span class="p">,</span> <span class="n">labels</span><span class="p">:</span> <span class="n">NDArray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">NDArray</span><span class="p">,</span> <span class="n">NDArray</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Фильтрация шумовых объектов (с меткой -1).</span>
+<span class="sd">        </span>
+<span class="sd">        Аргументы:</span>
+<span class="sd">            df (NDArray): Исходные данные</span>
+<span class="sd">            labels (NDArray): Метки кластеров</span>
+<span class="sd">            </span>
+<span class="sd">        Возвращает:</span>
+<span class="sd">            tuple[NDArray, NDArray]: Очищенные данные и метки</span>
+<span class="sd">            </span>
+<span class="sd">        Выбрасывает:</span>
+<span class="sd">            ValueError: Если доля шума превышает NOISE_THRESHOLD</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">denoised</span> <span class="o">=</span> <span class="n">labels</span> <span class="o">!=</span> <span class="o">-</span><span class="mi">1</span>
+        <span class="n">denoised_labels</span> <span class="o">=</span> <span class="n">labels</span><span class="p">[</span><span class="n">denoised</span><span class="p">]</span>
+        <span class="n">denoised_ratio</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">denoised_labels</span><span class="p">)</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">labels</span><span class="p">)</span>
+        <span class="n">noise_ratio</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">-</span> <span class="n">denoised_ratio</span>
+        <span class="k">if</span> <span class="n">noise_ratio</span> <span class="o">&gt;</span> <span class="n">EstimationContainer</span><span class="o">.</span><span class="n">NOISE_THRESHOLD</span><span class="p">:</span>
+            <span class="n">noice_perc</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">noise_ratio</span> <span class="o">*</span> <span class="mi">100</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Получено </span><span class="si">{</span><span class="n">noice_perc</span><span class="si">}</span><span class="s2">% объектов с шумовыми метками&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">df</span><span class="p">[</span><span class="n">denoised</span><span class="p">],</span> <span class="n">denoised_labels</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_check_max_clusters</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="n">NDArray</span><span class="p">,</span> <span class="n">uniq_labels</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Проверка допустимого количества кластеров для размера выборки.</span>
+<span class="sd">        </span>
+<span class="sd">        Аргументы:</span>
+<span class="sd">            data (NDArray): Исходные данные</span>
+<span class="sd">            uniq_labels (np.ndarray): Уникальные метки кластеров</span>
+<span class="sd">            </span>
+<span class="sd">        Выбрасывает:</span>
+<span class="sd">            ValueError: Если количество кластеров слишком велико для выборки</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">n</span><span class="p">,</span> <span class="n">k</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">uniq_labels</span><span class="p">)</span>
+        <span class="n">max_clusters</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">cbrt</span><span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">n</span><span class="p">))</span> <span class="o">+</span> <span class="mi">1</span>
+        <span class="k">if</span> <span class="n">k</span> <span class="o">&gt;</span> <span class="n">max_clusters</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Получено слишком много (</span><span class="si">{</span><span class="n">k</span><span class="si">}</span><span class="s2">) кластеров для выборки из </span><span class="si">{</span><span class="n">n</span><span class="si">}</span><span class="s2"> объектов&quot;</span><span class="p">)</span>
+
+<div class="viewcode-block" id="EstimationContainer.create">
+<a class="viewcode-back" href="../../../gamac.estimation.html#gamac.estimation.container.EstimationContainer.create">[документация]</a>
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">create</span><span class="p">(</span><span class="n">df</span><span class="p">:</span> <span class="n">NDArray</span><span class="p">,</span> <span class="n">labels</span><span class="p">:</span> <span class="n">NDArray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s1">&#39;EstimationContainer&#39;</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Фабричный метод для создания контейнера с предварительной обработкой данных.</span>
+<span class="sd">        </span>
+<span class="sd">        Аргументы:</span>
+<span class="sd">            df (NDArray): Исходные данные</span>
+<span class="sd">            labels (NDArray): Метки кластеров</span>
+<span class="sd">            </span>
+<span class="sd">        Возвращает:</span>
+<span class="sd">            EstimationContainer: Экземпляр контейнера с обработанными данными</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">uniq_labels_gpu</span> <span class="o">=</span> <span class="n">cp</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">labels</span><span class="p">)</span>
+        <span class="n">uniq_labels_arr</span> <span class="o">=</span> <span class="n">uniq_labels_gpu</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="o">-</span><span class="mi">1</span> <span class="ow">in</span> <span class="n">uniq_labels_arr</span><span class="p">:</span>
+            <span class="n">_data</span><span class="p">,</span> <span class="n">_labels</span> <span class="o">=</span> <span class="n">EstimationContainer</span><span class="o">.</span><span class="n">_denoise</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">labels</span><span class="p">)</span>
+            <span class="n">_uniq_labels_arr</span> <span class="o">=</span> <span class="n">uniq_labels_arr</span><span class="p">[</span><span class="n">uniq_labels_arr</span> <span class="o">!=</span> <span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+            <span class="n">EstimationContainer</span><span class="o">.</span><span class="n">_check_max_clusters</span><span class="p">(</span><span class="n">_data</span><span class="p">,</span> <span class="n">_uniq_labels_arr</span><span class="p">)</span>
+            <span class="n">_uniq_labels_gpu</span> <span class="o">=</span> <span class="n">cp</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">_uniq_labels_arr</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">cp</span><span class="o">.</span><span class="n">int32</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">EstimationContainer</span><span class="p">(</span>
+                <span class="n">data</span><span class="o">=</span><span class="n">_data</span><span class="p">,</span>
+                <span class="n">labels</span><span class="o">=</span><span class="n">_labels</span><span class="p">,</span>
+                <span class="n">uniq_labels_gpu</span><span class="o">=</span><span class="n">_uniq_labels_gpu</span><span class="p">,</span>
+                <span class="n">uniq_labels_arr</span><span class="o">=</span><span class="n">_uniq_labels_arr</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">EstimationContainer</span><span class="o">.</span><span class="n">_check_max_clusters</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">uniq_labels_arr</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">EstimationContainer</span><span class="p">(</span>
+                <span class="n">data</span><span class="o">=</span><span class="n">df</span><span class="p">,</span>
+                <span class="n">labels</span><span class="o">=</span><span class="n">labels</span><span class="p">,</span>
+                <span class="n">uniq_labels_gpu</span><span class="o">=</span><span class="n">uniq_labels_gpu</span><span class="p">,</span>
+                <span class="n">uniq_labels_arr</span><span class="o">=</span><span class="n">uniq_labels_arr</span><span class="p">,</span>
+            <span class="p">)</span></div>
+
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">k</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Количество кластеров.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">uniq_labels_arr</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">n_w</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Количество внутрикластерных пар объектов.&quot;&quot;&quot;</span>
+        <span class="n">n_w</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">for</span> <span class="n">cl</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">clusters</span><span class="p">:</span>
+            <span class="n">cl_n</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">cl</span><span class="p">)</span>
+            <span class="n">n_w</span> <span class="o">+=</span> <span class="nb">int</span><span class="p">(</span><span class="n">cl_n</span> <span class="o">*</span> <span class="p">(</span><span class="n">cl_n</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">n_w</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">n_b</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Количество межкластерных пар объектов.&quot;&quot;&quot;</span>
+        <span class="n">n</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">n</span> <span class="o">*</span> <span class="p">(</span><span class="n">n</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_w</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">clusters</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">NDArray</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Список кластеров (разделенных по меткам).</span>
+<span class="sd">        </span>
+<span class="sd">        Вычисляется лениво при первом обращении.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_clusters</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_clusters</span> <span class="o">=</span> <span class="p">[</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">labels</span> <span class="o">==</span> <span class="n">label</span><span class="p">]</span>
+                <span class="k">for</span> <span class="n">label</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">uniq_labels_arr</span>
+            <span class="p">]</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_clusters</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">centroids</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">NDArray</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Массив центроидов кластеров.</span>
+<span class="sd">        </span>
+<span class="sd">        Вычисляется лениво с использованием GPU-ускорения.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_centroids</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">centroids</span> <span class="o">=</span> <span class="n">cp</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">k</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">d</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">cp</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+            <span class="n">MIDDLEWARE</span><span class="o">.</span><span class="n">get_centroids</span><span class="p">(</span>
+                <span class="n">data</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">,</span>
+                <span class="n">labels</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">labels</span><span class="p">,</span>
+                <span class="n">N</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">n</span><span class="p">,</span>
+                <span class="n">D</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">d</span><span class="p">,</span>
+                <span class="n">K</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">k</span><span class="p">,</span>
+                <span class="n">uniq_labels</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">uniq_labels_gpu</span><span class="p">,</span>
+                <span class="n">centroids</span><span class="o">=</span><span class="n">centroids</span>
+            <span class="p">)</span><span class="o">.</span><span class="n">invoke</span><span class="p">(</span>
+                <span class="n">grid</span><span class="o">=</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">k</span> <span class="o">//</span> <span class="mi">16</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">d</span> <span class="o">//</span> <span class="mi">16</span> <span class="o">+</span> <span class="mi">1</span><span class="p">),</span>
+                <span class="n">blocks</span><span class="o">=</span><span class="p">(</span><span class="mi">16</span><span class="p">,</span> <span class="mi">16</span><span class="p">),</span>
+            <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_centroids</span> <span class="o">=</span> <span class="n">centroids</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_centroids</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">cent_dists</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">NDArray</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Расстояния от объектов до центроидов их кластеров.</span>
+<span class="sd">        </span>
+<span class="sd">        Вычисляется лениво с использованием GPU-ускорения.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cent_dists</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">cent_dists_list</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+            <span class="k">for</span> <span class="n">k_idx</span><span class="p">,</span> <span class="n">cluster</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">clusters</span><span class="p">):</span>
+                <span class="n">cl_n</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">cluster</span><span class="p">)</span>
+                <span class="n">cent_dists</span> <span class="o">=</span> <span class="n">cp</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="n">cl_n</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">cp</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+
+                <span class="n">MIDDLEWARE</span><span class="o">.</span><span class="n">get_cent_dists</span><span class="p">(</span>
+                    <span class="n">cluster</span><span class="o">=</span><span class="n">cluster</span><span class="p">,</span>
+                    <span class="n">cl_n</span><span class="o">=</span><span class="n">cl_n</span><span class="p">,</span>
+                    <span class="n">D</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">d</span><span class="p">,</span>
+                    <span class="n">centroids</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">centroids</span><span class="p">,</span>
+                    <span class="n">k_idx</span><span class="o">=</span><span class="n">k_idx</span><span class="p">,</span>
+                    <span class="n">cent_dists</span><span class="o">=</span><span class="n">cent_dists</span><span class="p">,</span>
+                <span class="p">)</span><span class="o">.</span><span class="n">invoke</span><span class="p">(</span>
+                    <span class="n">grid</span><span class="o">=</span><span class="p">(</span><span class="n">cl_n</span> <span class="o">//</span> <span class="n">BATCH_SIZE</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,),</span>
+                    <span class="n">blocks</span><span class="o">=</span><span class="p">(</span><span class="n">BATCH_SIZE</span><span class="p">,),</span>
+                <span class="p">)</span>
+
+                <span class="n">cent_dists_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">cent_dists</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_cent_dists</span> <span class="o">=</span> <span class="n">cent_dists_list</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cent_dists</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">sym_dists</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">NDArray</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Симметризованные расстояния между объектами.</span>
+<span class="sd">        </span>
+<span class="sd">        Вычисляется лениво с использованием GPU-ускорения.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sym_dists</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">sym_dists_list</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+            <span class="k">for</span> <span class="n">k_idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">k</span><span class="p">):</span>
+                <span class="n">cluster</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">clusters</span><span class="p">[</span><span class="n">k_idx</span><span class="p">]</span>
+                <span class="n">cent_dists</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cent_dists</span><span class="p">[</span><span class="n">k_idx</span><span class="p">]</span>
+                <span class="n">cl_n</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">cluster</span><span class="p">)</span>
+
+                <span class="n">sym_data</span> <span class="o">=</span> <span class="n">cp</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="n">cluster</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">cp</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+                <span class="n">MIDDLEWARE</span><span class="o">.</span><span class="n">get_sym_data</span><span class="p">(</span>
+                    <span class="n">cluster</span><span class="o">=</span><span class="n">cluster</span><span class="p">,</span>
+                    <span class="n">cl_n</span><span class="o">=</span><span class="n">cl_n</span><span class="p">,</span>
+                    <span class="n">D</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">d</span><span class="p">,</span>
+                    <span class="n">centroids</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">centroids</span><span class="p">,</span>
+                    <span class="n">k_idx</span><span class="o">=</span><span class="n">k_idx</span><span class="p">,</span>
+                    <span class="n">sym_data</span><span class="o">=</span><span class="n">sym_data</span><span class="p">,</span>
+                <span class="p">)</span><span class="o">.</span><span class="n">invoke</span><span class="p">(</span>
+                    <span class="n">grid</span><span class="o">=</span><span class="p">(</span><span class="n">cl_n</span> <span class="o">//</span> <span class="n">BATCH_SIZE</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">d</span><span class="p">),</span>
+                    <span class="n">blocks</span><span class="o">=</span><span class="p">(</span><span class="n">BATCH_SIZE</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
+                <span class="p">)</span>
+
+                <span class="n">sym_dists</span> <span class="o">=</span> <span class="n">cp</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="n">cl_n</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">cp</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+                <span class="n">MIDDLEWARE</span><span class="o">.</span><span class="n">get_sym_dists</span><span class="p">(</span>
+                    <span class="n">cluster</span><span class="o">=</span><span class="n">cluster</span><span class="p">,</span>
+                    <span class="n">cl_n</span><span class="o">=</span><span class="n">cl_n</span><span class="p">,</span>
+                    <span class="n">D</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">d</span><span class="p">,</span>
+                    <span class="n">cent_dists</span><span class="o">=</span><span class="n">cent_dists</span><span class="p">,</span>
+                    <span class="n">sym_data</span><span class="o">=</span><span class="n">sym_data</span><span class="p">,</span>
+                    <span class="n">sym_dists</span><span class="o">=</span><span class="n">sym_dists</span><span class="p">,</span>
+                <span class="p">)</span><span class="o">.</span><span class="n">invoke</span><span class="p">(</span>
+                    <span class="n">grid</span><span class="o">=</span><span class="p">(</span><span class="n">cl_n</span> <span class="o">//</span> <span class="n">BATCH_SIZE</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,),</span>
+                    <span class="n">blocks</span><span class="o">=</span><span class="p">(</span><span class="n">BATCH_SIZE</span><span class="p">,),</span>
+                <span class="p">)</span>
+
+                <span class="n">sym_dists_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">sym_dists</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_sym_dists</span> <span class="o">=</span> <span class="n">sym_dists_list</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sym_dists</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">cent_matrix</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Матрица попарных расстояний между центроидами.</span>
+<span class="sd">        </span>
+<span class="sd">        Вычисляется лениво с использованием GPU-ускорения.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cent_matrix</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">cent_matrix</span> <span class="o">=</span> <span class="n">cp</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">k</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">k</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">cp</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+            <span class="n">MIDDLEWARE</span><span class="o">.</span><span class="n">get_cent_matrix</span><span class="p">(</span>
+                <span class="n">centroids</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">centroids</span><span class="p">,</span>
+                <span class="n">K</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">k</span><span class="p">,</span>
+                <span class="n">D</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">d</span><span class="p">,</span>
+                <span class="n">cent_matrix</span><span class="o">=</span><span class="n">cent_matrix</span><span class="p">,</span>
+            <span class="p">)</span><span class="o">.</span><span class="n">invoke</span><span class="p">(</span>
+                <span class="n">grid</span><span class="o">=</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">k</span> <span class="o">//</span> <span class="mi">16</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">k</span> <span class="o">//</span> <span class="mi">16</span> <span class="o">+</span> <span class="mi">1</span><span class="p">),</span>
+                <span class="n">blocks</span><span class="o">=</span><span class="p">(</span><span class="mi">16</span><span class="p">,</span> <span class="mi">16</span><span class="p">),</span>
+            <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_cent_matrix</span> <span class="o">=</span> <span class="n">cp</span><span class="o">.</span><span class="n">asnumpy</span><span class="p">(</span><span class="n">cent_matrix</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cent_matrix</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Авторские права 2025, Sergey Muravyov, Nikita Kulin, Ivan Usov, Olga Muravyova, Simar Muratov. </p>
+  </div>
+
+  Собрано при помощи <a href="https://www.sphinx-doc.org/">Sphinx</a> с использованием
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">темы,</a>
+    предоставленной <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

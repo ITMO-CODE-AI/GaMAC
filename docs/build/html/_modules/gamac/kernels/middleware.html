@@ -1,0 +1,583 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="ru" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>gamac.kernels.middleware &mdash; документация GaMAC 1.0.0</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=e35015f7"></script>
+      <script src="../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../../_static/translations.js?v=cd1d70c9"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Алфавитный указатель" href="../../../genindex.html" />
+    <link rel="search" title="Поиск" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            GaMAC
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Поиск в документации" aria-label="Поиск в документации" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Меню навигации">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../modules.html">gamac</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Меню навигации для мобильных устройств" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">GaMAC</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Навигация по страницам">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Код модуля</a></li>
+      <li class="breadcrumb-item active">gamac.kernels.middleware</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Исходный код gamac.kernels.middleware</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">os.path</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">cupy</span><span class="w"> </span><span class="kn">import</span> <span class="n">RawModule</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">cupy.typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">NDArray</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">gamac.data.data_pipeline</span><span class="w"> </span><span class="kn">import</span> <span class="n">DataFrameType</span><span class="p">,</span> <span class="n">LabelsType</span>
+
+
+<div class="viewcode-block" id="load_module">
+<a class="viewcode-back" href="../../../gamac.kernels.html#gamac.kernels.middleware.load_module">[документация]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">load_module</span><span class="p">(</span><span class="n">file</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RawModule</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Загружает CUDA-модуль из файла.</span>
+<span class="sd">    </span>
+<span class="sd">    Аргументы:</span>
+<span class="sd">        file (str): Имя файла с CUDA-кодом</span>
+<span class="sd">        </span>
+<span class="sd">    Возвращает:</span>
+<span class="sd">        RawModule: Загруженный модуль CUDA</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">real_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">realpath</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)</span>
+    <span class="n">dir_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">real_path</span><span class="p">)</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">dir_path</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">file</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">fp</span><span class="p">:</span>
+        <span class="n">content</span> <span class="o">=</span> <span class="n">fp</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">RawModule</span><span class="p">(</span><span class="n">code</span><span class="o">=</span><span class="n">content</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="KernelInvocation">
+<a class="viewcode-back" href="../../../gamac.kernels.html#gamac.kernels.middleware.KernelInvocation">[документация]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">KernelInvocation</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Класс для инкапсуляции вызова CUDA-ядра.</span>
+<span class="sd">    </span>
+<span class="sd">    Атрибуты:</span>
+<span class="sd">        kernel (RawKernel): CUDA-ядро для вызова</span>
+<span class="sd">        args (tuple): Аргументы для передачи ядру</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">kernel</span><span class="p">,</span> <span class="n">args</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Инициализация вызова ядра.</span>
+<span class="sd">        </span>
+<span class="sd">        Аргументы:</span>
+<span class="sd">            kernel: CUDA-ядро</span>
+<span class="sd">            args: Аргументы для ядра</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">kernel</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span> <span class="o">=</span> <span class="n">kernel</span><span class="p">,</span> <span class="n">args</span>
+
+<div class="viewcode-block" id="KernelInvocation.invoke">
+<a class="viewcode-back" href="../../../gamac.kernels.html#gamac.kernels.middleware.KernelInvocation.invoke">[документация]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">invoke</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">grid</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">,</span> <span class="n">blocks</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Выполняет запуск ядра на GPU.</span>
+<span class="sd">        </span>
+<span class="sd">        Аргументы:</span>
+<span class="sd">            grid (tuple): Конфигурация grid для запуска ядра</span>
+<span class="sd">            blocks (tuple): Конфигурация blocks для запуска ядра</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">kernel</span><span class="p">(</span><span class="n">grid</span><span class="p">,</span> <span class="n">blocks</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="p">)</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="Middleware">
+<a class="viewcode-back" href="../../../gamac.kernels.html#gamac.kernels.middleware.Middleware">[документация]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">Middleware</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Промежуточный слой для работы с CUDA-ядрами.</span>
+<span class="sd">    </span>
+<span class="sd">    Обеспечивает удобный интерфейс для вызова различных ядер.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Инициализация Middleware с загрузкой всех необходимых модулей.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_meta</span> <span class="o">=</span> <span class="n">load_module</span><span class="p">(</span><span class="s1">&#39;meta-kernels.c&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_cvi</span> <span class="o">=</span> <span class="n">load_module</span><span class="p">(</span><span class="s1">&#39;cvi-kernels.c&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_kmeans</span> <span class="o">=</span> <span class="n">load_module</span><span class="p">(</span><span class="s1">&#39;kmeans-kernels.c&#39;</span><span class="p">)</span>
+
+<div class="viewcode-block" id="Middleware.meta_dist_partial">
+<a class="viewcode-back" href="../../../gamac.kernels.html#gamac.kernels.middleware.Middleware.meta_dist_partial">[документация]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">meta_dist_partial</span><span class="p">(</span>
+            <span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span>
+            <span class="n">N</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+            <span class="n">D</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+            <span class="n">data</span><span class="p">:</span> <span class="n">NDArray</span><span class="p">,</span>
+            <span class="n">batch_start</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+            <span class="n">batch_size</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+            <span class="n">partial_dists</span><span class="p">:</span> <span class="n">NDArray</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">KernelInvocation</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Создает вызов ядра для вычисления частичных расстояний.</span>
+<span class="sd">        </span>
+<span class="sd">        Аргументы:</span>
+<span class="sd">            N (int): Количество объектов</span>
+<span class="sd">            D (int): Размерность данных</span>
+<span class="sd">            data (NDArray): Массив данных</span>
+<span class="sd">            batch_start (int): Начальный индекс батча</span>
+<span class="sd">            batch_size (int): Размер батча</span>
+<span class="sd">            partial_dists (NDArray): Массив для частичных расстояний</span>
+<span class="sd">            </span>
+<span class="sd">        Возвращает:</span>
+<span class="sd">            KernelInvocation: Объект вызова ядра</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">KernelInvocation</span><span class="p">(</span>
+            <span class="n">kernel</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_meta</span><span class="o">.</span><span class="n">get_function</span><span class="p">(</span><span class="s1">&#39;meta_dist_partial&#39;</span><span class="p">),</span>
+            <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="n">N</span><span class="p">,</span> <span class="n">D</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">batch_start</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">,</span> <span class="n">partial_dists</span><span class="p">),</span>
+        <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Middleware.meta_dist_stat">
+<a class="viewcode-back" href="../../../gamac.kernels.html#gamac.kernels.middleware.Middleware.meta_dist_stat">[документация]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">meta_dist_stat</span><span class="p">(</span>
+            <span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span>
+            <span class="n">Q</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+            <span class="n">R</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+            <span class="n">N</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+            <span class="n">sorted_dists</span><span class="p">:</span> <span class="n">NDArray</span><span class="p">,</span>
+            <span class="n">batch_size</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+            <span class="n">dist_stats</span><span class="p">:</span> <span class="n">NDArray</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">KernelInvocation</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Создает вызов ядра для статистики по расстояниям.</span>
+<span class="sd">        </span>
+<span class="sd">        Аргументы:</span>
+<span class="sd">            Q (int): Первый параметр статистики</span>
+<span class="sd">            R (int): Второй параметр статистики</span>
+<span class="sd">            N (int): Количество объектов</span>
+<span class="sd">            sorted_dists (NDArray): Отсортированные расстояния</span>
+<span class="sd">            batch_size (int): Размер батча</span>
+<span class="sd">            dist_stats (NDArray): Массив для статистики</span>
+<span class="sd">            </span>
+<span class="sd">        Возвращает:</span>
+<span class="sd">            KernelInvocation: Объект вызова ядра</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">KernelInvocation</span><span class="p">(</span>
+            <span class="n">kernel</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_meta</span><span class="o">.</span><span class="n">get_function</span><span class="p">(</span><span class="s1">&#39;meta_dist_stat&#39;</span><span class="p">),</span>
+            <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="n">Q</span><span class="p">,</span> <span class="n">R</span><span class="p">,</span> <span class="n">N</span><span class="p">,</span> <span class="n">sorted_dists</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">,</span> <span class="n">dist_stats</span><span class="p">),</span>
+        <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Middleware.get_centroids">
+<a class="viewcode-back" href="../../../gamac.kernels.html#gamac.kernels.middleware.Middleware.get_centroids">[документация]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_centroids</span><span class="p">(</span>
+            <span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span>
+            <span class="n">data</span><span class="p">:</span> <span class="n">DataFrameType</span><span class="p">,</span>
+            <span class="n">labels</span><span class="p">:</span> <span class="n">LabelsType</span><span class="p">,</span>
+            <span class="n">N</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+            <span class="n">D</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+            <span class="n">K</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+            <span class="n">uniq_labels</span><span class="p">:</span> <span class="n">NDArray</span><span class="p">,</span>
+            <span class="n">centroids</span><span class="p">:</span> <span class="n">NDArray</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">KernelInvocation</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Создает вызов ядра для вычисления центроидов.</span>
+<span class="sd">        </span>
+<span class="sd">        Аргументы:</span>
+<span class="sd">            data (DataFrameType): Исходные данные</span>
+<span class="sd">            labels (LabelsType): Метки кластеров</span>
+<span class="sd">            N (int): Количество объектов</span>
+<span class="sd">            D (int): Размерность данных</span>
+<span class="sd">            K (int): Количество кластеров</span>
+<span class="sd">            uniq_labels (NDArray): Уникальные метки</span>
+<span class="sd">            centroids (NDArray): Массив для центроидов</span>
+<span class="sd">            </span>
+<span class="sd">        Возвращает:</span>
+<span class="sd">            KernelInvocation: Объект вызова ядра</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">KernelInvocation</span><span class="p">(</span>
+            <span class="n">kernel</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_cvi</span><span class="o">.</span><span class="n">get_function</span><span class="p">(</span><span class="s1">&#39;get_centroids&#39;</span><span class="p">),</span>
+            <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="n">N</span><span class="p">,</span> <span class="n">D</span><span class="p">,</span> <span class="n">K</span><span class="p">,</span> <span class="n">uniq_labels</span><span class="p">,</span> <span class="n">centroids</span><span class="p">),</span>
+        <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Middleware.get_cent_dists">
+<a class="viewcode-back" href="../../../gamac.kernels.html#gamac.kernels.middleware.Middleware.get_cent_dists">[документация]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_cent_dists</span><span class="p">(</span>
+            <span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span>
+            <span class="n">cluster</span><span class="p">:</span> <span class="n">NDArray</span><span class="p">,</span>
+            <span class="n">cl_n</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+            <span class="n">D</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+            <span class="n">centroids</span><span class="p">:</span> <span class="n">NDArray</span><span class="p">,</span>
+            <span class="n">k_idx</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+            <span class="n">cent_dists</span><span class="p">:</span> <span class="n">NDArray</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">KernelInvocation</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Создает вызов ядра для расстояний до центроидов.</span>
+<span class="sd">        </span>
+<span class="sd">        Аргументы:</span>
+<span class="sd">            cluster (NDArray): Данные кластера</span>
+<span class="sd">            cl_n (int): Количество объектов в кластере</span>
+<span class="sd">            D (int): Размерность данных</span>
+<span class="sd">            centroids (NDArray): Центроиды кластеров</span>
+<span class="sd">            k_idx (int): Индекс текущего кластера</span>
+<span class="sd">            cent_dists (NDArray): Массив для расстояний</span>
+<span class="sd">            </span>
+<span class="sd">        Возвращает:</span>
+<span class="sd">            KernelInvocation: Объект вызова ядра</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">KernelInvocation</span><span class="p">(</span>
+            <span class="n">kernel</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_cvi</span><span class="o">.</span><span class="n">get_function</span><span class="p">(</span><span class="s1">&#39;get_cent_dists&#39;</span><span class="p">),</span>
+            <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="n">cluster</span><span class="p">,</span> <span class="n">cl_n</span><span class="p">,</span> <span class="n">D</span><span class="p">,</span> <span class="n">centroids</span><span class="p">,</span> <span class="n">k_idx</span><span class="p">,</span> <span class="n">cent_dists</span><span class="p">),</span>
+        <span class="p">)</span></div>
+
+        
+<div class="viewcode-block" id="Middleware.get_cent_matrix">
+<a class="viewcode-back" href="../../../gamac.kernels.html#gamac.kernels.middleware.Middleware.get_cent_matrix">[документация]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_cent_matrix</span><span class="p">(</span>
+            <span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span>
+            <span class="n">centroids</span><span class="p">:</span> <span class="n">NDArray</span><span class="p">,</span>
+            <span class="n">K</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+            <span class="n">D</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+            <span class="n">cent_matrix</span><span class="p">:</span> <span class="n">NDArray</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">KernelInvocation</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Создает вызов ядра для матрицы расстояний между центроидами.</span>
+<span class="sd">        </span>
+<span class="sd">        Аргументы:</span>
+<span class="sd">            centroids (NDArray): Центроиды кластеров</span>
+<span class="sd">            K (int): Количество кластеров</span>
+<span class="sd">            D (int): Размерность данных</span>
+<span class="sd">            cent_matrix (NDArray): Матрица для расстояний</span>
+<span class="sd">            </span>
+<span class="sd">        Возвращает:</span>
+<span class="sd">            KernelInvocation: Объект вызова ядра</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">KernelInvocation</span><span class="p">(</span>
+            <span class="n">kernel</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_cvi</span><span class="o">.</span><span class="n">get_function</span><span class="p">(</span><span class="s1">&#39;get_cent_matrix&#39;</span><span class="p">),</span>
+            <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="n">centroids</span><span class="p">,</span> <span class="n">K</span><span class="p">,</span> <span class="n">D</span><span class="p">,</span> <span class="n">cent_matrix</span><span class="p">),</span>
+        <span class="p">)</span></div>
+
+    
+<div class="viewcode-block" id="Middleware.get_sym_data">
+<a class="viewcode-back" href="../../../gamac.kernels.html#gamac.kernels.middleware.Middleware.get_sym_data">[документация]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_sym_data</span><span class="p">(</span>
+            <span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span>
+            <span class="n">cluster</span><span class="p">:</span> <span class="n">NDArray</span><span class="p">,</span>
+            <span class="n">cl_n</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+            <span class="n">D</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+            <span class="n">centroids</span><span class="p">:</span> <span class="n">NDArray</span><span class="p">,</span>
+            <span class="n">k_idx</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+            <span class="n">sym_data</span><span class="p">:</span> <span class="n">NDArray</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">KernelInvocation</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Создает вызов ядра для симметричных данных.</span>
+<span class="sd">        </span>
+<span class="sd">        Аргументы:</span>
+<span class="sd">            cluster (NDArray): Данные кластера</span>
+<span class="sd">            cl_n (int): Количество объектов в кластере</span>
+<span class="sd">            D (int): Размерность данных</span>
+<span class="sd">            centroids (NDArray): Центроиды кластеров</span>
+<span class="sd">            k_idx (int): Индекс текущего кластера</span>
+<span class="sd">            sym_data (NDArray): Массив для симметричных данных</span>
+<span class="sd">            </span>
+<span class="sd">        Возвращает:</span>
+<span class="sd">            KernelInvocation: Объект вызова ядра</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">KernelInvocation</span><span class="p">(</span>
+            <span class="n">kernel</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_cvi</span><span class="o">.</span><span class="n">get_function</span><span class="p">(</span><span class="s1">&#39;get_sym_data&#39;</span><span class="p">),</span>
+            <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="n">cluster</span><span class="p">,</span> <span class="n">cl_n</span><span class="p">,</span> <span class="n">D</span><span class="p">,</span> <span class="n">centroids</span><span class="p">,</span> <span class="n">k_idx</span><span class="p">,</span> <span class="n">sym_data</span><span class="p">),</span>
+        <span class="p">)</span></div>
+
+        
+<div class="viewcode-block" id="Middleware.get_sym_dists">
+<a class="viewcode-back" href="../../../gamac.kernels.html#gamac.kernels.middleware.Middleware.get_sym_dists">[документация]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_sym_dists</span><span class="p">(</span>
+            <span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span>
+            <span class="n">cluster</span><span class="p">:</span> <span class="n">NDArray</span><span class="p">,</span>
+            <span class="n">cl_n</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+            <span class="n">D</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+            <span class="n">cent_dists</span><span class="p">:</span> <span class="n">NDArray</span><span class="p">,</span>
+            <span class="n">sym_data</span><span class="p">:</span> <span class="n">NDArray</span><span class="p">,</span>
+            <span class="n">sym_dists</span><span class="p">:</span> <span class="n">NDArray</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">KernelInvocation</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Создает вызов ядра для симметричных расстояний.</span>
+<span class="sd">        </span>
+<span class="sd">        Аргументы:</span>
+<span class="sd">            cluster (NDArray): Данные кластера</span>
+<span class="sd">            cl_n (int): Количество объектов в кластере</span>
+<span class="sd">            D (int): Размерность данных</span>
+<span class="sd">            cent_dists (NDArray): Расстояния до центроидов</span>
+<span class="sd">            sym_data (NDArray): Симметричные данные</span>
+<span class="sd">            sym_dists (NDArray): Массив для симметричных расстояний</span>
+<span class="sd">            </span>
+<span class="sd">        Возвращает:</span>
+<span class="sd">            KernelInvocation: Объект вызова ядра</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">KernelInvocation</span><span class="p">(</span>
+            <span class="n">kernel</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_cvi</span><span class="o">.</span><span class="n">get_function</span><span class="p">(</span><span class="s1">&#39;get_sym_dists&#39;</span><span class="p">),</span>
+            <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="n">cluster</span><span class="p">,</span> <span class="n">cl_n</span><span class="p">,</span> <span class="n">D</span><span class="p">,</span> <span class="n">cent_dists</span><span class="p">,</span> <span class="n">sym_data</span><span class="p">,</span> <span class="n">sym_dists</span><span class="p">),</span>
+        <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Middleware.mcr">
+<a class="viewcode-back" href="../../../gamac.kernels.html#gamac.kernels.middleware.Middleware.mcr">[документация]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">mcr</span><span class="p">(</span>
+            <span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span>
+            <span class="n">data</span><span class="p">:</span> <span class="n">NDArray</span><span class="p">,</span>
+            <span class="n">N</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+            <span class="n">D</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+            <span class="n">labels</span><span class="p">:</span> <span class="n">NDArray</span><span class="p">,</span>
+            <span class="n">s_w</span><span class="p">:</span> <span class="n">NDArray</span><span class="p">,</span>
+            <span class="n">s_b</span><span class="p">:</span> <span class="n">NDArray</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">KernelInvocation</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Создает вызов ядра для метрики MCR.</span>
+<span class="sd">        </span>
+<span class="sd">        Аргументы:</span>
+<span class="sd">            data (NDArray): Исходные данные</span>
+<span class="sd">            N (int): Количество объектов</span>
+<span class="sd">            D (int): Размерность данных</span>
+<span class="sd">            labels (NDArray): Метки кластеров</span>
+<span class="sd">            s_w (NDArray): Массив для внутрикластерных расстояний</span>
+<span class="sd">            s_b (NDArray): Массив для межкластерных расстояний</span>
+<span class="sd">            </span>
+<span class="sd">        Возвращает:</span>
+<span class="sd">            KernelInvocation: Объект вызова ядра</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">KernelInvocation</span><span class="p">(</span>
+            <span class="n">kernel</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_cvi</span><span class="o">.</span><span class="n">get_function</span><span class="p">(</span><span class="s1">&#39;mcr&#39;</span><span class="p">),</span>
+            <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">N</span><span class="p">,</span> <span class="n">D</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="n">s_w</span><span class="p">,</span> <span class="n">s_b</span><span class="p">),</span>
+        <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Middleware.c_index">
+<a class="viewcode-back" href="../../../gamac.kernels.html#gamac.kernels.middleware.Middleware.c_index">[документация]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">c_index</span><span class="p">(</span>
+            <span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span>
+            <span class="n">data</span><span class="p">:</span> <span class="n">NDArray</span><span class="p">,</span>
+            <span class="n">N</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+            <span class="n">D</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+            <span class="n">pairs</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+            <span class="n">labels</span><span class="p">:</span> <span class="n">NDArray</span><span class="p">,</span>
+            <span class="n">s_min_idx</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+            <span class="n">s_min</span><span class="p">:</span> <span class="n">NDArray</span><span class="p">,</span>
+            <span class="n">s_max_idx</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+            <span class="n">s_max</span><span class="p">:</span> <span class="n">NDArray</span><span class="p">,</span>
+            <span class="n">s_c</span><span class="p">:</span> <span class="n">NDArray</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">KernelInvocation</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Создает вызов ядра для индекса C.</span>
+<span class="sd">        </span>
+<span class="sd">        Аргументы:</span>
+<span class="sd">            data (NDArray): Исходные данные</span>
+<span class="sd">            N (int): Количество объектов</span>
+<span class="sd">            D (int): Размерность данных</span>
+<span class="sd">            pairs (int): Количество пар</span>
+<span class="sd">            labels (NDArray): Метки кластеров</span>
+<span class="sd">            s_min_idx (int): Индекс минимального расстояния</span>
+<span class="sd">            s_min (NDArray): Минимальные расстояния</span>
+<span class="sd">            s_max_idx (int): Индекс максимального расстояния</span>
+<span class="sd">            s_max (NDArray): Максимальные расстояния</span>
+<span class="sd">            s_c (NDArray): Массив для результатов</span>
+<span class="sd">            </span>
+<span class="sd">        Возвращает:</span>
+<span class="sd">            KernelInvocation: Объект вызова ядра</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">KernelInvocation</span><span class="p">(</span>
+            <span class="n">kernel</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_cvi</span><span class="o">.</span><span class="n">get_function</span><span class="p">(</span><span class="s1">&#39;c_index&#39;</span><span class="p">),</span>
+            <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">N</span><span class="p">,</span> <span class="n">D</span><span class="p">,</span> <span class="n">pairs</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="n">s_min_idx</span><span class="p">,</span> <span class="n">s_min</span><span class="p">,</span> <span class="n">s_max_idx</span><span class="p">,</span> <span class="n">s_max</span><span class="p">,</span> <span class="n">s_c</span><span class="p">),</span>
+        <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Middleware.os">
+<a class="viewcode-back" href="../../../gamac.kernels.html#gamac.kernels.middleware.Middleware.os">[документация]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">os</span><span class="p">(</span>
+            <span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span>
+            <span class="n">data</span><span class="p">:</span> <span class="n">NDArray</span><span class="p">,</span>
+            <span class="n">N</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+            <span class="n">D</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+            <span class="n">centroids</span><span class="p">:</span> <span class="n">NDArray</span><span class="p">,</span>
+            <span class="n">K</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+            <span class="n">labels</span><span class="p">:</span> <span class="n">NDArray</span><span class="p">,</span>
+            <span class="n">uniq_labels</span><span class="p">:</span> <span class="n">NDArray</span><span class="p">,</span>
+            <span class="n">o_val</span><span class="p">:</span> <span class="n">NDArray</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">KernelInvocation</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Создает вызов ядра для метрики OS.</span>
+<span class="sd">        </span>
+<span class="sd">        Аргументы:</span>
+<span class="sd">            data (NDArray): Исходные данные</span>
+<span class="sd">            N (int): Количество объектов</span>
+<span class="sd">            D (int): Размерность данных</span>
+<span class="sd">            centroids (NDArray): Центроиды кластеров</span>
+<span class="sd">            K (int): Количество кластеров</span>
+<span class="sd">            labels (NDArray): Метки кластеров</span>
+<span class="sd">            uniq_labels (NDArray): Уникальные метки</span>
+<span class="sd">            o_val (NDArray): Массив для результатов</span>
+<span class="sd">            </span>
+<span class="sd">        Возвращает:</span>
+<span class="sd">            KernelInvocation: Объект вызова ядра</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">KernelInvocation</span><span class="p">(</span>
+            <span class="n">kernel</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_cvi</span><span class="o">.</span><span class="n">get_function</span><span class="p">(</span><span class="s1">&#39;os&#39;</span><span class="p">),</span>
+            <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">N</span><span class="p">,</span> <span class="n">D</span><span class="p">,</span> <span class="n">centroids</span><span class="p">,</span> <span class="n">K</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="n">uniq_labels</span><span class="p">,</span> <span class="n">o_val</span><span class="p">),</span>
+        <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Middleware.crosstab">
+<a class="viewcode-back" href="../../../gamac.kernels.html#gamac.kernels.middleware.Middleware.crosstab">[документация]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">crosstab</span><span class="p">(</span>
+            <span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span>
+            <span class="n">N</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+            <span class="n">uniq_classes</span><span class="p">:</span> <span class="n">NDArray</span><span class="p">,</span>
+            <span class="n">classes</span><span class="p">:</span> <span class="n">NDArray</span><span class="p">,</span>
+            <span class="n">classes_k</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+            <span class="n">uniq_labels</span><span class="p">:</span> <span class="n">NDArray</span><span class="p">,</span>
+            <span class="n">labels</span><span class="p">:</span> <span class="n">NDArray</span><span class="p">,</span>
+            <span class="n">labels_k</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+            <span class="n">crosstab_matrix</span><span class="p">:</span> <span class="n">NDArray</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">KernelInvocation</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Создает вызов ядра для кросс-таблицы.</span>
+<span class="sd">        </span>
+<span class="sd">        Аргументы:</span>
+<span class="sd">            N (int): Количество объектов</span>
+<span class="sd">            uniq_classes (NDArray): Уникальные классы</span>
+<span class="sd">            classes (NDArray): Массив классов</span>
+<span class="sd">            classes_k (int): Количество классов</span>
+<span class="sd">            uniq_labels (NDArray): Уникальные метки</span>
+<span class="sd">            labels (NDArray): Метки кластеров</span>
+<span class="sd">            labels_k (int): Количество кластеров</span>
+<span class="sd">            crosstab_matrix (NDArray): Матрица для кросс-таблицы</span>
+<span class="sd">            </span>
+<span class="sd">        Возвращает:</span>
+<span class="sd">            KernelInvocation: Объект вызова ядра</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">KernelInvocation</span><span class="p">(</span>
+            <span class="n">kernel</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_cvi</span><span class="o">.</span><span class="n">get_function</span><span class="p">(</span><span class="s1">&#39;crosstab&#39;</span><span class="p">),</span>
+            <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="n">N</span><span class="p">,</span> <span class="n">uniq_classes</span><span class="p">,</span> <span class="n">classes</span><span class="p">,</span> <span class="n">classes_k</span><span class="p">,</span> <span class="n">uniq_labels</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="n">labels_k</span><span class="p">,</span> <span class="n">crosstab_matrix</span><span class="p">),</span>
+        <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Middleware.kmeans_labels">
+<a class="viewcode-back" href="../../../gamac.kernels.html#gamac.kernels.middleware.Middleware.kmeans_labels">[документация]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">kmeans_labels</span><span class="p">(</span>
+            <span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span>
+            <span class="n">X</span><span class="p">:</span> <span class="n">NDArray</span><span class="p">,</span>
+            <span class="n">centers</span><span class="p">:</span> <span class="n">NDArray</span><span class="p">,</span>
+            <span class="n">N</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+            <span class="n">K</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+            <span class="n">D</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+            <span class="n">labels</span><span class="p">:</span> <span class="n">NDArray</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">KernelInvocation</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Создает вызов ядра для меток K-means.</span>
+<span class="sd">        </span>
+<span class="sd">        Аргументы:</span>
+<span class="sd">            X (NDArray): Исходные данные</span>
+<span class="sd">            centers (NDArray): Центроиды кластеров</span>
+<span class="sd">            N (int): Количество объектов</span>
+<span class="sd">            K (int): Количество кластеров</span>
+<span class="sd">            D (int): Размерность данных</span>
+<span class="sd">            labels (NDArray): Массив для меток</span>
+<span class="sd">            </span>
+<span class="sd">        Возвращает:</span>
+<span class="sd">            KernelInvocation: Объект вызова ядра</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">KernelInvocation</span><span class="p">(</span>
+            <span class="n">kernel</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_kmeans</span><span class="o">.</span><span class="n">get_function</span><span class="p">(</span><span class="s1">&#39;kmeans_labels&#39;</span><span class="p">),</span>
+            <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">centers</span><span class="p">,</span> <span class="n">N</span><span class="p">,</span> <span class="n">K</span><span class="p">,</span> <span class="n">D</span><span class="p">,</span> <span class="n">labels</span><span class="p">)</span>
+        <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Middleware.kmeans_sse">
+<a class="viewcode-back" href="../../../gamac.kernels.html#gamac.kernels.middleware.Middleware.kmeans_sse">[документация]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">kmeans_sse</span><span class="p">(</span>
+            <span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span>
+            <span class="n">X</span><span class="p">:</span> <span class="n">NDArray</span><span class="p">,</span>
+            <span class="n">centers</span><span class="p">:</span> <span class="n">NDArray</span><span class="p">,</span>
+            <span class="n">labels</span><span class="p">:</span> <span class="n">NDArray</span><span class="p">,</span>
+            <span class="n">sse</span><span class="p">:</span> <span class="n">NDArray</span><span class="p">,</span>
+            <span class="n">N</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+            <span class="n">D</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">KernelInvocation</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Создает вызов ядра для SSE K-means.</span>
+<span class="sd">        </span>
+<span class="sd">        Аргументы:</span>
+<span class="sd">            X (NDArray): Исходные данные</span>
+<span class="sd">            centers (NDArray): Центроиды кластеров</span>
+<span class="sd">            labels (NDArray): Метки кластеров</span>
+<span class="sd">            sse (NDArray): Массив для SSE</span>
+<span class="sd">            N (int): Количество объектов</span>
+<span class="sd">            D (int): Размерность данных</span>
+<span class="sd">            </span>
+<span class="sd">        Возвращает:</span>
+<span class="sd">            KernelInvocation: Объект вызова ядра</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">KernelInvocation</span><span class="p">(</span>
+            <span class="n">kernel</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_kmeans</span><span class="o">.</span><span class="n">get_function</span><span class="p">(</span><span class="s1">&#39;kmeans_sse&#39;</span><span class="p">),</span>
+            <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">centers</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="n">sse</span><span class="p">,</span> <span class="n">N</span><span class="p">,</span> <span class="n">D</span><span class="p">)</span>
+        <span class="p">)</span></div>
+</div>
+
+
+
+<span class="n">MIDDLEWARE</span> <span class="o">=</span> <span class="n">Middleware</span><span class="p">()</span>  <span class="c1"># Глобальный экземпляр Middleware для использования</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Авторские права 2025, Sergey Muravyov, Nikita Kulin, Ivan Usov, Olga Muravyova, Simar Muratov. </p>
+  </div>
+
+  Собрано при помощи <a href="https://www.sphinx-doc.org/">Sphinx</a> с использованием
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">темы,</a>
+    предоставленной <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

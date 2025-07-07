@@ -1,0 +1,336 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="ru" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>gamac.algorithms.dbscan &mdash; документация GaMAC 1.0.0</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=e35015f7"></script>
+      <script src="../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../../_static/translations.js?v=cd1d70c9"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Алфавитный указатель" href="../../../genindex.html" />
+    <link rel="search" title="Поиск" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            GaMAC
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Поиск в документации" aria-label="Поиск в документации" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Меню навигации">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../modules.html">gamac</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Меню навигации для мобильных устройств" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">GaMAC</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Навигация по страницам">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Код модуля</a></li>
+      <li class="breadcrumb-item active">gamac.algorithms.dbscan</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Исходный код gamac.algorithms.dbscan</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Реализация алгоритма DBSCAN (Density-Based Spatial Clustering of Applications with Noise) для GPU.</span>
+
+<span class="sd">Модуль содержит:</span>
+<span class="sd">- Класс DBSCANModel: модель кластеризации DBSCAN</span>
+<span class="sd">- Класс DBSCAN: основной алгоритм DBSCAN</span>
+<span class="sd">- Класс DBSCANConfig: конфигурация алгоритма</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">cupy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">cp</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pylibraft.config</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">gamac.algorithms.base</span><span class="w"> </span><span class="kn">import</span> <span class="n">ClusteringModel</span><span class="p">,</span> <span class="n">ClusteringAlgo</span><span class="p">,</span> <span class="n">AlgoConfig</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">gamac.data.data_pipeline</span><span class="w"> </span><span class="kn">import</span> <span class="n">DataFrameType</span><span class="p">,</span> <span class="n">LabelsType</span>
+
+<span class="n">pylibraft</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">set_output_as</span><span class="p">(</span><span class="s2">&quot;cupy&quot;</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="DBSCANModel">
+<a class="viewcode-back" href="../../../gamac.algorithms.html#gamac.algorithms.dbscan.DBSCANModel">[документация]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">DBSCANModel</span><span class="p">(</span><span class="n">ClusteringModel</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Модель кластеризации DBSCAN.</span>
+<span class="sd">    </span>
+<span class="sd">    Хранит метки кластеров, обучающие данные и параметр eps для предсказания.</span>
+<span class="sd">    </span>
+<span class="sd">    Attributes:</span>
+<span class="sd">        X_ (cp.ndarray): Обучающие данные.</span>
+<span class="sd">        eps_sq (float): Квадрат радиуса окрестности (для оптимизации расчетов).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">labels_</span><span class="p">,</span> <span class="n">X_</span><span class="p">,</span> <span class="n">eps</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Инициализирует модель DBSCAN.</span>
+<span class="sd">        </span>
+<span class="sd">        Args:</span>
+<span class="sd">            labels_: Метки кластеров для обучающих данных.</span>
+<span class="sd">            X_: Обучающие данные.</span>
+<span class="sd">            eps: Радиус окрестности.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">labels_</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">X_</span> <span class="o">=</span> <span class="n">X_</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">eps_sq</span> <span class="o">=</span> <span class="n">eps</span> <span class="o">**</span> <span class="mi">2</span>  <span class="c1"># Квадрат eps для оптимизации расчетов</span>
+
+<div class="viewcode-block" id="DBSCANModel.predict">
+<a class="viewcode-back" href="../../../gamac.algorithms.html#gamac.algorithms.dbscan.DBSCANModel.predict">[документация]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">predict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">df</span><span class="p">:</span> <span class="n">DataFrameType</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">LabelsType</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Предсказывает метки кластеров для новых данных.</span>
+<span class="sd">        </span>
+<span class="sd">        Использует батчевую обработку для эффективной работы с большими данными.</span>
+<span class="sd">        </span>
+<span class="sd">        Args:</span>
+<span class="sd">            df: Данные для предсказания.</span>
+<span class="sd">            </span>
+<span class="sd">        Returns:</span>
+<span class="sd">            Метки кластеров для входных данных.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="n">cp</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">cp</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+        <span class="n">X_train</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">X_</span>
+
+        <span class="c1"># Батчевая обработка для больших данных</span>
+        <span class="n">batch_size</span> <span class="o">=</span> <span class="mi">4096</span>
+        <span class="n">predictions</span> <span class="o">=</span> <span class="n">cp</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">df</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">cp</span><span class="o">.</span><span class="n">int32</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">df</span><span class="p">),</span> <span class="n">batch_size</span><span class="p">):</span>
+            <span class="n">batch</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">i</span><span class="p">:</span><span class="n">i</span> <span class="o">+</span> <span class="n">batch_size</span><span class="p">]</span>
+
+            <span class="c1"># Оптимизированный расчет расстояний через матричные операции</span>
+            <span class="n">X_new_norm</span> <span class="o">=</span> <span class="n">cp</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">batch</span><span class="o">**</span><span class="mi">2</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)[:,</span> <span class="n">cp</span><span class="o">.</span><span class="n">newaxis</span><span class="p">]</span>
+            <span class="n">X_train_norm</span> <span class="o">=</span> <span class="n">cp</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">X_train</span><span class="o">**</span><span class="mi">2</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+            <span class="n">dists_sq</span> <span class="o">=</span> <span class="n">X_new_norm</span> <span class="o">+</span> <span class="n">X_train_norm</span> <span class="o">-</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">batch</span> <span class="o">@</span> <span class="n">X_train</span><span class="o">.</span><span class="n">T</span>
+            <span class="n">dists_sq</span> <span class="o">=</span> <span class="n">cp</span><span class="o">.</span><span class="n">maximum</span><span class="p">(</span><span class="n">dists_sq</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>  <span class="c1"># Избегаем отрицательных значений из-за ошибок округления</span>
+
+            <span class="c1"># Поиск соседей в eps-окрестности</span>
+            <span class="n">mask</span> <span class="o">=</span> <span class="n">dists_sq</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">eps_sq</span>
+            <span class="n">has_neighbor</span> <span class="o">=</span> <span class="n">cp</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">mask</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+            <span class="c1"># Для точек без соседей используем ближайшего соседа</span>
+            <span class="n">nearest</span> <span class="o">=</span> <span class="n">cp</span><span class="o">.</span><span class="n">argmin</span><span class="p">(</span><span class="n">dists_sq</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+            <span class="n">predictions</span><span class="p">[</span><span class="n">i</span><span class="p">:</span><span class="n">i</span> <span class="o">+</span> <span class="n">batch_size</span><span class="p">]</span> <span class="o">=</span> <span class="n">cp</span><span class="o">.</span><span class="n">where</span><span class="p">(</span>
+                <span class="n">has_neighbor</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">labels_</span><span class="p">[</span><span class="n">cp</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">mask</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)],</span>  <span class="c1"># Метка первого найденного соседа</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">labels_</span><span class="p">[</span><span class="n">nearest</span><span class="p">]</span>  <span class="c1"># Метка ближайшего соседа</span>
+            <span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">predictions</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="DBSCAN">
+<a class="viewcode-back" href="../../../gamac.algorithms.html#gamac.algorithms.dbscan.DBSCAN">[документация]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">DBSCAN</span><span class="p">(</span><span class="n">ClusteringAlgo</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Алгоритм DBSCAN для GPU.</span>
+<span class="sd">    </span>
+<span class="sd">    Алгоритм кластеризации на основе плотности, который группирует точки в кластеры,</span>
+<span class="sd">    если они находятся в плотной области, и помечает выбросы как шум.</span>
+<span class="sd">    </span>
+<span class="sd">    Attributes:</span>
+<span class="sd">        eps (float): Радиус окрестности.</span>
+<span class="sd">        eps_sq (float): Квадрат радиуса (для оптимизации).</span>
+<span class="sd">        min_samples (int): Минимальное количество соседей для core-точки.</span>
+<span class="sd">        X (cp.ndarray): Обучающие данные.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">eps</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">min_samples</span><span class="o">=</span><span class="mi">5</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Инициализирует алгоритм DBSCAN.</span>
+<span class="sd">        </span>
+<span class="sd">        Args:</span>
+<span class="sd">            eps: Радиус окрестности.</span>
+<span class="sd">            min_samples: Минимальное количество соседей для core-точки.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">eps</span> <span class="o">=</span> <span class="n">eps</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">eps_sq</span> <span class="o">=</span> <span class="n">eps</span> <span class="o">**</span> <span class="mi">2</span>  <span class="c1"># Квадрат eps для оптимизации расчетов</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">min_samples</span> <span class="o">=</span> <span class="n">min_samples</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">X</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># Будет установлено в методе fit</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_get_neighbors</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">idx</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Находит всех соседей точки в eps-окрестности.</span>
+<span class="sd">        </span>
+<span class="sd">        Использует оптимизированный расчет расстояний.</span>
+<span class="sd">        </span>
+<span class="sd">        Args:</span>
+<span class="sd">            idx: Индекс точки.</span>
+<span class="sd">            </span>
+<span class="sd">        Returns:</span>
+<span class="sd">            Индексы соседей в eps-окрестности.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">point</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">X</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span>
+        <span class="n">diffs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">X</span> <span class="o">-</span> <span class="n">point</span>
+        <span class="n">dists_sq</span> <span class="o">=</span> <span class="n">cp</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">diffs</span><span class="o">**</span><span class="mi">2</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">cp</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">dists_sq</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">eps_sq</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_process_core_point</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">idx</span><span class="p">,</span> <span class="n">visited</span><span class="p">,</span> <span class="n">is_core</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Обрабатывает core-точку и расширяет кластер.</span>
+<span class="sd">        </span>
+<span class="sd">        Args:</span>
+<span class="sd">            idx: Индекс core-точки.</span>
+<span class="sd">            visited: Массив посещенных точек.</span>
+<span class="sd">            is_core: Массив флагов core-точек.</span>
+<span class="sd">            </span>
+<span class="sd">        Returns:</span>
+<span class="sd">            Список индексов точек в кластере или None.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">visited</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">is_core</span><span class="p">[</span><span class="n">idx</span><span class="p">]:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+
+        <span class="n">cluster</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">queue</span> <span class="o">=</span> <span class="n">cp</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">idx</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">cp</span><span class="o">.</span><span class="n">int32</span><span class="p">)</span>
+        <span class="n">visited</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+
+        <span class="k">while</span> <span class="n">queue</span><span class="o">.</span><span class="n">size</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">current</span> <span class="o">=</span> <span class="n">queue</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">queue</span> <span class="o">=</span> <span class="n">queue</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
+            <span class="n">cluster</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">current</span><span class="p">))</span>
+
+            <span class="n">neighbors</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_neighbors</span><span class="p">(</span><span class="n">current</span><span class="p">)</span>
+            <span class="n">mask</span> <span class="o">=</span> <span class="o">~</span><span class="n">visited</span><span class="p">[</span><span class="n">neighbors</span><span class="p">]</span>
+            <span class="n">new_points</span> <span class="o">=</span> <span class="n">neighbors</span><span class="p">[</span><span class="n">mask</span><span class="p">]</span>
+
+            <span class="c1"># Добавляем только core-точки в очередь</span>
+            <span class="n">core_mask</span> <span class="o">=</span> <span class="n">is_core</span><span class="p">[</span><span class="n">new_points</span><span class="p">]</span>
+            <span class="n">queue</span> <span class="o">=</span> <span class="n">cp</span><span class="o">.</span><span class="n">concatenate</span><span class="p">((</span><span class="n">queue</span><span class="p">,</span> <span class="n">new_points</span><span class="p">[</span><span class="n">core_mask</span><span class="p">]))</span>
+            <span class="n">visited</span><span class="p">[</span><span class="n">new_points</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+
+            <span class="c1"># Граничные точки добавляем в кластер, но не обрабатываем</span>
+            <span class="n">cluster</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">new_points</span><span class="p">[</span><span class="o">~</span><span class="n">core_mask</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">()</span><span class="o">.</span><span class="n">tolist</span><span class="p">())</span>
+
+        <span class="k">return</span> <span class="n">cluster</span>
+
+<div class="viewcode-block" id="DBSCAN.fit">
+<a class="viewcode-back" href="../../../gamac.algorithms.html#gamac.algorithms.dbscan.DBSCAN.fit">[документация]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Обучает модель DBSCAN на данных.</span>
+<span class="sd">        </span>
+<span class="sd">        Args:</span>
+<span class="sd">            X: Данные для обучения.</span>
+<span class="sd">            </span>
+<span class="sd">        Returns:</span>
+<span class="sd">            Обученная модель DBSCANModel.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">X</span> <span class="o">=</span> <span class="n">cp</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">cp</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+        <span class="n">n</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">X</span><span class="p">)</span>
+        <span class="n">visited</span> <span class="o">=</span> <span class="n">cp</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">bool</span><span class="p">)</span>
+        <span class="n">is_core</span> <span class="o">=</span> <span class="n">cp</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">bool</span><span class="p">)</span>
+        <span class="n">labels_</span> <span class="o">=</span> <span class="n">cp</span><span class="o">.</span><span class="n">full</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">cp</span><span class="o">.</span><span class="n">int32</span><span class="p">)</span>
+
+        <span class="c1"># Предварительное определение core-точек</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">visited</span><span class="p">[</span><span class="n">i</span><span class="p">]:</span>
+                <span class="n">neighbors</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_neighbors</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">neighbors</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">min_samples</span><span class="p">:</span>
+                    <span class="n">is_core</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+
+        <span class="c1"># Основной цикл кластеризации</span>
+        <span class="n">cluster_id</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">visited</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="ow">and</span> <span class="n">is_core</span><span class="p">[</span><span class="n">i</span><span class="p">]:</span>
+                <span class="n">cluster</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_process_core_point</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">visited</span><span class="p">,</span> <span class="n">is_core</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">cluster</span><span class="p">:</span>
+                    <span class="n">labels_</span><span class="p">[</span><span class="n">cluster</span><span class="p">]</span> <span class="o">=</span> <span class="n">cluster_id</span>
+                    <span class="n">cluster_id</span> <span class="o">+=</span> <span class="mi">1</span>
+
+        <span class="k">return</span> <span class="n">DBSCANModel</span><span class="p">(</span><span class="n">labels_</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">X</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">eps</span><span class="p">)</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="DBSCANConfig">
+<a class="viewcode-back" href="../../../gamac.algorithms.html#gamac.algorithms.dbscan.DBSCANConfig">[документация]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">DBSCANConfig</span><span class="p">(</span><span class="n">AlgoConfig</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Конфигурация алгоритма DBSCAN.</span>
+<span class="sd">    </span>
+<span class="sd">    Attributes:</span>
+<span class="sd">        config_space (dict): Пространство параметров:</span>
+<span class="sd">            - eps: Диапазон радиуса окрестности (по умолчанию (0.01, 1.5))</span>
+<span class="sd">            - min_samples: Диапазон минимального количества соседей (по умолчанию (5, 15))</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">eps</span><span class="o">=</span><span class="p">(</span><span class="mf">0.01</span><span class="p">,</span> <span class="mf">1.5</span><span class="p">),</span>
+        <span class="n">min_samples</span><span class="o">=</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">15</span><span class="p">)</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Инициализирует конфигурацию DBSCAN.</span>
+<span class="sd">        </span>
+<span class="sd">        Args:</span>
+<span class="sd">            eps: Диапазон радиуса окрестности.</span>
+<span class="sd">            min_samples: Диапазон минимального количества соседей.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="n">DBSCAN</span><span class="p">,</span>
+            <span class="n">eps</span><span class="o">=</span><span class="n">eps</span><span class="p">,</span>
+            <span class="n">min_samples</span><span class="o">=</span><span class="n">min_samples</span>
+        <span class="p">)</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Авторские права 2025, Sergey Muravyov, Nikita Kulin, Ivan Usov, Olga Muravyova, Simar Muratov. </p>
+  </div>
+
+  Собрано при помощи <a href="https://www.sphinx-doc.org/">Sphinx</a> с использованием
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">темы,</a>
+    предоставленной <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,243 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="ru" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>gamac.data.data_enrichment &mdash; документация GaMAC 1.0.0</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=e35015f7"></script>
+      <script src="../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../../_static/translations.js?v=cd1d70c9"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Алфавитный указатель" href="../../../genindex.html" />
+    <link rel="search" title="Поиск" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            GaMAC
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Поиск в документации" aria-label="Поиск в документации" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Меню навигации">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../modules.html">gamac</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Меню навигации для мобильных устройств" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">GaMAC</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Навигация по страницам">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Код модуля</a></li>
+      <li class="breadcrumb-item active">gamac.data.data_enrichment</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Исходный код gamac.data.data_enrichment</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.cluster</span><span class="w"> </span><span class="kn">import</span> <span class="n">KMeans</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.metrics</span><span class="w"> </span><span class="kn">import</span> <span class="n">silhouette_score</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.preprocessing</span><span class="w"> </span><span class="kn">import</span> <span class="n">LabelEncoder</span>
+
+<span class="c1"># Константы</span>
+<span class="n">N_CLUSTERS</span> <span class="o">=</span> <span class="mi">5</span>  <span class="c1"># Количество кластеров для алгоритма K-means</span>
+<span class="n">LINUX_FILE</span> <span class="o">=</span> <span class="s1">&#39;/Study/ASP/main/data/loghub - linux/Linux.log&#39;</span>  <span class="c1"># Путь к файлу с логами Linux</span>
+<span class="n">NGINX_FILE</span> <span class="o">=</span> <span class="s1">&#39;/Study/ASP/main/data/server logs - suspicious/CIDDS-001-external-week1.csv&#39;</span>  <span class="c1"># Путь к файлу с логами Nginx</span>
+
+<span class="c1"># Вектор признаков для классификации</span>
+<span class="n">FEATURE_VECTOR</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;static&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;object&#39;</span><span class="p">,</span> <span class="s1">&#39;subject&#39;</span><span class="p">,</span> <span class="s1">&#39;environment&#39;</span><span class="p">,</span> <span class="s1">&#39;agent&#39;</span><span class="p">,</span> <span class="s1">&#39;transaction&#39;</span><span class="p">,</span> <span class="s1">&#39;source&#39;</span><span class="p">],</span>
+    <span class="s1">&#39;semi static&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;net&#39;</span><span class="p">,</span> <span class="s1">&#39;result code&#39;</span><span class="p">,</span> <span class="s1">&#39;log level&#39;</span><span class="p">,</span> <span class="s1">&#39;result&#39;</span><span class="p">,</span> <span class="s1">&#39;tag&#39;</span><span class="p">,</span> <span class="s1">&#39;label&#39;</span><span class="p">],</span>
+    <span class="s1">&#39;dynamic&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;timestamp&#39;</span><span class="p">,</span> <span class="s1">&#39;traceback&#39;</span><span class="p">,</span> <span class="s1">&#39;action&#39;</span><span class="p">,</span> <span class="s1">&#39;protocol&#39;</span><span class="p">,</span> <span class="s1">&#39;auth data&#39;</span><span class="p">,</span> <span class="s1">&#39;property&#39;</span><span class="p">]</span>
+<span class="p">}</span>
+
+
+<div class="viewcode-block" id="get_linux_data">
+<a class="viewcode-back" href="../../../gamac.data.html#gamac.data.data_enrichment.get_linux_data">[документация]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_linux_data</span><span class="p">(</span><span class="n">file_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Загрузка данных логов Linux из файла.</span>
+<span class="sd">    </span>
+<span class="sd">    Аргументы:</span>
+<span class="sd">        file_path (str): Путь к файлу с логами</span>
+<span class="sd">        </span>
+<span class="sd">    Возвращает:</span>
+<span class="sd">        pd.DataFrame: DataFrame с содержимым логов</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">file_path</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">names</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;Log_contents&#39;</span><span class="p">],</span> <span class="n">encoding</span><span class="o">=</span><span class="s1">&#39;unicode_escape&#39;</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="get_nginx_data">
+<a class="viewcode-back" href="../../../gamac.data.html#gamac.data.data_enrichment.get_nginx_data">[документация]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_nginx_data</span><span class="p">(</span><span class="n">file_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Загрузка данных логов Nginx из файла.</span>
+<span class="sd">    </span>
+<span class="sd">    Аргументы:</span>
+<span class="sd">        file_path (str): Путь к файлу с логами</span>
+<span class="sd">        </span>
+<span class="sd">    Возвращает:</span>
+<span class="sd">        pd.DataFrame: DataFrame с содержимым логов</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">file_path</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="s1">&#39;,&#39;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s1">&#39;unicode_escape&#39;</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="preprocess_data">
+<a class="viewcode-back" href="../../../gamac.data.html#gamac.data.data_enrichment.preprocess_data">[документация]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">preprocess_data</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Предварительная обработка данных.</span>
+<span class="sd">    </span>
+<span class="sd">    Кодирует категориальные признаки с помощью LabelEncoder.</span>
+<span class="sd">    </span>
+<span class="sd">    Аргументы:</span>
+<span class="sd">        data (pd.DataFrame): Исходные данные для обработки</span>
+<span class="sd">        </span>
+<span class="sd">    Возвращает:</span>
+<span class="sd">        pd.DataFrame: Обработанные данные с закодированными признаками</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">label_encoder</span> <span class="o">=</span> <span class="n">LabelEncoder</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">data</span><span class="p">[</span><span class="n">c</span><span class="p">]</span><span class="o">.</span><span class="n">dtype</span> <span class="o">==</span> <span class="s1">&#39;object&#39;</span><span class="p">:</span>
+            <span class="n">encoded</span> <span class="o">=</span> <span class="n">label_encoder</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="n">c</span><span class="p">])</span>
+            <span class="n">data</span><span class="p">[</span><span class="n">c</span><span class="p">]</span> <span class="o">=</span> <span class="n">encoded</span>
+    <span class="k">return</span> <span class="n">data</span></div>
+
+
+
+<div class="viewcode-block" id="k_means_clustering">
+<a class="viewcode-back" href="../../../gamac.data.html#gamac.data.data_enrichment.k_means_clustering">[документация]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">k_means_clustering</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">n_clusters</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Кластеризация данных методом K-means.</span>
+<span class="sd">    </span>
+<span class="sd">    Аргументы:</span>
+<span class="sd">        data (pd.DataFrame): Данные для кластеризации</span>
+<span class="sd">        n_clusters (int): Количество кластеров</span>
+<span class="sd">        </span>
+<span class="sd">    Возвращает:</span>
+<span class="sd">        float: Средний silhouette score для полученных кластеров</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">kmeans</span> <span class="o">=</span> <span class="n">KMeans</span><span class="p">(</span><span class="n">n_clusters</span><span class="o">=</span><span class="n">n_clusters</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">42</span><span class="p">)</span>
+    <span class="n">kmeans</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+    <span class="n">labels</span> <span class="o">=</span> <span class="n">kmeans</span><span class="o">.</span><span class="n">labels_</span>
+    <span class="n">silhouette_avg</span> <span class="o">=</span> <span class="n">silhouette_score</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">labels</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">silhouette_avg</span></div>
+
+
+
+<div class="viewcode-block" id="enrich_nginx_data">
+<a class="viewcode-back" href="../../../gamac.data.html#gamac.data.data_enrichment.enrich_nginx_data">[документация]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">enrich_nginx_data</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Обогащение данных Nginx новыми признаками.</span>
+<span class="sd">    </span>
+<span class="sd">    Удаляет пустые признаки и добавляет составной признак из IP-адресов и портов.</span>
+<span class="sd">    </span>
+<span class="sd">    Аргументы:</span>
+<span class="sd">        data (pd.DataFrame): Исходные данные Nginx</span>
+<span class="sd">        </span>
+<span class="sd">    Возвращает:</span>
+<span class="sd">        pd.DataFrame: Обогащенные данные</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Удаление пустых признаков</span>
+    <span class="n">drop_features</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">columns</span><span class="p">[(</span><span class="n">data</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">()]</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Удаляемые признаки: </span><span class="si">{</span><span class="n">drop_features</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="n">drop_features</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">head</span><span class="p">())</span>
+    
+    <span class="c1"># Добавление составного признака</span>
+    <span class="n">data</span><span class="p">[</span><span class="n">FEATURE_VECTOR</span><span class="p">[</span><span class="s1">&#39;semi static&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]]</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;Src IP Addr&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span>
+        <span class="nb">str</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;:&#39;</span> <span class="o">+</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;Src Pt&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;-&#39;</span> <span class="o">+</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;Dst IP Addr&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;:&#39;</span> <span class="o">+</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;Dst Pt&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">data</span></div>
+
+
+
+<div class="viewcode-block" id="main">
+<a class="viewcode-back" href="../../../gamac.data.html#gamac.data.data_enrichment.main">[документация]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">main</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Основная функция выполнения скрипта.&quot;&quot;&quot;</span>
+    <span class="c1"># Загрузка данных</span>
+    <span class="n">linux_data</span> <span class="o">=</span> <span class="n">get_linux_data</span><span class="p">(</span><span class="n">LINUX_FILE</span><span class="p">)</span>
+    <span class="n">nginx_data</span> <span class="o">=</span> <span class="n">get_nginx_data</span><span class="p">(</span><span class="n">NGINX_FILE</span><span class="p">)</span>
+    
+    <span class="c1"># Вариант A: базовая предобработка</span>
+    <span class="n">nginx_data_a</span> <span class="o">=</span> <span class="n">preprocess_data</span><span class="p">(</span><span class="n">nginx_data</span><span class="p">)</span>
+    <span class="n">metric_a</span> <span class="o">=</span> <span class="n">k_means_clustering</span><span class="p">(</span><span class="n">nginx_data_a</span><span class="p">,</span> <span class="n">N_CLUSTERS</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Метрика silhouette для Nginx данных (вариант A): </span><span class="si">{</span><span class="n">metric_a</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+    
+    <span class="c1"># Вариант B: обогащение данных + предобработка</span>
+    <span class="n">nginx_data</span> <span class="o">=</span> <span class="n">get_nginx_data</span><span class="p">(</span><span class="n">NGINX_FILE</span><span class="p">)</span>
+    <span class="n">nginx_data_b</span> <span class="o">=</span> <span class="n">enrich_nginx_data</span><span class="p">(</span><span class="n">nginx_data</span><span class="p">)</span>
+    <span class="n">nginx_data_b</span> <span class="o">=</span> <span class="n">preprocess_data</span><span class="p">(</span><span class="n">nginx_data_b</span><span class="p">)</span>
+    <span class="n">metric_b</span> <span class="o">=</span> <span class="n">k_means_clustering</span><span class="p">(</span><span class="n">nginx_data_b</span><span class="p">,</span> <span class="n">N_CLUSTERS</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Метрика silhouette для Nginx данных (вариант B): </span><span class="si">{</span><span class="n">metric_b</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span></div>
+
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="n">main</span><span class="p">()</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Авторские права 2025, Sergey Muravyov, Nikita Kulin, Ivan Usov, Olga Muravyova, Simar Muratov. </p>
+  </div>
+
+  Собрано при помощи <a href="https://www.sphinx-doc.org/">Sphinx</a> с использованием
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">темы,</a>
+    предоставленной <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,1077 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="ru" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>gamac.meta.impl.cvi &mdash; документация GaMAC 1.0.0</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=e35015f7"></script>
+      <script src="../../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../../../_static/translations.js?v=cd1d70c9"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Алфавитный указатель" href="../../../../genindex.html" />
+    <link rel="search" title="Поиск" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            GaMAC
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Поиск в документации" aria-label="Поиск в документации" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Меню навигации">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../modules.html">gamac</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Меню навигации для мобильных устройств" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">GaMAC</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Навигация по страницам">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Код модуля</a></li>
+      <li class="breadcrumb-item active">gamac.meta.impl.cvi</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Исходный код gamac.meta.impl.cvi</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">CPU internal measures implementations</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Callable</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numba</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_get_centroid</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+
+<span class="nd">@numba</span><span class="o">.</span><span class="n">njit</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_dist</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+    <span class="n">diff</span> <span class="o">=</span> <span class="n">x</span> <span class="o">-</span> <span class="n">y</span>
+    <span class="n">sqr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">diff</span> <span class="o">*</span> <span class="n">diff</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">sqr</span><span class="p">)</span>
+
+
+<span class="nd">@numba</span><span class="o">.</span><span class="n">njit</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_dist_ps</span><span class="p">(</span><span class="n">x_obj</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">centroid</span><span class="p">):</span>
+    <span class="n">x_sym</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">centroid</span> <span class="o">-</span> <span class="n">x_obj</span>
+    <span class="n">d_near</span> <span class="o">=</span> <span class="nb">min</span><span class="p">([</span><span class="n">_dist</span><span class="p">(</span><span class="n">x_sym</span><span class="p">,</span> <span class="n">x_obj</span><span class="p">)</span> <span class="k">for</span> <span class="n">x_obj</span> <span class="ow">in</span> <span class="n">data</span><span class="p">])</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">d_near</span> <span class="o">+</span> <span class="mf">1e-6</span><span class="p">)</span> <span class="o">*</span> <span class="n">_dist</span><span class="p">(</span><span class="n">x_obj</span><span class="p">,</span> <span class="n">centroid</span><span class="p">)</span>
+
+
+<span class="nd">@numba</span><span class="o">.</span><span class="n">njit</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_get_cent_dists</span><span class="p">(</span><span class="n">cluster_data</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">centroid</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">_dist</span><span class="p">(</span><span class="n">cl_obj</span><span class="p">,</span> <span class="n">centroid</span><span class="p">)</span> <span class="k">for</span> <span class="n">cl_obj</span> <span class="ow">in</span> <span class="n">cluster_data</span><span class="p">])</span>
+
+
+<span class="nd">@numba</span><span class="o">.</span><span class="n">njit</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_get_sym_dists</span><span class="p">(</span><span class="n">cluster_data</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">centroid</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">_dist_ps</span><span class="p">(</span><span class="n">cl_obj</span><span class="p">,</span> <span class="n">cluster_data</span><span class="p">,</span> <span class="n">centroid</span><span class="p">)</span> <span class="k">for</span> <span class="n">cl_obj</span> <span class="ow">in</span> <span class="n">cluster_data</span><span class="p">])</span>
+
+
+<span class="nd">@numba</span><span class="o">.</span><span class="n">njit</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_get_n_w</span><span class="p">(</span><span class="n">clusters</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+    <span class="n">n_w</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">for</span> <span class="n">cl</span> <span class="ow">in</span> <span class="n">clusters</span><span class="p">:</span>
+        <span class="n">cl_n</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">cl</span><span class="p">)</span>
+        <span class="n">n_w</span> <span class="o">+=</span> <span class="nb">int</span><span class="p">(</span><span class="n">cl_n</span> <span class="o">*</span> <span class="p">(</span><span class="n">cl_n</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">n_w</span>
+
+
+<span class="nd">@numba</span><span class="o">.</span><span class="n">njit</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_get_n_b</span><span class="p">(</span><span class="n">clusters</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+    <span class="n">n</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">for</span> <span class="n">cl</span> <span class="ow">in</span> <span class="n">clusters</span><span class="p">:</span>
+        <span class="n">n</span> <span class="o">+=</span> <span class="nb">len</span><span class="p">(</span><span class="n">cl</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">n</span> <span class="o">*</span> <span class="p">(</span><span class="n">n</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">-</span> <span class="n">_get_n_w</span><span class="p">(</span><span class="n">clusters</span><span class="p">)</span>
+
+
+<span class="nd">@numba</span><span class="o">.</span><span class="n">njit</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_get_intra_stat</span><span class="p">(</span><span class="n">cluster_data</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
+    <span class="n">cluster_n</span><span class="p">,</span> <span class="n">sum_dist</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">cluster_data</span><span class="p">),</span> <span class="mf">0.0</span>
+    <span class="k">if</span> <span class="n">cluster_n</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">:</span>
+        <span class="k">return</span> <span class="mf">1e-6</span><span class="p">,</span> <span class="mf">1e-6</span><span class="p">,</span> <span class="mf">1e-6</span><span class="p">,</span> <span class="mf">1e-6</span>
+    <span class="n">max_dist</span><span class="p">,</span> <span class="n">min_dist</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="s1">&#39;-inf&#39;</span><span class="p">),</span> <span class="nb">float</span><span class="p">(</span><span class="s1">&#39;inf&#39;</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">x_obj_idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">cluster_n</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">y_obj_idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">x_obj_idx</span><span class="p">):</span>
+            <span class="n">x_obj</span><span class="p">,</span> <span class="n">y_obj</span> <span class="o">=</span> <span class="n">cluster_data</span><span class="p">[</span><span class="n">x_obj_idx</span><span class="p">],</span> <span class="n">cluster_data</span><span class="p">[</span><span class="n">y_obj_idx</span><span class="p">]</span>
+            <span class="n">xy_dist</span> <span class="o">=</span> <span class="n">_dist</span><span class="p">(</span><span class="n">x_obj</span><span class="p">,</span> <span class="n">y_obj</span><span class="p">)</span>
+            <span class="n">max_dist</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">xy_dist</span><span class="p">,</span> <span class="n">max_dist</span><span class="p">)</span>
+            <span class="n">min_dist</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">xy_dist</span><span class="p">,</span> <span class="n">min_dist</span><span class="p">)</span>
+            <span class="n">sum_dist</span> <span class="o">+=</span> <span class="n">xy_dist</span>
+    <span class="n">pairs</span> <span class="o">=</span> <span class="n">cluster_n</span> <span class="o">*</span> <span class="p">(</span><span class="n">cluster_n</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span>
+    <span class="k">return</span> <span class="n">min_dist</span><span class="p">,</span> <span class="n">sum_dist</span> <span class="o">/</span> <span class="n">pairs</span><span class="p">,</span> <span class="n">max_dist</span><span class="p">,</span> <span class="n">sum_dist</span>
+
+
+<span class="nd">@numba</span><span class="o">.</span><span class="n">njit</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_get_inter_stat</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
+    <span class="n">x_n</span><span class="p">,</span> <span class="n">y_n</span><span class="p">,</span> <span class="n">sum_dist</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">y</span><span class="p">),</span> <span class="mf">0.0</span>
+    <span class="n">max_dist</span><span class="p">,</span> <span class="n">min_dist</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="s1">&#39;-inf&#39;</span><span class="p">),</span> <span class="nb">float</span><span class="p">(</span><span class="s1">&#39;inf&#39;</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">x_obj</span> <span class="ow">in</span> <span class="n">x</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">y_obj</span> <span class="ow">in</span> <span class="n">y</span><span class="p">:</span>
+            <span class="n">xy_dist</span> <span class="o">=</span> <span class="n">_dist</span><span class="p">(</span><span class="n">x_obj</span><span class="p">,</span> <span class="n">y_obj</span><span class="p">)</span>
+            <span class="n">min_dist</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">xy_dist</span><span class="p">,</span> <span class="n">min_dist</span><span class="p">)</span>
+            <span class="n">max_dist</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">xy_dist</span><span class="p">,</span> <span class="n">max_dist</span><span class="p">)</span>
+            <span class="n">sum_dist</span> <span class="o">+=</span> <span class="n">xy_dist</span>
+    <span class="n">pairs</span> <span class="o">=</span> <span class="n">x_n</span> <span class="o">*</span> <span class="n">y_n</span>
+    <span class="k">return</span> <span class="n">min_dist</span><span class="p">,</span> <span class="n">sum_dist</span> <span class="o">/</span> <span class="n">pairs</span><span class="p">,</span> <span class="n">max_dist</span><span class="p">,</span> <span class="n">sum_dist</span>
+
+
+<span class="nd">@numba</span><span class="o">.</span><span class="n">njit</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_get_wgss</span><span class="p">(</span><span class="n">cent_dists</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">]):</span>
+    <span class="n">wgss</span> <span class="o">=</span> <span class="mf">0.0</span>
+    <span class="k">for</span> <span class="n">cent_dist</span> <span class="ow">in</span> <span class="n">cent_dists</span><span class="p">:</span>
+        <span class="n">wgss</span> <span class="o">+=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">cent_dist</span> <span class="o">*</span> <span class="n">cent_dist</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">wgss</span>
+
+
+<div class="viewcode-block" id="CachedValues">
+<a class="viewcode-back" href="../../../../gamac.meta.impl.html#gamac.meta.impl.cvi.CachedValues">[документация]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">CachedValues</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">min_val</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">mean_val</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">max_val</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">sum_val</span><span class="p">:</span> <span class="nb">float</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">min_val</span> <span class="o">=</span> <span class="n">min_val</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mean_val</span> <span class="o">=</span> <span class="n">mean_val</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">max_val</span> <span class="o">=</span> <span class="n">max_val</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sum_val</span> <span class="o">=</span> <span class="n">sum_val</span></div>
+
+
+
+<div class="viewcode-block" id="ArrayStat">
+<a class="viewcode-back" href="../../../../gamac.meta.impl.html#gamac.meta.impl.cvi.ArrayStat">[документация]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">ArrayStat</span><span class="p">(</span><span class="n">CachedValues</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">arr</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="n">min_val</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">arr</span><span class="p">),</span>
+            <span class="n">mean_val</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">arr</span><span class="p">),</span>
+            <span class="n">max_val</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">arr</span><span class="p">),</span>
+            <span class="n">sum_val</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">arr</span><span class="p">),</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">arr</span> <span class="o">=</span> <span class="n">arr</span></div>
+
+
+
+<div class="viewcode-block" id="Clusters">
+<a class="viewcode-back" href="../../../../gamac.meta.impl.html#gamac.meta.impl.cvi.Clusters">[документация]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">Clusters</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="bp">self</span><span class="p">,</span>
+            <span class="n">all_data</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+            <span class="n">global_centroid</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+            <span class="n">clusters_data</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span>
+            <span class="n">centroids</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span>
+            <span class="n">cent_dists</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">ArrayStat</span><span class="p">],</span>
+            <span class="n">sym_dists</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">ArrayStat</span><span class="p">],</span>
+            <span class="n">cartesian_stats</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">CachedValues</span><span class="p">]],</span>
+    <span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">all_data</span> <span class="o">=</span> <span class="n">all_data</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">global_centroid</span> <span class="o">=</span> <span class="n">global_centroid</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">clusters_data</span> <span class="o">=</span> <span class="n">clusters_data</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">centroids</span> <span class="o">=</span> <span class="n">centroids</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">cent_dists</span> <span class="o">=</span> <span class="n">cent_dists</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sym_dists</span> <span class="o">=</span> <span class="n">sym_dists</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">cartesian_stats</span> <span class="o">=</span> <span class="n">cartesian_stats</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">n</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">k</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">all_data</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">clusters_data</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">amounts</span> <span class="o">=</span> <span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">cl_data</span><span class="p">)</span> <span class="k">for</span> <span class="n">cl_data</span> <span class="ow">in</span> <span class="n">clusters_data</span><span class="p">]</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">intra_stats</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">CachedValues</span><span class="p">]:</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">cl_stat</span><span class="p">[</span><span class="n">cl_idx</span><span class="p">]</span> <span class="k">for</span> <span class="n">cl_idx</span><span class="p">,</span> <span class="n">cl_stat</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cartesian_stats</span><span class="p">)]</span>
+
+<div class="viewcode-block" id="Clusters.create">
+<a class="viewcode-back" href="../../../../gamac.meta.impl.html#gamac.meta.impl.cvi.Clusters.create">[документация]</a>
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">create</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">labels</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]):</span>
+        <span class="n">k</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">labels</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
+        <span class="n">clusters_data</span> <span class="o">=</span> <span class="p">[</span><span class="nb">list</span><span class="p">()</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">k</span><span class="p">)]</span>
+        <span class="n">filtered_data</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+
+        <span class="k">for</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">labels</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">y</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">clusters_data</span><span class="p">[</span><span class="n">y</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+                <span class="n">filtered_data</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="n">clusters_data</span> <span class="o">=</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">cl_data</span><span class="p">)</span> <span class="k">for</span> <span class="n">cl_data</span> <span class="ow">in</span> <span class="n">clusters_data</span><span class="p">]</span>
+
+        <span class="n">centroids</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+        <span class="n">cent_dists</span><span class="p">,</span> <span class="n">sym_dists</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(),</span> <span class="nb">list</span><span class="p">()</span>
+
+        <span class="n">cartesian_stats</span> <span class="o">=</span> <span class="p">[[</span><span class="kc">None</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">k</span><span class="p">)]</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">k</span><span class="p">)]</span>
+
+        <span class="k">for</span> <span class="n">cl_idx</span><span class="p">,</span> <span class="n">cl_data</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">clusters_data</span><span class="p">):</span>
+            <span class="n">cl_centroid</span> <span class="o">=</span> <span class="n">_get_centroid</span><span class="p">(</span><span class="n">cl_data</span><span class="p">)</span>
+            <span class="n">centroids</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">cl_centroid</span><span class="p">)</span>
+
+            <span class="n">cartesian_stats</span><span class="p">[</span><span class="n">cl_idx</span><span class="p">][</span><span class="n">cl_idx</span><span class="p">]</span> <span class="o">=</span> <span class="n">CachedValues</span><span class="p">(</span><span class="o">*</span><span class="n">_get_intra_stat</span><span class="p">(</span><span class="n">cl_data</span><span class="p">))</span>
+
+            <span class="n">cent_dists</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                <span class="n">ArrayStat</span><span class="p">(</span><span class="n">_get_cent_dists</span><span class="p">(</span><span class="n">cl_data</span><span class="p">,</span> <span class="n">cl_centroid</span><span class="p">))</span>
+            <span class="p">)</span>
+
+            <span class="n">sym_dists</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                <span class="n">ArrayStat</span><span class="p">(</span><span class="n">_get_sym_dists</span><span class="p">(</span><span class="n">cl_data</span><span class="p">,</span> <span class="n">cl_centroid</span><span class="p">))</span>
+            <span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">x_idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">k</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">y_idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">x_idx</span><span class="p">):</span>
+                <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">clusters_data</span><span class="p">[</span><span class="n">x_idx</span><span class="p">],</span> <span class="n">clusters_data</span><span class="p">[</span><span class="n">y_idx</span><span class="p">]</span>
+                <span class="n">inter_stat</span> <span class="o">=</span> <span class="n">CachedValues</span><span class="p">(</span><span class="o">*</span><span class="n">_get_inter_stat</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">))</span>
+                <span class="n">cartesian_stats</span><span class="p">[</span><span class="n">x_idx</span><span class="p">][</span><span class="n">y_idx</span><span class="p">]</span> <span class="o">=</span> <span class="n">inter_stat</span>
+                <span class="n">cartesian_stats</span><span class="p">[</span><span class="n">y_idx</span><span class="p">][</span><span class="n">x_idx</span><span class="p">]</span> <span class="o">=</span> <span class="n">inter_stat</span>
+
+        <span class="k">return</span> <span class="n">Clusters</span><span class="p">(</span>
+            <span class="n">all_data</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">filtered_data</span><span class="p">),</span>
+            <span class="n">global_centroid</span><span class="o">=</span><span class="n">_get_centroid</span><span class="p">(</span><span class="n">data</span><span class="p">),</span>
+            <span class="n">clusters_data</span><span class="o">=</span><span class="n">clusters_data</span><span class="p">,</span>
+            <span class="n">centroids</span><span class="o">=</span><span class="n">centroids</span><span class="p">,</span>
+            <span class="n">cent_dists</span><span class="o">=</span><span class="n">cent_dists</span><span class="p">,</span>
+            <span class="n">sym_dists</span><span class="o">=</span><span class="n">sym_dists</span><span class="p">,</span>
+            <span class="n">cartesian_stats</span><span class="o">=</span><span class="n">cartesian_stats</span><span class="p">,</span>
+        <span class="p">)</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="ch">
+<a class="viewcode-back" href="../../../../gamac.meta.impl.html#gamac.meta.impl.cvi.ch">[документация]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">ch</span><span class="p">(</span><span class="n">clusters</span><span class="p">:</span> <span class="n">Clusters</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+    <span class="n">global_sum</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">([</span>
+        <span class="n">cl_n</span> <span class="o">*</span> <span class="n">_dist</span><span class="p">(</span><span class="n">clusters</span><span class="o">.</span><span class="n">global_centroid</span><span class="p">,</span> <span class="n">cl_centroid</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">cl_n</span><span class="p">,</span> <span class="n">cl_centroid</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">clusters</span><span class="o">.</span><span class="n">amounts</span><span class="p">,</span> <span class="n">clusters</span><span class="o">.</span><span class="n">centroids</span><span class="p">)</span>
+    <span class="p">])</span>
+    <span class="n">cluster_sum</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">([</span><span class="n">cent_dist</span><span class="o">.</span><span class="n">sum_val</span> <span class="k">for</span> <span class="n">cent_dist</span> <span class="ow">in</span> <span class="n">clusters</span><span class="o">.</span><span class="n">cent_dists</span><span class="p">])</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">clusters</span><span class="o">.</span><span class="n">n</span> <span class="o">-</span> <span class="n">clusters</span><span class="o">.</span><span class="n">k</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">clusters</span><span class="o">.</span><span class="n">k</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">global_sum</span> <span class="o">/</span> <span class="n">cluster_sum</span></div>
+
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_gen_db</span><span class="p">(</span><span class="n">clusters</span><span class="p">:</span> <span class="n">Clusters</span><span class="p">,</span> <span class="n">diam</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="nb">int</span><span class="p">],</span> <span class="nb">float</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+    <span class="n">clusters_sum</span> <span class="o">=</span> <span class="mf">0.0</span>
+    <span class="k">for</span> <span class="n">x_idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">clusters</span><span class="o">.</span><span class="n">k</span><span class="p">):</span>
+        <span class="n">x_result</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="s1">&#39;-inf&#39;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">y_idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">clusters</span><span class="o">.</span><span class="n">k</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">x_idx</span> <span class="o">==</span> <span class="n">y_idx</span><span class="p">:</span>
+                <span class="k">continue</span>
+            <span class="n">x_cent</span> <span class="o">=</span> <span class="n">clusters</span><span class="o">.</span><span class="n">centroids</span><span class="p">[</span><span class="n">x_idx</span><span class="p">]</span>
+            <span class="n">y_cent</span> <span class="o">=</span> <span class="n">clusters</span><span class="o">.</span><span class="n">centroids</span><span class="p">[</span><span class="n">y_idx</span><span class="p">]</span>
+            <span class="n">comp</span> <span class="o">=</span> <span class="n">diam</span><span class="p">(</span><span class="n">x_idx</span><span class="p">)</span> <span class="o">+</span> <span class="n">diam</span><span class="p">(</span><span class="n">y_idx</span><span class="p">)</span>
+            <span class="n">sep</span> <span class="o">=</span> <span class="n">_dist</span><span class="p">(</span><span class="n">x_cent</span><span class="p">,</span> <span class="n">y_cent</span><span class="p">)</span>
+            <span class="n">x_result</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">comp</span> <span class="o">/</span> <span class="n">sep</span><span class="p">,</span> <span class="n">x_result</span><span class="p">)</span>
+        <span class="n">clusters_sum</span> <span class="o">+=</span> <span class="n">x_result</span>
+    <span class="k">return</span> <span class="n">clusters_sum</span> <span class="o">/</span> <span class="n">clusters</span><span class="o">.</span><span class="n">k</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_gen_db_star</span><span class="p">(</span><span class="n">clusters</span><span class="p">:</span> <span class="n">Clusters</span><span class="p">,</span> <span class="n">diam</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="nb">int</span><span class="p">],</span> <span class="nb">float</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+    <span class="n">clusters_sum</span> <span class="o">=</span> <span class="mf">0.0</span>
+    <span class="k">for</span> <span class="n">x_idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">clusters</span><span class="o">.</span><span class="n">k</span><span class="p">):</span>
+        <span class="n">sep</span><span class="p">,</span> <span class="n">comp</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="s1">&#39;-inf&#39;</span><span class="p">),</span> <span class="nb">float</span><span class="p">(</span><span class="s1">&#39;inf&#39;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">y_idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">clusters</span><span class="o">.</span><span class="n">k</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">x_idx</span> <span class="o">==</span> <span class="n">y_idx</span><span class="p">:</span>
+                <span class="k">continue</span>
+            <span class="n">x_cent</span> <span class="o">=</span> <span class="n">clusters</span><span class="o">.</span><span class="n">centroids</span><span class="p">[</span><span class="n">x_idx</span><span class="p">]</span>
+            <span class="n">y_cent</span> <span class="o">=</span> <span class="n">clusters</span><span class="o">.</span><span class="n">centroids</span><span class="p">[</span><span class="n">y_idx</span><span class="p">]</span>
+            <span class="n">sep</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">diam</span><span class="p">(</span><span class="n">x_idx</span><span class="p">)</span> <span class="o">+</span> <span class="n">diam</span><span class="p">(</span><span class="n">y_idx</span><span class="p">),</span> <span class="n">sep</span><span class="p">)</span>
+            <span class="n">comp</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">_dist</span><span class="p">(</span><span class="n">x_cent</span><span class="p">,</span> <span class="n">y_cent</span><span class="p">),</span> <span class="n">comp</span><span class="p">)</span>
+        <span class="n">clusters_sum</span> <span class="o">+=</span> <span class="n">sep</span> <span class="o">/</span> <span class="n">comp</span>
+    <span class="k">return</span> <span class="n">clusters_sum</span> <span class="o">/</span> <span class="n">clusters</span><span class="o">.</span><span class="n">k</span>
+
+
+<div class="viewcode-block" id="db">
+<a class="viewcode-back" href="../../../../gamac.meta.impl.html#gamac.meta.impl.cvi.db">[документация]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">db</span><span class="p">(</span><span class="n">clusters</span><span class="p">:</span> <span class="n">Clusters</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_diam</span><span class="p">(</span><span class="n">cl_idx</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">clusters</span><span class="o">.</span><span class="n">cent_dists</span><span class="p">[</span><span class="n">cl_idx</span><span class="p">]</span><span class="o">.</span><span class="n">mean_val</span>
+
+    <span class="n">result</span> <span class="o">=</span> <span class="n">_gen_db</span><span class="p">(</span><span class="n">clusters</span><span class="p">,</span> <span class="n">_diam</span><span class="p">)</span>
+    <span class="k">return</span> <span class="o">-</span><span class="n">result</span>  <span class="c1"># to invert monotonicity</span></div>
+
+
+
+<div class="viewcode-block" id="db_star">
+<a class="viewcode-back" href="../../../../gamac.meta.impl.html#gamac.meta.impl.cvi.db_star">[документация]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">db_star</span><span class="p">(</span><span class="n">clusters</span><span class="p">:</span> <span class="n">Clusters</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_diam</span><span class="p">(</span><span class="n">cl_idx</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">clusters</span><span class="o">.</span><span class="n">cent_dists</span><span class="p">[</span><span class="n">cl_idx</span><span class="p">]</span><span class="o">.</span><span class="n">mean_val</span>
+
+    <span class="n">result</span> <span class="o">=</span> <span class="n">_gen_db_star</span><span class="p">(</span><span class="n">clusters</span><span class="p">,</span> <span class="n">_diam</span><span class="p">)</span>
+    <span class="k">return</span> <span class="o">-</span><span class="n">result</span>  <span class="c1"># to invert monotonicity</span></div>
+
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_gen_dunn</span><span class="p">(</span>
+        <span class="n">clusters</span><span class="p">:</span> <span class="n">Clusters</span><span class="p">,</span>
+        <span class="n">cluster_diam</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="nb">int</span><span class="p">],</span> <span class="nb">float</span><span class="p">],</span>
+        <span class="n">cluster_dist</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">],</span> <span class="nb">float</span><span class="p">]</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+    <span class="n">sep</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="s1">&#39;inf&#39;</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">x_idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">clusters</span><span class="o">.</span><span class="n">k</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">y_idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">x_idx</span><span class="p">):</span>
+            <span class="n">sep</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">cluster_dist</span><span class="p">(</span><span class="n">x_idx</span><span class="p">,</span> <span class="n">y_idx</span><span class="p">),</span> <span class="n">sep</span><span class="p">)</span>
+    <span class="n">comp</span> <span class="o">=</span> <span class="nb">max</span><span class="p">([</span><span class="n">cluster_diam</span><span class="p">(</span><span class="n">cl_idx</span><span class="p">)</span> <span class="k">for</span> <span class="n">cl_idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">clusters</span><span class="o">.</span><span class="n">k</span><span class="p">)])</span>
+    <span class="k">return</span> <span class="n">sep</span> <span class="o">/</span> <span class="n">comp</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_get_dunn_diam1</span><span class="p">(</span><span class="n">clusters</span><span class="p">:</span> <span class="n">Clusters</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">[[</span><span class="nb">int</span><span class="p">],</span> <span class="nb">float</span><span class="p">]:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_dunn_diam1</span><span class="p">(</span><span class="n">cl_idx</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">clusters</span><span class="o">.</span><span class="n">cartesian_stats</span><span class="p">[</span><span class="n">cl_idx</span><span class="p">][</span><span class="n">cl_idx</span><span class="p">]</span><span class="o">.</span><span class="n">max_val</span>
+
+    <span class="k">return</span> <span class="n">_dunn_diam1</span>
+
+
+<span class="c1"># def _dunn_diam2(cluster: MCluster) -&gt; float:</span>
+<span class="c1">#     res_diam = 0.0</span>
+<span class="c1">#     for x_obj in cluster.data:</span>
+<span class="c1">#         for y_obj in cluster.data:</span>
+<span class="c1">#             res_diam += dist(x_obj, y_obj)</span>
+<span class="c1">#     return res_diam</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_get_dunn_diam3</span><span class="p">(</span><span class="n">clusters</span><span class="p">:</span> <span class="n">Clusters</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">[[</span><span class="nb">int</span><span class="p">],</span> <span class="nb">float</span><span class="p">]:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_dunn_diam3</span><span class="p">(</span><span class="n">cl_idx</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+        <span class="k">return</span> <span class="mf">2.0</span> <span class="o">*</span> <span class="n">clusters</span><span class="o">.</span><span class="n">cent_dists</span><span class="p">[</span><span class="n">cl_idx</span><span class="p">]</span><span class="o">.</span><span class="n">mean_val</span>
+
+    <span class="k">return</span> <span class="n">_dunn_diam3</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_get_dunn_dist1</span><span class="p">(</span><span class="n">clusters</span><span class="p">:</span> <span class="n">Clusters</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">[[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">],</span> <span class="nb">float</span><span class="p">]:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_dunn_dist1</span><span class="p">(</span><span class="n">x_idx</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">y_idx</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">clusters</span><span class="o">.</span><span class="n">cartesian_stats</span><span class="p">[</span><span class="n">x_idx</span><span class="p">][</span><span class="n">y_idx</span><span class="p">]</span><span class="o">.</span><span class="n">min_val</span>
+
+    <span class="k">return</span> <span class="n">_dunn_dist1</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_get_dunn_dist3</span><span class="p">(</span><span class="n">clusters</span><span class="p">:</span> <span class="n">Clusters</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">[[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">],</span> <span class="nb">float</span><span class="p">]:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_dunn_dist3</span><span class="p">(</span><span class="n">x_idx</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">y_idx</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">clusters</span><span class="o">.</span><span class="n">cartesian_stats</span><span class="p">[</span><span class="n">x_idx</span><span class="p">][</span><span class="n">y_idx</span><span class="p">]</span><span class="o">.</span><span class="n">mean_val</span>
+
+    <span class="k">return</span> <span class="n">_dunn_dist3</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_get_dunn_dist4</span><span class="p">(</span><span class="n">clusters</span><span class="p">:</span> <span class="n">Clusters</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">[[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">],</span> <span class="nb">float</span><span class="p">]:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_dunn_dist4</span><span class="p">(</span><span class="n">x_idx</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">y_idx</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+        <span class="n">x_cent</span> <span class="o">=</span> <span class="n">clusters</span><span class="o">.</span><span class="n">centroids</span><span class="p">[</span><span class="n">x_idx</span><span class="p">]</span>
+        <span class="n">y_cent</span> <span class="o">=</span> <span class="n">clusters</span><span class="o">.</span><span class="n">centroids</span><span class="p">[</span><span class="n">y_idx</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">_dist</span><span class="p">(</span><span class="n">x_cent</span><span class="p">,</span> <span class="n">y_cent</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">_dunn_dist4</span>
+
+
+<span class="c1"># def _dunn_dist5(x: MCluster, y: MCluster) -&gt; float:</span>
+<span class="c1">#     return (np.sum(x.dist_to_centroid) + np.sum(y.dist_to_centroid)) / (x.n + y.n)</span>
+
+
+<div class="viewcode-block" id="dunn11">
+<a class="viewcode-back" href="../../../../gamac.meta.impl.html#gamac.meta.impl.cvi.dunn11">[документация]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">dunn11</span><span class="p">(</span><span class="n">clusters</span><span class="p">:</span> <span class="n">Clusters</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+    <span class="n">_diam</span> <span class="o">=</span> <span class="n">_get_dunn_diam1</span><span class="p">(</span><span class="n">clusters</span><span class="p">)</span>
+    <span class="n">_dist</span> <span class="o">=</span> <span class="n">_get_dunn_dist1</span><span class="p">(</span><span class="n">clusters</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">_gen_dunn</span><span class="p">(</span><span class="n">clusters</span><span class="p">,</span> <span class="n">_diam</span><span class="p">,</span> <span class="n">_dist</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="dunn31">
+<a class="viewcode-back" href="../../../../gamac.meta.impl.html#gamac.meta.impl.cvi.dunn31">[документация]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">dunn31</span><span class="p">(</span><span class="n">clusters</span><span class="p">:</span> <span class="n">Clusters</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+    <span class="n">_diam</span> <span class="o">=</span> <span class="n">_get_dunn_diam1</span><span class="p">(</span><span class="n">clusters</span><span class="p">)</span>
+    <span class="n">_dist</span> <span class="o">=</span> <span class="n">_get_dunn_dist3</span><span class="p">(</span><span class="n">clusters</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">_gen_dunn</span><span class="p">(</span><span class="n">clusters</span><span class="p">,</span> <span class="n">_diam</span><span class="p">,</span> <span class="n">_dist</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="dunn41">
+<a class="viewcode-back" href="../../../../gamac.meta.impl.html#gamac.meta.impl.cvi.dunn41">[документация]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">dunn41</span><span class="p">(</span><span class="n">clusters</span><span class="p">:</span> <span class="n">Clusters</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+    <span class="n">_diam</span> <span class="o">=</span> <span class="n">_get_dunn_diam1</span><span class="p">(</span><span class="n">clusters</span><span class="p">)</span>
+    <span class="n">_dist</span> <span class="o">=</span> <span class="n">_get_dunn_dist4</span><span class="p">(</span><span class="n">clusters</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">_gen_dunn</span><span class="p">(</span><span class="n">clusters</span><span class="p">,</span> <span class="n">_diam</span><span class="p">,</span> <span class="n">_dist</span><span class="p">)</span></div>
+
+
+
+<span class="c1"># def dunn51(data: np.ndarray, clusters: List[MCluster]) -&gt; float:</span>
+<span class="c1">#     return _gen_dunn(clusters, _dunn_diam1, _dunn_dist5)</span>
+
+
+<span class="c1"># def dunn12(data: np.ndarray, clusters: List[MCluster]) -&gt; float:</span>
+<span class="c1">#     return _gen_dunn(clusters, _dunn_diam2, _dunn_dist1)</span>
+<span class="c1">#</span>
+<span class="c1">#</span>
+<span class="c1"># def dunn32(data: np.ndarray, clusters: List[MCluster]) -&gt; float:</span>
+<span class="c1">#     return _gen_dunn(clusters, _dunn_diam2, _dunn_dist3)</span>
+<span class="c1">#</span>
+<span class="c1">#</span>
+<span class="c1"># def dunn42(data: np.ndarray, clusters: List[MCluster]) -&gt; float:</span>
+<span class="c1">#     return _gen_dunn(clusters, _dunn_diam2, _dunn_dist4)</span>
+
+
+<span class="c1"># def dunn52(data: np.ndarray, clusters: List[MCluster]) -&gt; float:</span>
+<span class="c1">#     return _gen_dunn(clusters, _dunn_diam2, _dunn_dist5)</span>
+
+
+<div class="viewcode-block" id="dunn13">
+<a class="viewcode-back" href="../../../../gamac.meta.impl.html#gamac.meta.impl.cvi.dunn13">[документация]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">dunn13</span><span class="p">(</span><span class="n">clusters</span><span class="p">:</span> <span class="n">Clusters</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+    <span class="n">_diam</span> <span class="o">=</span> <span class="n">_get_dunn_diam3</span><span class="p">(</span><span class="n">clusters</span><span class="p">)</span>
+    <span class="n">_dist</span> <span class="o">=</span> <span class="n">_get_dunn_dist1</span><span class="p">(</span><span class="n">clusters</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">_gen_dunn</span><span class="p">(</span><span class="n">clusters</span><span class="p">,</span> <span class="n">_diam</span><span class="p">,</span> <span class="n">_dist</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="dunn33">
+<a class="viewcode-back" href="../../../../gamac.meta.impl.html#gamac.meta.impl.cvi.dunn33">[документация]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">dunn33</span><span class="p">(</span><span class="n">clusters</span><span class="p">:</span> <span class="n">Clusters</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+    <span class="n">_diam</span> <span class="o">=</span> <span class="n">_get_dunn_diam3</span><span class="p">(</span><span class="n">clusters</span><span class="p">)</span>
+    <span class="n">_dist</span> <span class="o">=</span> <span class="n">_get_dunn_dist3</span><span class="p">(</span><span class="n">clusters</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">_gen_dunn</span><span class="p">(</span><span class="n">clusters</span><span class="p">,</span> <span class="n">_diam</span><span class="p">,</span> <span class="n">_dist</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="dunn43">
+<a class="viewcode-back" href="../../../../gamac.meta.impl.html#gamac.meta.impl.cvi.dunn43">[документация]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">dunn43</span><span class="p">(</span><span class="n">clusters</span><span class="p">:</span> <span class="n">Clusters</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+    <span class="n">_diam</span> <span class="o">=</span> <span class="n">_get_dunn_diam3</span><span class="p">(</span><span class="n">clusters</span><span class="p">)</span>
+    <span class="n">_dist</span> <span class="o">=</span> <span class="n">_get_dunn_dist4</span><span class="p">(</span><span class="n">clusters</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">_gen_dunn</span><span class="p">(</span><span class="n">clusters</span><span class="p">,</span> <span class="n">_diam</span><span class="p">,</span> <span class="n">_dist</span><span class="p">)</span></div>
+
+
+
+<span class="c1"># def dunn53(data: np.ndarray, clusters: List[MCluster]) -&gt; float:</span>
+<span class="c1">#     return _gen_dunn(clusters, _dunn_diam3, _dunn_dist5)</span>
+
+
+<div class="viewcode-block" id="score">
+<a class="viewcode-back" href="../../../../gamac.meta.impl.html#gamac.meta.impl.cvi.score">[документация]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">score</span><span class="p">(</span><span class="n">clusters</span><span class="p">:</span> <span class="n">Clusters</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+    <span class="n">wcd</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">([</span><span class="n">cent_dist</span><span class="o">.</span><span class="n">mean_val</span> <span class="k">for</span> <span class="n">cent_dist</span> <span class="ow">in</span> <span class="n">clusters</span><span class="o">.</span><span class="n">cent_dists</span><span class="p">])</span>
+    <span class="n">bcd</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">([</span>
+        <span class="n">cl_n</span> <span class="o">*</span> <span class="n">_dist</span><span class="p">(</span><span class="n">cl_centroid</span><span class="p">,</span> <span class="n">clusters</span><span class="o">.</span><span class="n">global_centroid</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">cl_n</span><span class="p">,</span> <span class="n">cl_centroid</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">clusters</span><span class="o">.</span><span class="n">amounts</span><span class="p">,</span> <span class="n">clusters</span><span class="o">.</span><span class="n">centroids</span><span class="p">)</span>
+    <span class="p">])</span> <span class="o">/</span> <span class="p">(</span><span class="n">clusters</span><span class="o">.</span><span class="n">n</span> <span class="o">*</span> <span class="n">clusters</span><span class="o">.</span><span class="n">k</span><span class="p">)</span>
+    <span class="k">return</span> <span class="mf">1.0</span> <span class="o">-</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">bcd</span> <span class="o">-</span> <span class="n">wcd</span><span class="p">))</span></div>
+
+
+
+<span class="nd">@numba</span><span class="o">.</span><span class="n">njit</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_nb_sil</span><span class="p">(</span><span class="n">all_data</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">clusters_data</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+    <span class="n">sil_res</span><span class="p">,</span> <span class="n">k</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">clusters_data</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">x_idx</span><span class="p">,</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">clusters_data</span><span class="p">):</span>
+        <span class="n">x_n</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">x_obj</span> <span class="ow">in</span> <span class="n">x</span><span class="p">:</span>
+            <span class="n">a_val</span><span class="p">,</span> <span class="n">b_val</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span> <span class="nb">float</span><span class="p">(</span><span class="s1">&#39;inf&#39;</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">y_idx</span><span class="p">,</span> <span class="n">y</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">clusters_data</span><span class="p">):</span>
+                <span class="n">y_n</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">x_idx</span> <span class="o">==</span> <span class="n">y_idx</span><span class="p">:</span>
+                    <span class="k">for</span> <span class="n">y_obj</span> <span class="ow">in</span> <span class="n">y</span><span class="p">:</span>
+                        <span class="n">a_val</span> <span class="o">+=</span> <span class="n">_dist</span><span class="p">(</span><span class="n">x_obj</span><span class="p">,</span> <span class="n">y_obj</span><span class="p">)</span>
+                    <span class="n">a_val</span> <span class="o">/=</span> <span class="n">x_n</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">b_y</span> <span class="o">=</span> <span class="mf">0.0</span>
+                    <span class="k">for</span> <span class="n">y_obj</span> <span class="ow">in</span> <span class="n">y</span><span class="p">:</span>
+                        <span class="n">b_y</span> <span class="o">+=</span> <span class="n">_dist</span><span class="p">(</span><span class="n">x_obj</span><span class="p">,</span> <span class="n">y_obj</span><span class="p">)</span>
+                    <span class="n">b_val</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">b_y</span> <span class="o">/</span> <span class="n">y_n</span><span class="p">,</span> <span class="n">b_val</span><span class="p">)</span>
+            <span class="n">sil_res</span> <span class="o">+=</span> <span class="p">(</span><span class="n">b_val</span> <span class="o">-</span> <span class="n">a_val</span><span class="p">)</span> <span class="o">/</span> <span class="nb">max</span><span class="p">(</span><span class="n">b_val</span><span class="p">,</span> <span class="n">a_val</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">sil_res</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">all_data</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="sil">
+<a class="viewcode-back" href="../../../../gamac.meta.impl.html#gamac.meta.impl.cvi.sil">[документация]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">sil</span><span class="p">(</span><span class="n">clusters</span><span class="p">:</span> <span class="n">Clusters</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+    <span class="k">return</span> <span class="n">_nb_sil</span><span class="p">(</span>
+        <span class="n">all_data</span><span class="o">=</span><span class="n">clusters</span><span class="o">.</span><span class="n">all_data</span><span class="p">,</span>
+        <span class="n">clusters_data</span><span class="o">=</span><span class="n">clusters</span><span class="o">.</span><span class="n">clusters_data</span>
+    <span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="sv">
+<a class="viewcode-back" href="../../../../gamac.meta.impl.html#gamac.meta.impl.cvi.sv">[документация]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">sv</span><span class="p">(</span><span class="n">clusters</span><span class="p">:</span> <span class="n">Clusters</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+    <span class="n">s_val</span><span class="p">,</span> <span class="n">v_val</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span>
+    <span class="k">for</span> <span class="n">x_idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">clusters</span><span class="o">.</span><span class="n">k</span><span class="p">):</span>
+        <span class="n">sorted_dists</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">clusters</span><span class="o">.</span><span class="n">cent_dists</span><span class="p">[</span><span class="n">x_idx</span><span class="p">]</span><span class="o">.</span><span class="n">arr</span><span class="p">)</span>
+        <span class="n">edge_idx</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">clusters</span><span class="o">.</span><span class="n">amounts</span><span class="p">[</span><span class="n">x_idx</span><span class="p">]</span> <span class="o">*</span> <span class="mf">0.1</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
+        <span class="n">v_val</span> <span class="o">+=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">sorted_dists</span><span class="p">[</span><span class="o">-</span><span class="n">edge_idx</span><span class="p">:])</span> <span class="o">+</span> <span class="mf">1e-6</span>
+
+        <span class="n">s_c</span><span class="p">,</span> <span class="n">x_cent</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="s1">&#39;inf&#39;</span><span class="p">),</span> <span class="n">clusters</span><span class="o">.</span><span class="n">centroids</span><span class="p">[</span><span class="n">x_idx</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">y_idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">clusters</span><span class="o">.</span><span class="n">k</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">x_idx</span> <span class="o">==</span> <span class="n">y_idx</span><span class="p">:</span>
+                <span class="k">continue</span>
+            <span class="n">y_cent</span> <span class="o">=</span> <span class="n">clusters</span><span class="o">.</span><span class="n">centroids</span><span class="p">[</span><span class="n">y_idx</span><span class="p">]</span>
+            <span class="n">s_c</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">_dist</span><span class="p">(</span><span class="n">y_cent</span><span class="p">,</span> <span class="n">x_cent</span><span class="p">),</span> <span class="n">s_c</span><span class="p">)</span>
+        <span class="n">s_val</span> <span class="o">+=</span> <span class="n">s_c</span>
+    <span class="k">return</span> <span class="n">s_val</span> <span class="o">/</span> <span class="n">v_val</span></div>
+
+
+
+<span class="nd">@numba</span><span class="o">.</span><span class="n">njit</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_nb_os</span><span class="p">(</span><span class="n">clusters_data</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span> <span class="n">centroids</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+    <span class="n">o_val</span><span class="p">,</span> <span class="n">s_val</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span>
+    <span class="k">for</span> <span class="n">x_idx</span><span class="p">,</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">clusters_data</span><span class="p">):</span>
+        <span class="n">x_centroid</span> <span class="o">=</span> <span class="n">centroids</span><span class="p">[</span><span class="n">x_idx</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">x_obj</span> <span class="ow">in</span> <span class="n">x</span><span class="p">:</span>
+            <span class="n">x_a</span><span class="p">,</span> <span class="n">o_xs</span> <span class="o">=</span> <span class="n">_dist</span><span class="p">(</span><span class="n">x_obj</span><span class="p">,</span> <span class="n">x_centroid</span><span class="p">),</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">y_idx</span><span class="p">,</span> <span class="n">y</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">clusters_data</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">x_idx</span> <span class="o">==</span> <span class="n">y_idx</span><span class="p">:</span>
+                    <span class="k">continue</span>
+                <span class="n">y_centroid</span> <span class="o">=</span> <span class="n">centroids</span><span class="p">[</span><span class="n">y_idx</span><span class="p">]</span>
+                <span class="n">x_b_j</span> <span class="o">=</span> <span class="n">_dist</span><span class="p">(</span><span class="n">x_obj</span><span class="p">,</span> <span class="n">y_centroid</span><span class="p">)</span>
+                <span class="n">threshold</span> <span class="o">=</span> <span class="p">(</span><span class="n">x_b_j</span> <span class="o">-</span> <span class="n">x_a</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">x_b_j</span> <span class="o">+</span> <span class="n">x_a</span><span class="p">)</span>
+                <span class="n">o_x_j</span> <span class="o">=</span> <span class="n">x_a</span> <span class="o">/</span> <span class="n">x_b_j</span>
+                <span class="k">if</span> <span class="n">threshold</span> <span class="o">&lt;</span> <span class="mf">0.4</span> <span class="ow">and</span> <span class="n">o_x_j</span> <span class="o">&gt;</span> <span class="mf">0.1</span><span class="p">:</span>
+                    <span class="n">o_xs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">o_x_j</span><span class="p">)</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">o_xs</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">o_val</span> <span class="o">+=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">o_xs</span><span class="p">)</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">o_xs</span><span class="p">)</span>
+
+        <span class="n">s_c</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="s1">&#39;inf&#39;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">y_idx</span><span class="p">,</span> <span class="n">y</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">clusters_data</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">x_idx</span> <span class="o">==</span> <span class="n">y_idx</span><span class="p">:</span>
+                <span class="k">continue</span>
+            <span class="n">y_centroid</span> <span class="o">=</span> <span class="n">centroids</span><span class="p">[</span><span class="n">y_idx</span><span class="p">]</span>
+            <span class="n">s_c</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">_dist</span><span class="p">(</span><span class="n">y_centroid</span><span class="p">,</span> <span class="n">x_centroid</span><span class="p">),</span> <span class="n">s_c</span><span class="p">)</span>
+        <span class="n">s_val</span> <span class="o">+=</span> <span class="n">s_c</span>
+    <span class="k">return</span> <span class="n">o_val</span> <span class="o">/</span> <span class="n">s_val</span>
+
+
+<div class="viewcode-block" id="os">
+<a class="viewcode-back" href="../../../../gamac.meta.impl.html#gamac.meta.impl.cvi.os">[документация]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">os</span><span class="p">(</span><span class="n">clusters</span><span class="p">:</span> <span class="n">Clusters</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="n">_nb_os</span><span class="p">(</span>
+        <span class="n">clusters_data</span><span class="o">=</span><span class="n">clusters</span><span class="o">.</span><span class="n">clusters_data</span><span class="p">,</span>
+        <span class="n">centroids</span><span class="o">=</span><span class="n">clusters</span><span class="o">.</span><span class="n">centroids</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="o">-</span><span class="n">result</span>  <span class="c1"># to invert monotonicity</span></div>
+
+
+
+<span class="nd">@numba</span><span class="o">.</span><span class="n">njit</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_nb_c_index</span><span class="p">(</span>
+        <span class="n">all_data</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+        <span class="n">clusters_data</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span>
+        <span class="n">intra_sums</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+    <span class="n">s_c</span><span class="p">,</span> <span class="n">s_all</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">intra_sums</span><span class="p">),</span> <span class="p">[]</span>
+    <span class="n">n</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">all_data</span><span class="p">)</span>
+    <span class="n">n_w</span> <span class="o">=</span> <span class="n">_get_n_w</span><span class="p">(</span><span class="n">clusters_data</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">x_obj_idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">n</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">y_obj_idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">x_obj_idx</span><span class="p">):</span>
+            <span class="n">x_obj</span><span class="p">,</span> <span class="n">y_obj</span> <span class="o">=</span> <span class="n">all_data</span><span class="p">[</span><span class="n">x_obj_idx</span><span class="p">],</span> <span class="n">all_data</span><span class="p">[</span><span class="n">y_obj_idx</span><span class="p">]</span>
+            <span class="n">s_all</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">_dist</span><span class="p">(</span><span class="n">x_obj</span><span class="p">,</span> <span class="n">y_obj</span><span class="p">))</span>
+    <span class="n">s_all</span><span class="o">.</span><span class="n">sort</span><span class="p">()</span>
+    <span class="n">s_min</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">s_all</span><span class="p">[:</span><span class="n">n_w</span><span class="p">])</span>
+    <span class="n">s_max</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">s_all</span><span class="p">[</span><span class="o">-</span><span class="n">n_w</span><span class="p">:])</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">s_c</span> <span class="o">-</span> <span class="n">s_min</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">s_max</span> <span class="o">-</span> <span class="n">s_min</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="c_index">
+<a class="viewcode-back" href="../../../../gamac.meta.impl.html#gamac.meta.impl.cvi.c_index">[документация]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">c_index</span><span class="p">(</span><span class="n">clusters</span><span class="p">:</span> <span class="n">Clusters</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="n">_nb_c_index</span><span class="p">(</span>
+        <span class="n">all_data</span><span class="o">=</span><span class="n">clusters</span><span class="o">.</span><span class="n">all_data</span><span class="p">,</span>
+        <span class="n">clusters_data</span><span class="o">=</span><span class="n">clusters</span><span class="o">.</span><span class="n">clusters_data</span><span class="p">,</span>
+        <span class="n">intra_sums</span><span class="o">=</span><span class="p">[</span><span class="n">cl_stat</span><span class="o">.</span><span class="n">sum_val</span> <span class="k">for</span> <span class="n">cl_stat</span> <span class="ow">in</span> <span class="n">clusters</span><span class="o">.</span><span class="n">intra_stats</span><span class="p">],</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="o">-</span><span class="n">result</span>  <span class="c1"># to invert monotonicity</span></div>
+
+
+
+<span class="nd">@numba</span><span class="o">.</span><span class="n">njit</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_get_kl_arr</span><span class="p">(</span><span class="n">clusters_data</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]):</span>
+    <span class="n">k</span><span class="p">,</span> <span class="n">kl_arr</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">clusters_data</span><span class="p">),</span> <span class="nb">list</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">x_idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">k</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">x_obj</span> <span class="ow">in</span> <span class="n">clusters_data</span><span class="p">[</span><span class="n">x_idx</span><span class="p">]:</span>
+            <span class="k">for</span> <span class="n">y_idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">x_idx</span><span class="p">):</span>
+                <span class="k">for</span> <span class="n">y_obj</span> <span class="ow">in</span> <span class="n">clusters_data</span><span class="p">[</span><span class="n">y_idx</span><span class="p">]:</span>
+                    <span class="n">kl_arr</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">_dist</span><span class="p">(</span><span class="n">x_obj</span><span class="p">,</span> <span class="n">y_obj</span><span class="p">))</span>
+    <span class="k">return</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">kl_arr</span><span class="p">)</span>
+
+
+<span class="nd">@numba</span><span class="o">.</span><span class="n">njit</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_bin_search</span><span class="p">(</span><span class="n">sorted_arr</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+    <span class="n">l</span><span class="p">,</span> <span class="n">r</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">sorted_arr</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span>
+    <span class="k">while</span> <span class="n">l</span> <span class="o">&lt;=</span> <span class="n">r</span><span class="p">:</span>
+        <span class="n">m</span> <span class="o">=</span> <span class="p">(</span><span class="n">l</span> <span class="o">+</span> <span class="n">r</span><span class="p">)</span> <span class="o">//</span> <span class="mi">2</span>
+        <span class="n">m_val</span> <span class="o">=</span> <span class="n">sorted_arr</span><span class="p">[</span><span class="n">m</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">m_val</span> <span class="o">&lt;</span> <span class="n">value</span><span class="p">:</span>
+            <span class="n">l</span> <span class="o">=</span> <span class="n">m</span> <span class="o">+</span> <span class="mi">1</span>
+        <span class="k">elif</span> <span class="n">m_val</span> <span class="o">&gt;</span> <span class="n">value</span><span class="p">:</span>
+            <span class="n">r</span> <span class="o">=</span> <span class="n">m</span> <span class="o">-</span> <span class="mi">1</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">m</span>
+    <span class="k">return</span> <span class="n">l</span>
+
+
+<span class="nd">@numba</span><span class="o">.</span><span class="n">njit</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_nb_gamma_index</span><span class="p">(</span>
+        <span class="n">clusters_data</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+    <span class="n">d_l</span><span class="p">,</span> <span class="n">kl_arr</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">_get_kl_arr</span><span class="p">(</span><span class="n">clusters_data</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">cl</span> <span class="ow">in</span> <span class="n">clusters_data</span><span class="p">:</span>
+        <span class="n">cl_n</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">cl</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">x_obj_idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">cl_n</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">y_obj_idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">x_obj_idx</span><span class="p">):</span>
+                <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">cl</span><span class="p">[</span><span class="n">x_obj_idx</span><span class="p">],</span> <span class="n">cl</span><span class="p">[</span><span class="n">y_obj_idx</span><span class="p">]</span>
+                <span class="n">d_l</span> <span class="o">+=</span> <span class="n">_bin_search</span><span class="p">(</span><span class="n">kl_arr</span><span class="p">,</span> <span class="n">_dist</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">d_l</span> <span class="o">/</span> <span class="p">(</span><span class="n">_get_n_w</span><span class="p">(</span><span class="n">clusters_data</span><span class="p">)</span> <span class="o">*</span> <span class="n">_get_n_b</span><span class="p">(</span><span class="n">clusters_data</span><span class="p">))</span>
+
+
+<div class="viewcode-block" id="gamma_index">
+<a class="viewcode-back" href="../../../../gamac.meta.impl.html#gamac.meta.impl.cvi.gamma_index">[документация]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">gamma_index</span><span class="p">(</span><span class="n">clusters</span><span class="p">:</span> <span class="n">Clusters</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="n">_nb_gamma_index</span><span class="p">(</span>
+        <span class="n">clusters_data</span><span class="o">=</span><span class="n">clusters</span><span class="o">.</span><span class="n">clusters_data</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="o">-</span><span class="n">result</span>  <span class="c1"># to invert monotonicity</span></div>
+
+
+
+<span class="nd">@numba</span><span class="o">.</span><span class="n">njit</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_nb_cop</span><span class="p">(</span>
+        <span class="n">all_data</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+        <span class="n">clusters_data</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span>
+        <span class="n">mean_cent_dists</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+    <span class="n">cop_res</span><span class="p">,</span> <span class="n">k</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">clusters_data</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">x_idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">k</span><span class="p">):</span>
+        <span class="n">x</span><span class="p">,</span> <span class="n">x_sep</span> <span class="o">=</span> <span class="n">clusters_data</span><span class="p">[</span><span class="n">x_idx</span><span class="p">],</span> <span class="nb">float</span><span class="p">(</span><span class="s1">&#39;inf&#39;</span><span class="p">)</span>
+        <span class="n">x_comp</span> <span class="o">=</span> <span class="n">mean_cent_dists</span><span class="p">[</span><span class="n">x_idx</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">y_idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">k</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">x_idx</span> <span class="o">==</span> <span class="n">y_idx</span><span class="p">:</span>
+                <span class="k">continue</span>
+            <span class="k">for</span> <span class="n">y_obj</span> <span class="ow">in</span> <span class="n">clusters_data</span><span class="p">[</span><span class="n">y_idx</span><span class="p">]:</span>
+                <span class="n">y_sep</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="s1">&#39;-inf&#39;</span><span class="p">)</span>
+                <span class="k">for</span> <span class="n">x_obj</span> <span class="ow">in</span> <span class="n">x</span><span class="p">:</span>
+                    <span class="n">y_sep</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">_dist</span><span class="p">(</span><span class="n">y_obj</span><span class="p">,</span> <span class="n">x_obj</span><span class="p">),</span> <span class="n">y_sep</span><span class="p">)</span>
+                <span class="n">x_sep</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">x_sep</span><span class="p">,</span> <span class="n">y_sep</span><span class="p">)</span>
+        <span class="n">cop_res</span> <span class="o">+=</span> <span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">*</span> <span class="n">x_comp</span> <span class="o">/</span> <span class="n">x_sep</span>
+    <span class="k">return</span> <span class="n">cop_res</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">all_data</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="cop">
+<a class="viewcode-back" href="../../../../gamac.meta.impl.html#gamac.meta.impl.cvi.cop">[документация]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">cop</span><span class="p">(</span><span class="n">clusters</span><span class="p">:</span> <span class="n">Clusters</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="n">_nb_cop</span><span class="p">(</span>
+        <span class="n">all_data</span><span class="o">=</span><span class="n">clusters</span><span class="o">.</span><span class="n">all_data</span><span class="p">,</span>
+        <span class="n">clusters_data</span><span class="o">=</span><span class="n">clusters</span><span class="o">.</span><span class="n">clusters_data</span><span class="p">,</span>
+        <span class="n">mean_cent_dists</span><span class="o">=</span><span class="p">[</span><span class="n">c_dist</span><span class="o">.</span><span class="n">mean_val</span> <span class="k">for</span> <span class="n">c_dist</span> <span class="ow">in</span> <span class="n">clusters</span><span class="o">.</span><span class="n">cent_dists</span><span class="p">]</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="o">-</span><span class="n">result</span>  <span class="c1"># to invert monotonicity</span></div>
+
+
+
+<span class="nd">@numba</span><span class="o">.</span><span class="n">njit</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_nb_cs</span><span class="p">(</span><span class="n">clusters_data</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span> <span class="n">centroids</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span> <span class="n">intra_maxs</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span> <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+    <span class="n">comp</span><span class="p">,</span> <span class="n">k</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">clusters_data</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">cl_idx</span><span class="p">,</span> <span class="n">cl_data</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">clusters_data</span><span class="p">):</span>
+        <span class="n">comp</span> <span class="o">+=</span> <span class="n">intra_maxs</span><span class="p">[</span><span class="n">cl_idx</span><span class="p">]</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">cl_data</span><span class="p">)</span>
+
+    <span class="n">d_centroids</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">k</span><span class="p">),</span> <span class="n">fill_value</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="s1">&#39;inf&#39;</span><span class="p">))</span>
+    <span class="k">for</span> <span class="n">x_idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">k</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">y_idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">x_idx</span><span class="p">):</span>
+            <span class="n">d_c</span> <span class="o">=</span> <span class="n">_dist</span><span class="p">(</span><span class="n">centroids</span><span class="p">[</span><span class="n">x_idx</span><span class="p">],</span> <span class="n">centroids</span><span class="p">[</span><span class="n">y_idx</span><span class="p">])</span>
+            <span class="n">d_centroids</span><span class="p">[</span><span class="n">x_idx</span><span class="p">,</span> <span class="n">y_idx</span><span class="p">]</span> <span class="o">=</span> <span class="n">d_c</span>
+            <span class="n">d_centroids</span><span class="p">[</span><span class="n">y_idx</span><span class="p">,</span> <span class="n">x_idx</span><span class="p">]</span> <span class="o">=</span> <span class="n">d_c</span>
+    <span class="n">sep</span> <span class="o">=</span> <span class="mf">0.0</span>
+    <span class="k">for</span> <span class="n">c_idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">k</span><span class="p">):</span>
+        <span class="n">sep</span> <span class="o">+=</span> <span class="nb">min</span><span class="p">(</span><span class="n">d_centroids</span><span class="p">[</span><span class="n">c_idx</span><span class="p">])</span>
+    <span class="k">return</span> <span class="n">comp</span> <span class="o">/</span> <span class="n">sep</span>
+
+
+<div class="viewcode-block" id="cs">
+<a class="viewcode-back" href="../../../../gamac.meta.impl.html#gamac.meta.impl.cvi.cs">[документация]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">cs</span><span class="p">(</span><span class="n">clusters</span><span class="p">:</span> <span class="n">Clusters</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="n">_nb_cs</span><span class="p">(</span>
+        <span class="n">clusters_data</span><span class="o">=</span><span class="n">clusters</span><span class="o">.</span><span class="n">clusters_data</span><span class="p">,</span>
+        <span class="n">centroids</span><span class="o">=</span><span class="n">clusters</span><span class="o">.</span><span class="n">centroids</span><span class="p">,</span>
+        <span class="n">intra_maxs</span><span class="o">=</span><span class="p">[</span><span class="n">cl_stat</span><span class="o">.</span><span class="n">max_val</span> <span class="k">for</span> <span class="n">cl_stat</span> <span class="ow">in</span> <span class="n">clusters</span><span class="o">.</span><span class="n">intra_stats</span><span class="p">],</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="o">-</span><span class="n">result</span>  <span class="c1"># to invert monotonicity</span></div>
+
+
+
+<div class="viewcode-block" id="sym">
+<a class="viewcode-back" href="../../../../gamac.meta.impl.html#gamac.meta.impl.cvi.sym">[документация]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">sym</span><span class="p">(</span><span class="n">clusters</span><span class="p">:</span> <span class="n">Clusters</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+    <span class="n">d_k</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="s1">&#39;-inf&#39;</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">x_idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">clusters</span><span class="o">.</span><span class="n">k</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">y_idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">x_idx</span><span class="p">):</span>
+            <span class="n">x_cent</span> <span class="o">=</span> <span class="n">clusters</span><span class="o">.</span><span class="n">centroids</span><span class="p">[</span><span class="n">x_idx</span><span class="p">]</span>
+            <span class="n">y_cent</span> <span class="o">=</span> <span class="n">clusters</span><span class="o">.</span><span class="n">centroids</span><span class="p">[</span><span class="n">y_idx</span><span class="p">]</span>
+            <span class="n">d_k</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">_dist</span><span class="p">(</span><span class="n">x_cent</span><span class="p">,</span> <span class="n">y_cent</span><span class="p">),</span> <span class="n">d_k</span><span class="p">)</span>
+
+    <span class="n">e_k</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">([</span>
+        <span class="n">cl_sym</span><span class="o">.</span><span class="n">sum_val</span> <span class="k">for</span> <span class="n">cl_sym</span> <span class="ow">in</span> <span class="n">clusters</span><span class="o">.</span><span class="n">sym_dists</span>
+    <span class="p">])</span>
+    <span class="k">return</span> <span class="n">d_k</span> <span class="o">/</span> <span class="n">e_k</span></div>
+
+
+
+<div class="viewcode-block" id="sym_db">
+<a class="viewcode-back" href="../../../../gamac.meta.impl.html#gamac.meta.impl.cvi.sym_db">[документация]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">sym_db</span><span class="p">(</span><span class="n">clusters</span><span class="p">:</span> <span class="n">Clusters</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_diam</span><span class="p">(</span><span class="n">cl_idx</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">clusters</span><span class="o">.</span><span class="n">sym_dists</span><span class="p">[</span><span class="n">cl_idx</span><span class="p">]</span><span class="o">.</span><span class="n">mean_val</span>
+
+    <span class="n">result</span> <span class="o">=</span> <span class="n">_gen_db</span><span class="p">(</span><span class="n">clusters</span><span class="p">,</span> <span class="n">_diam</span><span class="p">)</span>
+    <span class="k">return</span> <span class="o">-</span><span class="n">result</span>  <span class="c1"># to invert monotonicity</span></div>
+
+
+
+<div class="viewcode-block" id="sym_db_star">
+<a class="viewcode-back" href="../../../../gamac.meta.impl.html#gamac.meta.impl.cvi.sym_db_star">[документация]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">sym_db_star</span><span class="p">(</span><span class="n">clusters</span><span class="p">:</span> <span class="n">Clusters</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_diam</span><span class="p">(</span><span class="n">cl_idx</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">clusters</span><span class="o">.</span><span class="n">sym_dists</span><span class="p">[</span><span class="n">cl_idx</span><span class="p">]</span><span class="o">.</span><span class="n">mean_val</span>
+
+    <span class="n">result</span> <span class="o">=</span> <span class="n">_gen_db_star</span><span class="p">(</span><span class="n">clusters</span><span class="p">,</span> <span class="n">_diam</span><span class="p">)</span>
+    <span class="k">return</span> <span class="o">-</span><span class="n">result</span>  <span class="c1"># to invert monotonicity</span></div>
+
+
+
+<div class="viewcode-block" id="sym_11">
+<a class="viewcode-back" href="../../../../gamac.meta.impl.html#gamac.meta.impl.cvi.sym_11">[документация]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">sym_11</span><span class="p">(</span><span class="n">clusters</span><span class="p">:</span> <span class="n">Clusters</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_diam</span><span class="p">(</span><span class="n">cl_idx</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">clusters</span><span class="o">.</span><span class="n">sym_dists</span><span class="p">[</span><span class="n">cl_idx</span><span class="p">]</span><span class="o">.</span><span class="n">max_val</span>
+
+    <span class="n">_dist</span> <span class="o">=</span> <span class="n">_get_dunn_dist1</span><span class="p">(</span><span class="n">clusters</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">_gen_dunn</span><span class="p">(</span><span class="n">clusters</span><span class="p">,</span> <span class="n">_diam</span><span class="p">,</span> <span class="n">_dist</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="sym_33">
+<a class="viewcode-back" href="../../../../gamac.meta.impl.html#gamac.meta.impl.cvi.sym_33">[документация]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">sym_33</span><span class="p">(</span><span class="n">clusters</span><span class="p">:</span> <span class="n">Clusters</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_diam</span><span class="p">(</span><span class="n">cl_idx</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+        <span class="k">return</span> <span class="mf">2.0</span> <span class="o">*</span> <span class="n">clusters</span><span class="o">.</span><span class="n">sym_dists</span><span class="p">[</span><span class="n">cl_idx</span><span class="p">]</span><span class="o">.</span><span class="n">mean_val</span>
+
+    <span class="n">_dist</span> <span class="o">=</span> <span class="n">_get_dunn_dist3</span><span class="p">(</span><span class="n">clusters</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">_gen_dunn</span><span class="p">(</span><span class="n">clusters</span><span class="p">,</span> <span class="n">_diam</span><span class="p">,</span> <span class="n">_dist</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="banfield_raftery">
+<a class="viewcode-back" href="../../../../gamac.meta.impl.html#gamac.meta.impl.cvi.banfield_raftery">[документация]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">banfield_raftery</span><span class="p">(</span><span class="n">clusters</span><span class="p">:</span> <span class="n">Clusters</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+    <span class="n">br_res</span> <span class="o">=</span> <span class="mf">0.0</span>
+    <span class="k">for</span> <span class="n">cl_idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">clusters</span><span class="o">.</span><span class="n">k</span><span class="p">):</span>
+        <span class="n">cl_d</span> <span class="o">=</span> <span class="n">clusters</span><span class="o">.</span><span class="n">cent_dists</span><span class="p">[</span><span class="n">cl_idx</span><span class="p">]</span><span class="o">.</span><span class="n">arr</span>
+        <span class="n">cl_var</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">cl_d</span> <span class="o">*</span> <span class="n">cl_d</span><span class="p">)</span>
+        <span class="n">var_stable</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">+</span> <span class="n">cl_var</span> <span class="o">+</span> <span class="mf">1e-6</span>  <span class="c1"># Added 1 and 1e-6 to stabilize, originally just used np.log(cl_var)</span>
+        <span class="n">br_res</span> <span class="o">+=</span> <span class="n">clusters</span><span class="o">.</span><span class="n">amounts</span><span class="p">[</span><span class="n">cl_idx</span><span class="p">]</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">var_stable</span><span class="p">)</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="n">br_res</span> <span class="o">/</span> <span class="n">clusters</span><span class="o">.</span><span class="n">n</span>  <span class="c1"># originally index is not normalised</span>
+    <span class="k">return</span> <span class="o">-</span><span class="n">result</span>  <span class="c1"># to invert monotonicity</span></div>
+
+
+
+<span class="nd">@numba</span><span class="o">.</span><span class="n">njit</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_nb_mc_clain_rao</span><span class="p">(</span><span class="n">clusters_data</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span> <span class="n">inter_sums</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+    <span class="n">s_w</span><span class="p">,</span> <span class="n">s_b</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span>
+    <span class="n">k</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">clusters_data</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">x_idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">k</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">y_idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">x_idx</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
+            <span class="n">inter_sum_val</span> <span class="o">=</span> <span class="n">inter_sums</span><span class="p">[</span><span class="n">x_idx</span><span class="p">,</span> <span class="n">y_idx</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">x_idx</span> <span class="o">==</span> <span class="n">y_idx</span><span class="p">:</span>
+                <span class="n">s_w</span> <span class="o">+=</span> <span class="n">inter_sum_val</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">s_b</span> <span class="o">+=</span> <span class="n">inter_sum_val</span>
+    <span class="n">n_w</span><span class="p">,</span> <span class="n">n_b</span> <span class="o">=</span> <span class="n">_get_n_w</span><span class="p">(</span><span class="n">clusters_data</span><span class="p">),</span> <span class="n">_get_n_b</span><span class="p">(</span><span class="n">clusters_data</span><span class="p">)</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">s_w</span> <span class="o">/</span> <span class="n">n_w</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">s_b</span> <span class="o">/</span> <span class="n">n_b</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="mc_clain_rao">
+<a class="viewcode-back" href="../../../../gamac.meta.impl.html#gamac.meta.impl.cvi.mc_clain_rao">[документация]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">mc_clain_rao</span><span class="p">(</span><span class="n">clusters</span><span class="p">:</span> <span class="n">Clusters</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="n">_nb_mc_clain_rao</span><span class="p">(</span>
+        <span class="n">clusters_data</span><span class="o">=</span><span class="n">clusters</span><span class="o">.</span><span class="n">clusters_data</span><span class="p">,</span>
+        <span class="n">inter_sums</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span>
+            <span class="p">[</span><span class="n">pair_stat</span><span class="o">.</span><span class="n">sum_val</span> <span class="k">for</span> <span class="n">pair_stat</span> <span class="ow">in</span> <span class="n">cl_row</span><span class="p">]</span>
+            <span class="k">for</span> <span class="n">cl_row</span> <span class="ow">in</span> <span class="n">clusters</span><span class="o">.</span><span class="n">cartesian_stats</span>
+        <span class="p">])</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="o">-</span><span class="n">result</span>  <span class="c1"># to invert monotonicity</span></div>
+
+
+
+<div class="viewcode-block" id="pakhira_bandyopadhyay_maulik">
+<a class="viewcode-back" href="../../../../gamac.meta.impl.html#gamac.meta.impl.cvi.pakhira_bandyopadhyay_maulik">[документация]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">pakhira_bandyopadhyay_maulik</span><span class="p">(</span><span class="n">clusters</span><span class="p">:</span> <span class="n">Clusters</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+    <span class="n">d_b</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="s1">&#39;-inf&#39;</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">x_idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">clusters</span><span class="o">.</span><span class="n">k</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">y_idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">x_idx</span><span class="p">):</span>
+            <span class="n">x_cent</span> <span class="o">=</span> <span class="n">clusters</span><span class="o">.</span><span class="n">centroids</span><span class="p">[</span><span class="n">x_idx</span><span class="p">]</span>
+            <span class="n">y_cent</span> <span class="o">=</span> <span class="n">clusters</span><span class="o">.</span><span class="n">centroids</span><span class="p">[</span><span class="n">y_idx</span><span class="p">]</span>
+            <span class="n">d_b</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">_dist</span><span class="p">(</span><span class="n">x_cent</span><span class="p">,</span> <span class="n">y_cent</span><span class="p">),</span> <span class="n">d_b</span><span class="p">)</span>
+    <span class="n">e_w</span><span class="p">,</span> <span class="n">e_t</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span>
+    <span class="k">for</span> <span class="n">cent_dist</span> <span class="ow">in</span> <span class="n">clusters</span><span class="o">.</span><span class="n">cent_dists</span><span class="p">:</span>
+        <span class="n">e_w</span> <span class="o">+=</span> <span class="n">cent_dist</span><span class="o">.</span><span class="n">sum_val</span>
+
+    <span class="k">for</span> <span class="n">obj</span> <span class="ow">in</span> <span class="n">clusters</span><span class="o">.</span><span class="n">all_data</span><span class="p">:</span>
+        <span class="n">e_t</span> <span class="o">+=</span> <span class="n">_dist</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">clusters</span><span class="o">.</span><span class="n">global_centroid</span><span class="p">)</span>
+
+    <span class="n">val</span> <span class="o">=</span> <span class="p">(</span><span class="n">e_t</span> <span class="o">*</span> <span class="n">d_b</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">clusters</span><span class="o">.</span><span class="n">k</span> <span class="o">*</span> <span class="n">e_w</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">val</span> <span class="o">*</span> <span class="n">val</span></div>
+
+
+
+<div class="viewcode-block" id="ray_turi">
+<a class="viewcode-back" href="../../../../gamac.meta.impl.html#gamac.meta.impl.cvi.ray_turi">[документация]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">ray_turi</span><span class="p">(</span><span class="n">clusters</span><span class="p">:</span> <span class="n">Clusters</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+    <span class="n">wgss</span> <span class="o">=</span> <span class="n">_get_wgss</span><span class="p">([</span><span class="n">c_dist</span><span class="o">.</span><span class="n">arr</span> <span class="k">for</span> <span class="n">c_dist</span> <span class="ow">in</span> <span class="n">clusters</span><span class="o">.</span><span class="n">cent_dists</span><span class="p">])</span>
+    <span class="n">delta</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="s1">&#39;inf&#39;</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">x_idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">clusters</span><span class="o">.</span><span class="n">k</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">y_idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">x_idx</span><span class="p">):</span>
+            <span class="n">x_cent</span> <span class="o">=</span> <span class="n">clusters</span><span class="o">.</span><span class="n">centroids</span><span class="p">[</span><span class="n">x_idx</span><span class="p">]</span>
+            <span class="n">y_cent</span> <span class="o">=</span> <span class="n">clusters</span><span class="o">.</span><span class="n">centroids</span><span class="p">[</span><span class="n">y_idx</span><span class="p">]</span>
+            <span class="n">delta</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">_dist</span><span class="p">(</span><span class="n">x_cent</span><span class="p">,</span> <span class="n">y_cent</span><span class="p">),</span> <span class="n">delta</span><span class="p">)</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="n">wgss</span> <span class="o">/</span> <span class="p">(</span><span class="n">clusters</span><span class="o">.</span><span class="n">n</span> <span class="o">*</span> <span class="n">delta</span> <span class="o">*</span> <span class="n">delta</span><span class="p">)</span>
+    <span class="k">return</span> <span class="o">-</span><span class="n">result</span>  <span class="c1"># to invert monotonicity</span></div>
+
+
+
+<span class="nd">@numba</span><span class="o">.</span><span class="n">njit</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_nb_wemmert_gancarski</span><span class="p">(</span>
+        <span class="n">all_data</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+        <span class="n">clusters_data</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span>
+        <span class="n">centroids</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+    <span class="n">wg_res</span> <span class="o">=</span> <span class="mf">0.0</span>
+    <span class="k">for</span> <span class="n">x_idx</span><span class="p">,</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">clusters_data</span><span class="p">):</span>
+        <span class="n">r_cl</span><span class="p">,</span> <span class="n">x_cent</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span> <span class="n">centroids</span><span class="p">[</span><span class="n">x_idx</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">x_obj_idx</span><span class="p">,</span> <span class="n">x_obj</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+            <span class="n">r_x</span><span class="p">,</span> <span class="n">r_y</span> <span class="o">=</span> <span class="n">_dist</span><span class="p">(</span><span class="n">x_obj</span><span class="p">,</span> <span class="n">x_cent</span><span class="p">),</span> <span class="nb">float</span><span class="p">(</span><span class="s1">&#39;inf&#39;</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">y_idx</span><span class="p">,</span> <span class="n">y</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">clusters_data</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">x_idx</span> <span class="o">==</span> <span class="n">y_idx</span><span class="p">:</span>
+                    <span class="k">continue</span>
+                <span class="n">y_centroid</span> <span class="o">=</span> <span class="n">centroids</span><span class="p">[</span><span class="n">y_idx</span><span class="p">]</span>
+                <span class="n">r_y</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">_dist</span><span class="p">(</span><span class="n">x_obj</span><span class="p">,</span> <span class="n">y_centroid</span><span class="p">),</span> <span class="n">r_y</span><span class="p">)</span>
+            <span class="n">r_cl</span> <span class="o">+=</span> <span class="n">r_x</span> <span class="o">/</span> <span class="p">(</span><span class="n">r_y</span> <span class="o">+</span> <span class="mf">1e-6</span><span class="p">)</span>
+        <span class="n">wg_res</span> <span class="o">+=</span> <span class="nb">max</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">-</span> <span class="n">r_cl</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">wg_res</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">all_data</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="wemmert_gancarski">
+<a class="viewcode-back" href="../../../../gamac.meta.impl.html#gamac.meta.impl.cvi.wemmert_gancarski">[документация]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">wemmert_gancarski</span><span class="p">(</span><span class="n">clusters</span><span class="p">:</span> <span class="n">Clusters</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+    <span class="k">return</span> <span class="n">_nb_wemmert_gancarski</span><span class="p">(</span>
+        <span class="n">all_data</span><span class="o">=</span><span class="n">clusters</span><span class="o">.</span><span class="n">all_data</span><span class="p">,</span>
+        <span class="n">clusters_data</span><span class="o">=</span><span class="n">clusters</span><span class="o">.</span><span class="n">clusters_data</span><span class="p">,</span>
+        <span class="n">centroids</span><span class="o">=</span><span class="n">clusters</span><span class="o">.</span><span class="n">centroids</span><span class="p">,</span>
+    <span class="p">)</span></div>
+
+
+
+<span class="nd">@numba</span><span class="o">.</span><span class="n">njit</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_nb_point_biserial</span><span class="p">(</span>
+        <span class="n">all_data</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+        <span class="n">clusters_data</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span>
+        <span class="n">inter_sums</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+    <span class="n">s_w</span><span class="p">,</span> <span class="n">s_b</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span>
+    <span class="n">k</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">clusters_data</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">x_idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">k</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">y_idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">x_idx</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
+            <span class="n">inter_sum_val</span> <span class="o">=</span> <span class="n">inter_sums</span><span class="p">[</span><span class="n">x_idx</span><span class="p">,</span> <span class="n">y_idx</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">x_idx</span> <span class="o">==</span> <span class="n">y_idx</span><span class="p">:</span>
+                <span class="n">s_w</span> <span class="o">+=</span> <span class="n">inter_sum_val</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">s_b</span> <span class="o">+=</span> <span class="n">inter_sum_val</span>
+    <span class="n">n_w</span><span class="p">,</span> <span class="n">n_b</span> <span class="o">=</span> <span class="n">_get_n_w</span><span class="p">(</span><span class="n">clusters_data</span><span class="p">),</span> <span class="n">_get_n_b</span><span class="p">(</span><span class="n">clusters_data</span><span class="p">)</span>
+    <span class="n">normaliser</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">n_w</span> <span class="o">*</span> <span class="n">n_b</span><span class="p">)</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">all_data</span><span class="p">)</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">s_w</span> <span class="o">/</span> <span class="n">n_w</span> <span class="o">-</span> <span class="n">s_b</span> <span class="o">/</span> <span class="n">n_b</span><span class="p">)</span> <span class="o">*</span> <span class="n">normaliser</span>
+
+
+<div class="viewcode-block" id="point_biserial">
+<a class="viewcode-back" href="../../../../gamac.meta.impl.html#gamac.meta.impl.cvi.point_biserial">[документация]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">point_biserial</span><span class="p">(</span><span class="n">clusters</span><span class="p">:</span> <span class="n">Clusters</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+    <span class="k">return</span> <span class="n">_nb_point_biserial</span><span class="p">(</span>
+        <span class="n">all_data</span><span class="o">=</span><span class="n">clusters</span><span class="o">.</span><span class="n">all_data</span><span class="p">,</span>
+        <span class="n">clusters_data</span><span class="o">=</span><span class="n">clusters</span><span class="o">.</span><span class="n">clusters_data</span><span class="p">,</span>
+        <span class="n">inter_sums</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span>
+            <span class="p">[</span><span class="n">pair_stat</span><span class="o">.</span><span class="n">sum_val</span> <span class="k">for</span> <span class="n">pair_stat</span> <span class="ow">in</span> <span class="n">cl_row</span><span class="p">]</span>
+            <span class="k">for</span> <span class="n">cl_row</span> <span class="ow">in</span> <span class="n">clusters</span><span class="o">.</span><span class="n">cartesian_stats</span>
+        <span class="p">])</span>
+    <span class="p">)</span></div>
+
+
+
+<span class="nd">@numba</span><span class="o">.</span><span class="n">njit</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_nb_xie_beni</span><span class="p">(</span><span class="n">all_data</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">cent_dists</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span> <span class="n">inter_mins</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+    <span class="n">wgss</span> <span class="o">=</span> <span class="n">_get_wgss</span><span class="p">(</span><span class="n">cent_dists</span><span class="p">)</span>
+    <span class="n">k</span><span class="p">,</span> <span class="n">delta</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">cent_dists</span><span class="p">),</span> <span class="nb">float</span><span class="p">(</span><span class="s1">&#39;inf&#39;</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">x_idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">k</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">y_idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">x_idx</span><span class="p">):</span>
+            <span class="n">inter_min_val</span> <span class="o">=</span> <span class="n">inter_mins</span><span class="p">[</span><span class="n">x_idx</span><span class="p">,</span> <span class="n">y_idx</span><span class="p">]</span>
+            <span class="n">delta</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">inter_min_val</span><span class="p">,</span> <span class="n">delta</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">wgss</span> <span class="o">/</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">all_data</span><span class="p">)</span> <span class="o">*</span> <span class="n">delta</span> <span class="o">*</span> <span class="n">delta</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="xie_beni">
+<a class="viewcode-back" href="../../../../gamac.meta.impl.html#gamac.meta.impl.cvi.xie_beni">[документация]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">xie_beni</span><span class="p">(</span><span class="n">clusters</span><span class="p">:</span> <span class="n">Clusters</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="n">_nb_xie_beni</span><span class="p">(</span>
+        <span class="n">all_data</span><span class="o">=</span><span class="n">clusters</span><span class="o">.</span><span class="n">all_data</span><span class="p">,</span>
+        <span class="n">cent_dists</span><span class="o">=</span><span class="p">[</span><span class="n">c_dist</span><span class="o">.</span><span class="n">arr</span> <span class="k">for</span> <span class="n">c_dist</span> <span class="ow">in</span> <span class="n">clusters</span><span class="o">.</span><span class="n">cent_dists</span><span class="p">],</span>
+        <span class="n">inter_mins</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span>
+            <span class="p">[</span><span class="n">pair_stat</span><span class="o">.</span><span class="n">min_val</span> <span class="k">for</span> <span class="n">pair_stat</span> <span class="ow">in</span> <span class="n">cl_row</span><span class="p">]</span>
+            <span class="k">for</span> <span class="n">cl_row</span> <span class="ow">in</span> <span class="n">clusters</span><span class="o">.</span><span class="n">cartesian_stats</span>
+        <span class="p">])</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="o">-</span><span class="n">result</span>  <span class="c1"># to invert monotonicity</span></div>
+
+
+<span class="c1"># def s_dbw(data: np.ndarray, clusters: List[MCluster]) -&gt; float:</span>
+<span class="c1">#     k, dim = len(clusters), data.shape[1]</span>
+<span class="c1">#</span>
+<span class="c1">#     def get_sigma_norm(arr, centroid):</span>
+<span class="c1">#         sigma = np.zeros(shape=dim)</span>
+<span class="c1">#         for obj in arr:</span>
+<span class="c1">#             diff = obj - centroid</span>
+<span class="c1">#             sigma += diff * diff</span>
+<span class="c1">#         return np.linalg.norm(sigma / len(data))</span>
+<span class="c1">#</span>
+<span class="c1">#     global_centroid = get_centroid(data)</span>
+<span class="c1">#     global_sigma = get_sigma_norm(data, global_centroid)</span>
+<span class="c1">#</span>
+<span class="c1">#     sigma_x = [get_sigma_norm(x.data, x.centroid) for x in clusters]</span>
+<span class="c1">#     stddev = np.sqrt(sum(sigma_x)) / k</span>
+<span class="c1">#</span>
+<span class="c1">#     scat = np.mean([s_x / global_sigma for s_x in sigma_x])</span>
+<span class="c1">#</span>
+<span class="c1">#     def one_or_zero(d_val):</span>
+<span class="c1">#         return 1 if d_val &lt; stddev else 0</span>
+<span class="c1">#</span>
+<span class="c1">#     def f_dist(x, y):</span>
+<span class="c1">#         d = dist(x, y)</span>
+<span class="c1">#         return one_or_zero(d)</span>
+<span class="c1">#</span>
+<span class="c1">#     def den_cl(cl: MCluster):</span>
+<span class="c1">#         den_cl_val = 0</span>
+<span class="c1">#         for d_val in cl.dist_to_centroid:</span>
+<span class="c1">#             den_cl_val += one_or_zero(d_val)</span>
+<span class="c1">#         return den_cl_val</span>
+<span class="c1">#</span>
+<span class="c1">#     def den_xy(x: MCluster, y: MCluster):</span>
+<span class="c1">#         den_xy_val = 0</span>
+<span class="c1">#         mid_cent = (x.centroid + y.centroid) / 2</span>
+<span class="c1">#         for x_obj in x.data:</span>
+<span class="c1">#             den_xy_val += f_dist(x_obj, mid_cent)</span>
+<span class="c1">#         for y_obj in y.data:</span>
+<span class="c1">#             den_xy_val += f_dist(y_obj, mid_cent)</span>
+<span class="c1">#         return den_xy_val</span>
+<span class="c1">#</span>
+<span class="c1">#     density = 0.0</span>
+<span class="c1">#     den_clusters = [den_cl(x) for x in clusters]</span>
+<span class="c1">#     for x_idx in range(1, k):</span>
+<span class="c1">#         for y_idx in range(x_idx):</span>
+<span class="c1">#             x, y = clusters[x_idx], clusters[y_idx]</span>
+<span class="c1">#             den_x, den_y = den_clusters[x_idx], den_clusters[y_idx]</span>
+<span class="c1">#             divider = max(den_x, den_y)</span>
+<span class="c1">#             if divider &gt; 1e-8:</span>
+<span class="c1">#                 density += den_xy(x, y) / divider</span>
+<span class="c1">#     density /= k * (k - 1) / 2</span>
+<span class="c1">#</span>
+<span class="c1">#     result = scat + density</span>
+<span class="c1">#     return -result  # to invert monotonicity</span>
+
+<span class="n">INTERNAL_MEASURES</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="p">(</span><span class="s1">&#39;CH&#39;</span><span class="p">,</span> <span class="n">ch</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;DB&#39;</span><span class="p">,</span> <span class="n">db</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;DB_STAR&#39;</span><span class="p">,</span> <span class="n">db_star</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;DUNN_11&#39;</span><span class="p">,</span> <span class="n">dunn11</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;DUNN_31&#39;</span><span class="p">,</span> <span class="n">dunn31</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;DUNN_41&#39;</span><span class="p">,</span> <span class="n">dunn41</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;DUNN_13&#39;</span><span class="p">,</span> <span class="n">dunn13</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;DUNN_33&#39;</span><span class="p">,</span> <span class="n">dunn33</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;DUNN_43&#39;</span><span class="p">,</span> <span class="n">dunn43</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;SCORE&#39;</span><span class="p">,</span> <span class="n">score</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;SIL&#39;</span><span class="p">,</span> <span class="n">sil</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;SV&#39;</span><span class="p">,</span> <span class="n">sv</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;OS&#39;</span><span class="p">,</span> <span class="n">os</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;C_INDEX&#39;</span><span class="p">,</span> <span class="n">c_index</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;GAMMA_INDEX&#39;</span><span class="p">,</span> <span class="n">gamma_index</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;COP&#39;</span><span class="p">,</span> <span class="n">cop</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;CS&#39;</span><span class="p">,</span> <span class="n">cs</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;SYM&#39;</span><span class="p">,</span> <span class="n">sym</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;SYM_DB&#39;</span><span class="p">,</span> <span class="n">sym_db</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;SYM_DB_STAR&#39;</span><span class="p">,</span> <span class="n">sym_db_star</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;SYM_11&#39;</span><span class="p">,</span> <span class="n">sym_11</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;SYM_33&#39;</span><span class="p">,</span> <span class="n">sym_33</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;BR&#39;</span><span class="p">,</span> <span class="n">banfield_raftery</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;MCR&#39;</span><span class="p">,</span> <span class="n">mc_clain_rao</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;PBM&#39;</span><span class="p">,</span> <span class="n">pakhira_bandyopadhyay_maulik</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;RT&#39;</span><span class="p">,</span> <span class="n">ray_turi</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;WG&#39;</span><span class="p">,</span> <span class="n">wemmert_gancarski</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;PB&#39;</span><span class="p">,</span> <span class="n">point_biserial</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;XB&#39;</span><span class="p">,</span> <span class="n">xie_beni</span><span class="p">),</span>
+    <span class="c1"># (&#39;S_DBW&#39;, s_dbw)</span>
+<span class="p">]</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Авторские права 2025, Sergey Muravyov, Nikita Kulin, Ivan Usov, Olga Muravyova, Simar Muratov. </p>
+  </div>
+
+  Собрано при помощи <a href="https://www.sphinx-doc.org/">Sphinx</a> с использованием
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">темы,</a>
+    предоставленной <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
