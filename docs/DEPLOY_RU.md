@@ -21,3 +21,11 @@ cd GaMAC
 
 pip install -r requirements.txt --extra-index-url https://download.pytorch.org/whl/cu128
 ```
+
+### Запуск юнит тестов
+
+Выполните следующую команду из корня репозитория:
+
+```bash
+python -m pytest gamac/tests/unit/ -v
+```

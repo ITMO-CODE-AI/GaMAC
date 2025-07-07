@@ -101,8 +101,10 @@ def traverse_data():
         for dataset in traverse_data():
             print(dataset['name'], dataset['data'].shape)
     """
-    for data_name in sorted(os.listdir('../data')):
-        data_path = f'../data/{data_name}'
+    real_path = os.path.realpath(__file__)
+    tests_path = os.path.dirname(real_path)
+    for data_name in sorted(os.listdir(f'{tests_path}/data')):
+        data_path = f'{tests_path}/data/{data_name}'
         yield {
             "name": data_name,
             "data": _read_data(data_path),

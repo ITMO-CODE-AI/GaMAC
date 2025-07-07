@@ -70,7 +70,7 @@ class TestEstimationContainer:
         with pytest.raises(ValueError) as excinfo:
             EstimationContainer.create(data, labels)
 
-        assert "Received 25% objects with noise labels" in str(excinfo.value)
+        assert "Получено 25% объектов с шумовыми метками" in str(excinfo.value)
 
     def test_clusters_property(self, sample_data):
         container = EstimationContainer(**sample_data)
