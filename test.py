@@ -25,6 +25,7 @@ def main():
     #df, optimal = Gamac().run(table=data, text=None, image=None)
     print(f'optimal.model: {result.model}')
     print(f'clusters: {result.model.labels_}')
+    print(f'F1 score: {result.f1_score}')
 
 
 if __name__ == '__main__':
