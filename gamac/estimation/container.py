@@ -93,7 +93,7 @@ class EstimationContainer:
             df (NDArray): Исходные данные
             labels (NDArray): Метки кластеров
             
-        Возвращает:
+        Возвращаемое значение:
             EstimationContainer: Экземпляр контейнера с обработанными данными
         """
         uniq_labels_gpu = cp.unique(labels)

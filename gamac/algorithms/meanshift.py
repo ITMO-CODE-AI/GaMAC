@@ -8,11 +8,11 @@ pylibraft.config.set_output_as("cupy")
 
 
 class MeanShiftModel(ClusteringModel):
-    """Модель кластеризации, обученная алгоритмом MeanShift.
+    r"""Модель кластеризации, обученная алгоритмом MeanShift.
     
     Атрибуты:
-        labels_ (cupy.ndarray): Метки кластеров для каждой точки обучающей выборки.
-        centroids_ (cupy.ndarray): Координаты центроидов кластеров.
+        labels\_ (cupy.ndarray): Метки кластеров для каждой точки обучающей выборки.
+        centroids\_ (cupy.ndarray): Координаты центроидов кластеров.
     """
     
     def __init__(self, labels_, centroids_):
