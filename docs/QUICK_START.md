@@ -4,14 +4,12 @@
 
 ## Quick Start
 
-1. Install all project requirements
-    <code>pip install -r requirements.txt --extra-index-url https://download.pytorch.org/whl/cu128</code>
 
-2. Run Gamac
+1. Run Gamac
 
 Check examples in following [notebook](https://github.com/ITMO-CODE-AI/GaMAC/blob/develop/notebooks/basic_example.ipynb)
 
-2.1. Autoclustering with table, text and image data
+1.1. Autoclustering with table, text and image data
 ---
 ```
 from torchvision.datasets import CIFAR100
@@ -20,17 +18,17 @@ from gamac.autoclustering import Gamac
 # Import data
 cifar100 = CIFAR100('../data/cifar', download=True, train=False)
 
-cifar_txt = [f'a photo of {cifar100.classes[img[1]]}' for img in cifar100][:100]
-cifar_img = [img[0] for img in cifar100][:100]
-cifar_table = pd.DataFrame(cifar100.targets[:100])
+cifar_txt = [f'a photo of {cifar100.classes[img[1]]}' for img in cifar100]
+cifar_img = [img[0] for img in cifar100]
+cifar_table = pd.DataFrame(cifar100.targets)
 
-df, best_model = Gamac().run(table=cifar_table, text=cifar_txt, image=cifar_img)
+result = Gamac().run(table=cifar_table, text=cifar_txt, image=cifar_img)
 
-print(f'best_model.model: {best_model.model}')
-print(f'clusters: {best_model.model.labels_}')
+print(f'result.model: {result.model}')
+print(f'clusters: {result.model.labels_}')
 ```
 ---
-2.2. Autoclustering with only table data
+1.2. Autoclustering with only table data
 ---
 ```
 import pandas as pd
@@ -41,13 +39,13 @@ from gamac.autoclustering import Gamac
 data = load_digits(as_frame=True)
 table = data['data']
 
-df, best_model = Gamac().run(table=table, text=None, image=None)
+result = Gamac().run(table=table, text=None, image=None)
 
-print(f'best_model.model: {best_model.model}')
-print(f'clusters: {best_model.model.labels_}')
+print(f'result.model: {result.model}')
+print(f'clusters: {result.model.labels_}')
 ```
 ---
-2.3. Autoclustering with only text and image data
+1.3. Autoclustering with only text and image data
 ---
 ```
 from torchvision.datasets import CIFAR100
@@ -56,12 +54,12 @@ from gamac.autoclustering import Gamac
 # Import data
 cifar100 = CIFAR100('../data/cifar', download=True, train=False)
 
-cifar_txt = [f'a photo of {cifar100.classes[img[1]]}' for img in cifar100][:100]
-cifar_img = [img[0] for img in cifar100][:100]
+cifar_txt = [f'a photo of {cifar100.classes[img[1]]}' for img in cifar100]
+cifar_img = [img[0] for img in cifar100]
 
-df, best_model = Gamac().run(table=None, text=cifar_txt, image=cifar_img)
+result = Gamac().run(table=None, text=cifar_txt, image=cifar_img)
 
-print(f'best_model.model: {best_model.model}')
-print(f'clusters: {best_model.model.labels_}')
+print(f'result.model: {result.model}')
+print(f'clusters: {result.model.labels_}')
 ```
 ---
