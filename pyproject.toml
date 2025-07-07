@@ -14,7 +14,7 @@ namespaces = false
 
 [project]
 name = "Gamac"
-version = "0.1.0"
+version = "0.1.1"
 description = "Framework for automative prompting creation and optimization"
 readme = "README.md"
 requires-python = ">=3.12"
