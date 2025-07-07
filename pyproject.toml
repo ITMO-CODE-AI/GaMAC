@@ -25,7 +25,6 @@ classifiers = [
 ]
 dependencies = [
     "accelerate==0.33.0",
-    "contourpy==1.2.1",
     "cuda-bindings==12.8.0",
     "cuda-python==12.8.0",
     "cupy-cuda12x==13.3.0",
