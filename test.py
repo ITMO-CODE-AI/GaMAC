@@ -18,10 +18,12 @@ def main():
         data = pd.read_csv(f'test-data/{DATA}')
     elif '.parquet':
         pd.read_parquet(f'test-data/{DATA}')
-    data = data.drop("class", errors='ignore', axis=1)
+    if 'class' in data.columns:
+        classes = data['class'].tolist()
+    data = data.drop('class', errors='ignore', axis=1)
     print(f'used data: {DATA}')
     print(f'used measures: {used_measures}')
-    result = Gamac(target_measures=tuple(used_measures)).run(table=data, text=None, image=None)
+    result = Gamac(target_measures=tuple(used_measures)).run(table=data, text=None, image=None, classes=classes)
     #df, optimal = Gamac().run(table=data, text=None, image=None)
     print(f'optimal.model: {result.model}')
     print(f'clusters: {result.model.labels_}')
