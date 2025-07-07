@@ -14,7 +14,7 @@ namespaces = false
 
 [project]
 name = "Gamac"
-version = "0.0.9"
+version = "0.1.2"
 description = "Framework for automative prompting creation and optimization"
 readme = "README.md"
 requires-python = ">=3.12"
@@ -26,6 +26,7 @@ classifiers = [
 ]
 dependencies = [
     "accelerate==0.33.0",
+    "datasets==3.6.0",
     "cuda-bindings==12.8.0",
     "cuda-python==12.8.0",
     "cupy-cuda12x==13.3.0",
@@ -69,7 +70,10 @@ dependencies = [
     "sympy==1.13.3",
     "tokenizers==0.19.1",
     "torch==2.7.0+cu128",
+    "torchaudio==2.7.0",
+    "torchvision==0.22.0",
     "tqdm==4.66.5",
+    "umap-learn==0.5.7",
     "transformers==4.44.2",
     "wheel==0.45.1",
     "xgboost==3.0.0",
