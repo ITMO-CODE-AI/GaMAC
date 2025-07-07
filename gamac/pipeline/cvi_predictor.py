@@ -7,6 +7,7 @@
 
 import os
 import pickle
+import importlib.resources as resources
 
 from gamac.data.data_pipeline import DataFrameType
 from gamac.estimation.internal import Internal
@@ -18,31 +19,35 @@ from gamac.kernels import BATCH_SIZE, MIDDLEWARE
 
 def load_pickle(file: str):
     """Загружает объект из pickle-файла.
-    
+
     Аргументы:
         file (str): Имя файла в директории bin
-        
+
     Возвращает:
         Any: Загруженный Python-объект
     """
-    real_path = os.path.realpath(__file__)
-    dir_path = os.path.dirname(real_path)
-    root_path = os.path.dirname(dir_path)
-    with open(f"{root_path}/bin/{file}", 'rb') as fp:
-        return pickle.load(fp)
+    try:
+        with resources.files("gamac.bin").joinpath(file).open('rb') as fp:
+            return pickle.load(fp)
+    except Exception:
+        real_path = os.path.realpath(__file__)
+        dir_path = os.path.dirname(real_path)
+        root_path = os.path.dirname(dir_path)
+        with open(f"{root_path}/bin/{file}", 'rb') as fp:
+            return pickle.load(fp)
 
 
 class CVIPredictor:
     """Класс для предсказания оптимальных метрик оценки кластеризации.
-    
+
     Использует предобученные модели для анализа мета-признаков данных
     и выбора наиболее подходящих метрик качества кластеризации.
-    
+
     Атрибуты:
         BUCKETS (int): Количество корзин для гистограммного анализа
         MEASURES_BY_INDEX (list): Список метрик, соответствующих индексам модели
     """
-    
+
     BUCKETS = 128  # Количество интервалов для статистики расстояний
     MEASURES_BY_INDEX = [
         Internal.OS,  # Метрика OS (относительная разделимость)

@@ -15,6 +15,12 @@ List of dependencies can be found in [requirements](../requirements.txt) directo
 
 ### Installation and dependencies setup of the library
 
+With pip
+```bash
+pip install -U --extra-index-url https://test.pypi.org/simple/ Gamac --extra-index-url https://download.pytorch.org/whl/cu128
+```
+
+With git
 ```bash
 git clone https://github.com/ITMO-CODE-AI/GaMAC.git
 cd GaMAC

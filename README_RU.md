@@ -53,6 +53,12 @@ GaMAC это модуль на языке Python для автоматизиро
 
 ### Установка и настройка зависимостей
 
+Через pip
+```bash
+pip install -U --extra-index-url https://test.pypi.org/simple/ Gamac --extra-index-url https://download.pytorch.org/whl/cu128
+```
+
+Через git
 ```bash
 git clone https://github.com/ITMO-CODE-AI/GaMAC.git
 cd GaMAC
