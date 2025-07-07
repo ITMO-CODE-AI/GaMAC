@@ -1,6 +1,9 @@
 [build-system]
-requires = ["setuptools >= 77.0.3"]
+requires = ["setuptools >= 77.0.3", "wheel"]
 build-backend = "setuptools.build_meta"
+
+[tool.setuptools.package-data]
+"gamac.kernels" = ["*.c"]
 
 [tool.setuptools.packages.find]
 where = ["."]  # list of folders that contain the packages (["."] by default)
@@ -10,7 +13,7 @@ namespaces = false
 
 [project]
 name = "Gamac"
-version = "0.0.4"
+version = "0.0.5"
 description = "Framework for automative prompting creation and optimization"
 readme = "README.md"
 requires-python = ">=3.12"

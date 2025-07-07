@@ -1,4 +1,5 @@
 import os.path
+import importlib.resources as resources
 
 from cupy import RawModule
 from cupy.typing import NDArray
@@ -15,10 +16,13 @@ def load_module(file: str) -> RawModule:
     Возвращает:
         RawModule: Загруженный модуль CUDA
     """
-    real_path = os.path.realpath(__file__)
-    dir_path = os.path.dirname(real_path)
-    with open(f"{dir_path}/{file}", 'r') as fp:
-        content = fp.read()
+    try:
+        content = resources.files("gamac.kernels").joinpath(file).read_text(encoding="utf-8")
+    except Exception:
+        real_path = os.path.realpath(__file__)
+        dir_path = os.path.dirname(real_path)
+        with open(f"{dir_path}/{file}", 'r') as fp:
+            content = fp.read()
     return RawModule(code=content)
 
 
