@@ -26,6 +26,7 @@ classifiers = [
 ]
 dependencies = [
     "accelerate==0.33.0",
+    "datasets==3.6.0",
     "cuda-bindings==12.8.0",
     "cuda-python==12.8.0",
     "cupy-cuda12x==13.3.0",

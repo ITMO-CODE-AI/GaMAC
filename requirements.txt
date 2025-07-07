@@ -3,6 +3,7 @@ cuda-bindings==12.8.0
 cuda-python==12.8.0
 cupy-cuda12x==13.3.0
 cuvs-cu12==25.2.1
+datasets==3.6.0
 distributed==2024.12.1
 distributed-ucxx-cu12==0.42.0
 huggingface-hub==0.24.6
