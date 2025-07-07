@@ -72,6 +72,7 @@ dependencies = [
     "torchaudio==2.7.0",
     "torchvision==0.22.0",
     "tqdm==4.66.5",
+    "umap-learn==0.5.7",
     "transformers==4.44.2",
     "wheel==0.45.1",
     "xgboost==3.0.0",
