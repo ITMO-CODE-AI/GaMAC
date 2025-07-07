@@ -1,8 +1,8 @@
 """Основной скрипт класса Gamac"""
 import time
-import cupy as cp
 from typing import Optional, Set
 
+import cupy as cp
 import torch
 from PIL import Image
 from pandas import DataFrame
@@ -12,17 +12,18 @@ from transformers import (
 )
 
 from gamac.algorithms.birch import BirchConfig
-from gamac.algorithms.kmeans import KMeansConfig
 from gamac.algorithms.bisecting_kmeans import BisectingKMeansConfig
-from gamac.algorithms.meanshift import MeanShiftConfig
 from gamac.algorithms.dbscan import DBSCANConfig
 from gamac.algorithms.hdbscan import HDBSCANConfig
-from gamac.data.data_pipeline import DataHandler, DataFrameType, LabelsType
+from gamac.algorithms.kmeans import KMeansConfig
+from gamac.algorithms.meanshift import MeanShiftConfig
+from gamac.data.data_pipeline import DataHandler, DataFrameType
+from gamac.estimation.functions import f1
 from gamac.estimation.internal import Internal, InternalEvaluator
 from gamac.pipeline.cvi_predictor import CVIPredictor
 from gamac.pipeline.hyper_optimisers import HyperOptimisers
 from gamac.pipeline.mab_solvers import MabSolvers
-from gamac.pipeline.run_types import Optimal
+from gamac.pipeline.run_types import Optimal, GamacResult
 
 
 class Gamac:
@@ -41,8 +42,8 @@ class Gamac:
 
     Пример использования:
         >>> gamac = Gamac()
-        >>> df, clusters = gamac.run(text=text_data, image=image_data)
-        >>> print(clusters)
+        >>> result = gamac.run(text=text_data, image=image_data)
+        >>> print(result.labels)
 
     Attributes:
         batch_size (int): Размер батча для обработки данных
@@ -116,7 +117,8 @@ class Gamac:
             table: Optional[DataFrame] = None,
             text: Optional[list[str]] = None,
             image: Optional[list[Image]] = None,
-    ) -> tuple[DataFrameType, Optimal]:
+            classes: Optional[list[int]] = None,
+    ) -> GamacResult:
         """
         Запуск пайплайна
 
@@ -124,8 +126,9 @@ class Gamac:
             table (DataFrame): Таблица из которой брать данные
             text (list[str]): Текстовые данные
             image (list[Image]): Картинки из которых брать данные
+            classes (list[int]): Внешняя разметка набора данных
         Returns:
-            tuple[ndarray, list[int]]: Кортеж датасет и список кластеров
+            GamacResult: Найденное разбиение с дополнительной мета-информацией
         """
         self._check_input(table, text, image)
 
@@ -142,7 +145,15 @@ class Gamac:
         # Кластеризация датасета с применением рекомендованной меры качества
         optimal = self._auto_clustering(df, measures)
 
-        return df, optimal
+        f1_score = None if classes is None else self._eval_f1(classes, optimal)
+
+        return GamacResult(
+            df=df,
+            algo=optimal.algo,
+            model=optimal.model,
+            estimation=optimal.estimation,
+            f1_score=f1_score
+        )
 
     def _data_handler(
             self,
@@ -185,6 +196,11 @@ class Gamac:
         meta_time = time.time() - meta_start
         print(f"=== Picked {single_prediction.name} in {meta_time}s ===")
         return {single_prediction}
+
+    def _eval_f1(self, classes: list[int], optimal: Optimal) -> float:
+       classes_gpu = cp.array(classes, dtype=cp.int32)
+       return f1(classes_gpu, optimal.model.labels_)
+
 
     def _auto_clustering(
             self,

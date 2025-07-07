@@ -21,10 +21,10 @@ def main():
     data = data.drop("class", errors='ignore', axis=1)
     print(f'used data: {DATA}')
     print(f'used measures: {used_measures}')
-    df, optimal = Gamac(target_measures=tuple(used_measures)).run(table=data, text=None, image=None)
+    result = Gamac(target_measures=tuple(used_measures)).run(table=data, text=None, image=None)
     #df, optimal = Gamac().run(table=data, text=None, image=None)
-    print(f'optimal.model: {optimal.model}')
-    print(f'clusters: {optimal.model.labels_}')
+    print(f'optimal.model: {result.model}')
+    print(f'clusters: {result.model.labels_}')
 
 
 if __name__ == '__main__':
