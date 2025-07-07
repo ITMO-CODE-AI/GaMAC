@@ -17,24 +17,45 @@ import numpy as np
 from gamac.kernels import BATCH_SIZE, MIDDLEWARE
 
 
-def load_pickle(file: str):
-    """Загружает объект из pickle-файла.
+# def load_pickle(file: str):
+#     """Загружает объект из pickle-файла.
 
-    Аргументы:
-        file (str): Имя файла в директории bin
+#     Аргументы:
+#         file (str): Имя файла в директории bin
 
-    Возвращает:
-        Any: Загруженный Python-объект
-    """
+#     Возвращает:
+#         Any: Загруженный Python-объект
+#     """
+#     try:
+#         with resources.files("gamac.bin").joinpath(file).open('rb') as fp:
+#             return pickle.load(fp)
+#     except Exception:
+#         real_path = os.path.realpath(__file__)
+#         dir_path = os.path.dirname(real_path)
+#         root_path = os.path.dirname(dir_path)
+#         with open(f"{root_path}/bin/{file}", 'rb') as fp:
+#             return pickle.load(fp)
+
+
+def load_pickle(filename: str):
+    """Загружает pickle-файл из ресурсов пакета."""
     try:
-        with resources.files("gamac.bin").joinpath(file).open('rb') as fp:
+        # Проверка наличия ресурса
+        resource_path = resources.files("gamac.bin").joinpath(filename)
+        if not resource_path.is_file():
+            available = [f.name for f in resources.files("gamac.bin").iterdir()
+                         if f.is_file()]
+            raise FileNotFoundError(
+                f"Resource {filename} not found in gamac.bin. "
+                f"Available: {available}"
+            )
+
+        with resource_path.open('rb') as fp:
             return pickle.load(fp)
-    except Exception:
-        real_path = os.path.realpath(__file__)
-        dir_path = os.path.dirname(real_path)
-        root_path = os.path.dirname(dir_path)
-        with open(f"{root_path}/bin/{file}", 'rb') as fp:
-            return pickle.load(fp)
+    except Exception as e:
+        # Дополнительная диагностика
+        print(f"Error loading {filename}: {str(e)}")
+        raise
 
 
 class CVIPredictor:
