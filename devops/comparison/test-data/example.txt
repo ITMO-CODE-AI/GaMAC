@@ -1,0 +1,5 @@
+Put data to this dir for tests on gamac-jupyter.
+
+Build: docker buildx build -t gamac-jupyter .
+
+Run: docker run --rm -it --gpus=all -p 8888:8888 gamac-jupyter

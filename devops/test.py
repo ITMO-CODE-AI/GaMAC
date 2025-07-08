@@ -23,6 +23,8 @@ def main():
         pd.read_parquet(f'test-data/{DATA}')
     if 'class' in data.columns:
         classes = data['class'].tolist()
+    else:
+        classes = None
     data = data.drop('class', errors='ignore', axis=1)
     print(f'used data: {DATA}')
     print(f'used measures: {used_measures}')
