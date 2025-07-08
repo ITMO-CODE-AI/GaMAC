@@ -51,10 +51,10 @@ jobs:
         };
         $env:MINIO_ACCESS_KEY="${{ secrets.MINIO_ACCESS_KEY }}";
         $env:MINIO_SECRET_KEY="${{ secrets.MINIO_SECRET_KEY }}";
-        $env:SSL_CERT_FILE=$path + 'devops/' + 'public.crt';
+        $env:SSL_CERT_FILE=$path + '.\devops\' + 'public.crt';
         $env:MINIO_ENDPOINT="${{ secrets.MINIO_ENDPOINT }}";
         $env:DATA="${{ env.DATA }}";
-        dir;
+        dir .\devops\;
         pip install minio;
         python ./devops/download_minio.py
 
