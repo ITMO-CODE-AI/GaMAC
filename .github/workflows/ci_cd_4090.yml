@@ -34,7 +34,7 @@ jobs:
         $env:DATA="${{ env.DATA }}";
         dir;
         pip install minio;
-        python download_minio.py
+        python ./devops/download_minio.py
 
     - name: Save tag
       id: get-date
@@ -53,7 +53,7 @@ jobs:
       uses: docker/build-push-action@v5.1.0
       with:
         context: .
-        file: ./Dockerfile
+        file: ./devops/Dockerfile
         push: true
         platforms: linux/amd64
         tags: "${{ secrets.DOCKER_USER }}/gamac:${{env.NOW}}"
