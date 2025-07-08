@@ -12,7 +12,7 @@ RUN python3 -m venv .venv && \
 
 COPY gamac gamac
 COPY devops devops
-# COPY test-data test-data
+COPY test-data test-data
 
 CMD . .venv/bin/activate && \
     python devops/test.py
