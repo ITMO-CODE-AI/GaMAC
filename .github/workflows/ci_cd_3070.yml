@@ -12,7 +12,7 @@ env:
 
 jobs:
 
-  push_to_registry_RTX_3070Ti_Mobile:
+  push_to_registry_3070:
 
     runs-on: RTX 3070Ti Mobile
     outputs:
@@ -26,15 +26,37 @@ jobs:
     - name: Put MinIO vars to env and download data from MinIO
       run: >-
         $path = (Get-Item .).FullName;
-        openssl enc -aes256 -d -pbkdf2 -k "${{ secrets.MINIO_KEY }}" -in minio.enc -out public.crt;
+        &{
+          param([string]$filePathInput="devops/public.enc",
+          [string]$filePathOutput="devops/public.crt",
+          [string]$base64Key="${{ secrets.AES_KEY }}",
+          [string]$base64IV="${{ secrets.AES_IV }}");
+
+            Add-Type -AssemblyName System.Core;
+            $aes = New-Object System.Security.Cryptography.AesCryptoServiceProvider;
+            $aes.Key = [Convert]::FromBase64String($base64Key);
+            $aes.IV = [Convert]::FromBase64String($base64IV);
+            $inStream = New-Object IO.FileStream ($filePathInput, [IO.FileMode]::Open, [IO.FileAccess]::Read);
+            $outStream = New-Object IO.FileStream ($filePathOutput, [IO.FileMode]::Create, [IO.FileAccess]::Write);
+            $transform = $aes.CreateDecryptor();
+            $cryptoStream = New-Object Security.Cryptography.CryptoStream ($outStream, $transform, [Security.Cryptography.CryptoStreamMode]::Write);
+            try {
+                $buffer = New-Object Byte[] 4096;
+                while(($bytesRead = $inStream.Read($buffer, 0, $buffer.Length)) -ne 0){
+                    $cryptoStream.Write($buffer, 0, $bytesRead);
+                }
+            } finally {
+                $cryptoStream.Close(); $outStream.Close(); $inStream.Close();
+            };
+        };
         $env:MINIO_ACCESS_KEY="${{ secrets.MINIO_ACCESS_KEY }}";
         $env:MINIO_SECRET_KEY="${{ secrets.MINIO_SECRET_KEY }}";
-        $env:SSL_CERT_FILE=$path + '\' + 'public.crt';
+        $env:SSL_CERT_FILE=$path + '.\devops\' + 'public.crt';
         $env:MINIO_ENDPOINT="${{ secrets.MINIO_ENDPOINT }}";
         $env:DATA="${{ env.DATA }}";
-        dir;
+        dir .\devops\;
         pip install minio;
-        python download_minio.py
+        python ./devops/download_minio.py
 
     - name: Save tag
       id: get-date
@@ -58,15 +80,15 @@ jobs:
         platforms: linux/amd64
         tags: "${{ secrets.DOCKER_USER }}/gamac:${{env.NOW}}"
 
-  run_on_RTX_3070Ti_Mobile:
-    needs: push_to_registry_RTX_3070Ti_Mobile
+  run_on_3070:
+    needs: push_to_registry_3070
     runs-on: RTX 3070Ti Mobile
 
     steps:
     - uses: actions/checkout@v4
 
     - name: Check date tag
-      run: echo "${{ needs.push_to_registry_RTX_3070Ti_Mobile.outputs.date_tag }}"
+      run: echo "${{ needs.push_to_registry_3070.outputs.date_tag }}"
 
     - name: Run docker container
       run: >-
@@ -76,4 +98,4 @@ jobs:
           --gpus=all
           -e DATA="${{ env.DATA }}"
           -e TARGET_MEASURES="${{ env.TARGET_MEASURES }}"
-          "${{ secrets.DOCKER_USER }}/gamac:${{ needs.push_to_registry_RTX_3070Ti_Mobile.outputs.date_tag }}"
+          "${{ secrets.DOCKER_USER }}/gamac:${{ needs.push_to_registry_3070.outputs.date_tag }}"
