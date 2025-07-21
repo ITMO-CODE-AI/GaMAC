@@ -91,6 +91,8 @@ class CVIPredictor:
         Возвращает:
             Internal: Рекомендуемая метрика оценки качества кластеризации
         """
+        if len(df) < 2 * self.BUCKETS:
+            return Internal.MCR
         meta_features = self._meta_features(df)
         transformed = self._transform(meta_features)
         return self._predict(transformed)
