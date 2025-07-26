@@ -7,7 +7,6 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from gamac.autoclustering import Gamac
 from gamac.estimation.internal import Internal
-from gamac.estimation.functions import f1
 
 DATA = os.getenv('DATA', "gen.csv")
 TARGET_MEASURES = os.getenv('TARGET_MEASURES', "BR,OS,MCR,SYM")

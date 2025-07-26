@@ -255,7 +255,7 @@ extern "C" {
         }
     }
 
-    __global__ void crosstab(
+    __global__ void external_crosstab(
         unsigned int N,
         int* uniq_classes,
         int* classes,
@@ -280,6 +280,38 @@ extern "C" {
             }
             unsigned int crosstab_idx = class_idx * labels_k + label_idx;
             crosstab_matrix[crosstab_idx] = crosstab_count;
+        }
+    }
+
+    __global__ void external_pairwise(
+        unsigned int N,
+        int* classes,
+        int* labels,
+        unsigned int* tp_val,
+        unsigned int* fp_val,
+        unsigned int* fn_val
+    ) {
+        unsigned int x_idx = blockDim.x * blockIdx.x + threadIdx.x;
+        if (x_idx < N) {
+            int x_class = classes[x_idx];
+            int x_label = labels[x_idx];
+            unsigned int x_tp = 0;
+            unsigned int x_fp = 0;
+            unsigned int x_fn = 0;
+            for (unsigned int y_idx = 0; y_idx < x_idx; ++y_idx) {
+                int y_class = classes[y_idx];
+                int y_label = labels[y_idx];
+                if (x_class == y_class && x_label == y_label) {
+                    x_tp++;
+                } else if (x_class == y_class && x_label != y_label) {
+                    x_fp++;
+                } else if (x_class != y_class && x_label == y_label) {
+                    x_fn++;
+                }
+            }
+            tp_val[x_idx] = x_tp;
+            fp_val[x_idx] = x_fp;
+            fn_val[x_idx] = x_fn;
         }
     }
 }

@@ -199,7 +199,7 @@ def c_index(container: EstimationContainer) -> float:
     return -result
 
 
-def f1(
+def f1_micro(
         classes: NDArray,
         labels: NDArray,
 ) -> float:
@@ -221,7 +221,7 @@ def f1(
 
     gpu_crosstab = cp.empty(shape=(classes_k, labels_k), dtype=cp.uint32)
 
-    MIDDLEWARE.crosstab(
+    MIDDLEWARE.external_crosstab(
         N=N,
         uniq_classes=uniq_classes,
         classes=classes,
@@ -250,6 +250,37 @@ def f1(
                 a_max_val = max(a_max_val, ij_val)
         f1_val += nj / N * a_max_val
     return f1_val
+
+def f1_macro(
+        classes: NDArray,
+        labels: NDArray,
+) -> float:
+    N = len(classes)
+    assert N == len(labels)
+    gpu_tp = cp.empty(shape=N, dtype=cp.uint32)
+    gpu_fp = cp.empty(shape=N, dtype=cp.uint32)
+    gpu_fn = cp.empty(shape=N, dtype=cp.uint32)
+
+    MIDDLEWARE.external_pairwise(
+        N=N,
+        classes=classes,
+        labels=labels,
+        tp_val=gpu_tp,
+        fp_val=gpu_fp,
+        fn_val=gpu_fn,
+    ).invoke(
+        grid=(N // BATCH_SIZE + 1,),
+        blocks=(BATCH_SIZE,),
+    )
+
+    tp = gpu_tp.sum().item()
+    fp = gpu_fp.sum().item()
+    fn = gpu_fn.sum().item()
+
+    precision = tp / (tp + fp)
+    recall = tp / (tp + fn)
+
+    return 2 * precision * recall / (precision + recall)
 
 
 def os(container: EstimationContainer):

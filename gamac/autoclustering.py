@@ -18,7 +18,7 @@ from gamac.algorithms.hdbscan import HDBSCANConfig
 from gamac.algorithms.kmeans import KMeansConfig
 from gamac.algorithms.meanshift import MeanShiftConfig
 from gamac.data.data_pipeline import DataHandler, DataFrameType
-from gamac.estimation.functions import f1
+from gamac.estimation.external import External
 from gamac.estimation.internal import Internal, InternalEvaluator
 from gamac.pipeline.cvi_predictor import CVIPredictor
 from gamac.pipeline.hyper_optimisers import HyperOptimisers
@@ -59,6 +59,7 @@ class Gamac:
             iter_limit: Optional[int] = 50,
             batch_size: int = 32,
             model_name: str = "openai/clip-vit-large-patch14",
+            external_measure: Optional[External] = External.F1_MICRO,
             verbose: bool = False
     ):
         """Запускает основной пайплайн кластеризации.
@@ -91,6 +92,7 @@ class Gamac:
 
         self.batch_size = batch_size
         self.model_name = model_name
+        self.external_measure = external_measure
         self.verbose = verbose
 
         self._init_clip_model()
@@ -145,7 +147,7 @@ class Gamac:
         # Кластеризация датасета с применением рекомендованной меры качества
         optimal = self._auto_clustering(df, measures)
 
-        f1_score = None if classes is None else self._eval_f1(classes, optimal)
+        f1_score = self._eval_external(classes, optimal)
 
         return GamacResult(
             df=df,
@@ -197,10 +199,12 @@ class Gamac:
         print(f"=== Picked {single_prediction.name} in {meta_time}s ===")
         return {single_prediction}
 
-    def _eval_f1(self, classes: list[int], optimal: Optimal) -> float:
-       classes_gpu = cp.array(classes, dtype=cp.int32)
-       return f1(classes_gpu, optimal.model.labels_)
-
+    def _eval_external(self, classes: list[int], optimal: Optimal) -> Optional[float]:
+        if classes is None or self.external_measure is None:
+            return None
+        classes_gpu = cp.array(classes, dtype=cp.int32)
+        evaluator = self.external_measure.value[0]
+        return evaluator(classes_gpu, optimal.model.labels_)
 
     def _auto_clustering(
             self,

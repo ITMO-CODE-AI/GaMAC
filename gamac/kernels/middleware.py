@@ -345,7 +345,7 @@ class Middleware:
             args=(data, N, D, centroids, K, labels, uniq_labels, o_val),
         )
 
-    def crosstab(
+    def external_crosstab(
             self, *,
             N: int,
             uniq_classes: NDArray,
@@ -372,8 +372,37 @@ class Middleware:
             KernelInvocation: Объект вызова ядра
         """
         return KernelInvocation(
-            kernel=self._cvi.get_function('crosstab'),
+            kernel=self._cvi.get_function('external_crosstab'),
             args=(N, uniq_classes, classes, classes_k, uniq_labels, labels, labels_k, crosstab_matrix),
+        )
+
+    def external_pairwise(
+            self, *,
+            N: int,
+            classes: NDArray,
+            labels: NDArray,
+            tp_val: NDArray,
+            fp_val: NDArray,
+            fn_val: NDArray,
+    ) -> KernelInvocation:
+        """Создает вызов ядра для кросс-таблицы.
+
+        Аргументы:
+            N (int): Количество объектов
+            uniq_classes (NDArray): Уникальные классы
+            classes (NDArray): Массив классов
+            classes_k (int): Количество классов
+            uniq_labels (NDArray): Уникальные метки
+            labels (NDArray): Метки кластеров
+            labels_k (int): Количество кластеров
+            crosstab_matrix (NDArray): Матрица для кросс-таблицы
+
+        Возвращает:
+            KernelInvocation: Объект вызова ядра
+        """
+        return KernelInvocation(
+            kernel=self._cvi.get_function('external_pairwise'),
+            args=(N, classes, labels, tp_val, fp_val, fn_val),
         )
 
     def kmeans_labels(
