@@ -50,3 +50,16 @@ modalities in preprocessed dataframe.
 
 Set of clustering algorithms and set of possible values for their hyperparameters, that will be exploited by
 optimisation pipeline to find configuration, which maximises [target measure](GLOSSARY.md#target-measure).
+
+#### Log interpretation
+- """CVI prediction iteration %N""" - this log displays the iteration number %N for selecting the final measure
+- """Picked %measure in %time""" - this log displays the final time %time for selecting the final measure %measure from the following options:
+ - BR: Banfield-Raftery metric
+ - OS: Relative separability metric
+ - MCR: McClain-Rao metric
+ - SYM: Symmetric metric
+- """MEASURES %time, {%measure: %score}""" - this log of the evaluation by the selected measure %measure with its value %score and the evaluation time %time by the algorithm output by the log below
+- """ALGO %time, %status, {%configuration}""" - this log of the selected model, where
+ - %time is the running time in seconds
+ - %status is the status of training and using the model with the selected hyperparameters
+ - %configuration is the selected model with hyperparameters
