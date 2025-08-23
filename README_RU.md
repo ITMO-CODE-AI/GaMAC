@@ -65,7 +65,7 @@ GaMAC это модуль на языке Python для автоматизиро
 |   |   ├── cvi_accuracy.ipynb	# Оценка мета-классификатора
 |   |   ├── embedder_testing.ipynb	# Оценка различных кодировщиков изображений-текста
 |   |   ├── experiment_on_optimizers.ipynb	# Оценка различных методов поиска
-|       └── devops	# DevOps эксперимента
+|       └── devops	# DevOps эксперименты
 ├── flake8
 ├── .gitignore
 ├── LICENSE
