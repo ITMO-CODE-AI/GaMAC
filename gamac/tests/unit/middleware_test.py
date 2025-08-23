@@ -46,6 +46,9 @@ class TestMiddleware:
             'o_val': cp.array([0.0]),
             'crosstab_matrix': cp.array([[0, 0], [0, 0]]),
             'sse': cp.array([0.0]),
+            'tp_val': cp.array([0, 0]),
+            'fp_val': cp.array([0, 0]),
+            'fn_val': cp.array([0, 0]),
         }
 
     def test_init(self, middleware):
@@ -214,8 +217,8 @@ class TestMiddleware:
         assert len(invocation.args) == 8
         assert invocation.args[1] == 2  # N
 
-    def test_crosstab(self, middleware, sample_arrays):
-        invocation = middleware.crosstab(
+    def test_external_crosstab(self, middleware, sample_arrays):
+        invocation = middleware.external_crosstab(
             N=2,
             uniq_classes=sample_arrays['uniq_labels'],
             classes=sample_arrays['labels'],
@@ -227,8 +230,23 @@ class TestMiddleware:
         )
 
         assert isinstance(invocation, KernelInvocation)
-        assert invocation.kernel == "mock_kernel_crosstab"
+        assert invocation.kernel == "mock_kernel_external_crosstab"
         assert len(invocation.args) == 8
+        assert invocation.args[0] == 2  # N
+
+    def test_external_pairwise(self, middleware, sample_arrays):
+        invocation = middleware.external_pairwise(
+            N=2,
+            classes=sample_arrays['labels'],
+            labels=sample_arrays['labels'],
+            tp_val=sample_arrays['tp_val'],
+            fp_val=sample_arrays['fp_val'],
+            fn_val=sample_arrays['fn_val'],
+        )
+
+        assert isinstance(invocation, KernelInvocation)
+        assert invocation.kernel == "mock_kernel_external_pairwise"
+        assert len(invocation.args) == 6
         assert invocation.args[0] == 2  # N
 
     def test_kmeans_labels(self, middleware, sample_arrays):
