@@ -2,7 +2,7 @@
 [![ru](https://img.shields.io/badge/lang-ru-red.svg)](CASE_RU.md)
 [![en](https://img.shields.io/badge/lang-en-blue.svg)](CASE.md)
 
-Applications are provided in [notebooks](../notebooks/example_on_realdata.ipynb)
+Applications are provided in [notebooks](https://github.com/ITMO-CODE-AI/GaMAC/blob/develop/notebooks/examples/example_on_realdata.ipynb)
 
 ### Clustering for Industrial Log Analysis  
 

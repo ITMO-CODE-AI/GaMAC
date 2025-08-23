@@ -72,7 +72,7 @@ pip install -r requirements.txt --extra-index-url https://download.pytorch.org/w
 
 1. Запуск Gamac
 
-Основные примеры лежат в [ноутбуке](https://github.com/ITMO-CODE-AI/GaMAC/blob/develop/notebooks/basic_example.ipynb)
+Основные примеры лежат в [ноутбуке](https://github.com/ITMO-CODE-AI/GaMAC/blob/develop/notebooks/examples/basic_example.ipynb)
 
 1.1. Автоматическая кластеризация табличных, визуальных и текстовых данных
 ---
@@ -161,6 +161,7 @@ print(f'clusters: {result.model.labels_}')
 7. Геопространственный анализ
 - Кластеризация точек интереса (POI) для урбанистики и логистики.
 
+## Abl
 
 
 ## Лицензия

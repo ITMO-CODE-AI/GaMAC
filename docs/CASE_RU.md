@@ -2,7 +2,7 @@
 [![ru](https://img.shields.io/badge/lang-ru-red.svg)](CASE_RU.md.md)
 [![en](https://img.shields.io/badge/lang-en-blue.svg)](CASE.md)
 
-Применения приведены в [notebooks](../notebooks/example_on_realdata.ipynb)
+Применения приведены в [notebooks](https://github.com/ITMO-CODE-AI/GaMAC/blob/develop/notebooks/examples/example_on_realdata.ipynb)
 
 ### Кластеризация для анализа промышленных логов
 

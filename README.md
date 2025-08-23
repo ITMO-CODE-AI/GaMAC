@@ -72,7 +72,7 @@ pip install -r requirements.txt --extra-index-url https://download.pytorch.org/w
 
 1. Run Gamac
 
-Check examples in following [notebook](https://github.com/ITMO-CODE-AI/GaMAC/blob/develop/notebooks/basic_example.ipynb)
+Check examples in following [notebook](https://github.com/ITMO-CODE-AI/GaMAC/blob/develop/notebooks/examples/basic_example.ipynb)
 
 1.1. Autoclustering with table, text and image data
 ---
