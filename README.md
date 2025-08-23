@@ -39,6 +39,44 @@ Sponsored by [Foundation for Promotion of Innovation](https://fasie.ru/).
 
 ---
 
+### Project catalog
+
+```
+├── data	# External datasets
+├── docs	# Project documentation
+├── gamac   # Project module
+|   ├── algorithms	# Implementations of clustering algorithms
+|   ├── bin	# Models files
+|   ├── data	# Data processing module
+|   ├── estimation	# Estimation of clustering results module
+|   ├── meta	# Meta-learning module
+|   |   ├── accessors	# Markup data
+|   |   ├── impl	# Meta-learning implementation
+|   |   └── storage	# Meta-learning storage
+|   ├── pipeline	# Autoclustering optimization module
+|   ├── tests	# Tests
+|   |   ├── data	# Data for tests
+|   |   └── unit	# Unit-tests
+|   └── autoclustering.py	# Autoclustering main interface script
+├── notebooks	# Project notebooks
+|   ├── examples	# Examples of running GaMAC
+|   |   ├── basic_example.ipynb	# Basic examples of GaMAC
+|   |   ├── cvi_accuracy.ipynb	# Meta-learning implementation
+|   |   └── storage	# Meta-learning storage
+|   ├── experiments
+├── package-lock.json
+├── README.md
+└── src
+    ├── app.js
+    ├── models.js
+    ├── routes.js
+    └── utils
+        ├── another.js
+        ├── constants.js
+        └── index.js
+```
+
+
 ### Minimal requirements
 
 * Ubuntu 22.04 / WSL
@@ -68,7 +106,6 @@ pip install -r requirements.txt --extra-index-url https://download.pytorch.org/w
 ---
 
 ## Quick Start
-
 
 1. Run Gamac
 
