@@ -49,11 +49,11 @@ Sponsored by [Foundation for Promotion of Innovation](https://fasie.ru/).
 |   ├── bin	# Models files
 |   ├── data	# Data processing module
 |   ├── estimation	# Estimation of clustering results module
-|   ├── meta	# Meta-learning module
+|   ├── meta	# Meta-classifier module
 |   |   ├── accessors	# Markup data
-|   |   ├── impl	# Meta-learning implementation
-|   |   └── storage	# Meta-learning storage
-|   ├── pipeline	# Autoclustering optimization module
+|   |   ├── impl	# Meta-classifier implementation
+|   |   └── storage	# Meta-classifier storage
+|   ├── pipeline	# Algorithm search module
 |   ├── tests	# Tests
 |   |   ├── data	# Data for tests
 |   |   └── unit	# Unit-tests
@@ -61,19 +61,19 @@ Sponsored by [Foundation for Promotion of Innovation](https://fasie.ru/).
 ├── notebooks	# Project notebooks
 |   ├── examples	# Examples of running GaMAC
 |   |   ├── basic_example.ipynb	# Basic examples of GaMAC
-|   |   ├── cvi_accuracy.ipynb	# Meta-learning implementation
-|   |   └── storage	# Meta-learning storage
-|   ├── experiments
-├── package-lock.json
-├── README.md
-└── src
-    ├── app.js
-    ├── models.js
-    ├── routes.js
-    └── utils
-        ├── another.js
-        ├── constants.js
-        └── index.js
+|   |   └── example_on_realdata.ipynb	# Examples of production cases
+|   └── experiments	# Development experiments
+|   |   ├── cvi_accuracy.ipynb	# Evaluation of meta-classifier
+|   |   ├── embedder_testing.ipynb	# Evaluation of different image-text encoders
+|   |   ├── experiment_on_optimizers.ipynb	# Evaluation of different optimizers
+|       └── devops	# Devops experiments
+├── flake8
+├── .gitignore
+├── LICENSE
+├── pyproject.toml
+├── README_RU.md	# Russian README
+├── README.md	# English README
+└── requirements.txt
 ```
 
 
