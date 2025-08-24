@@ -7,5 +7,5 @@
 
 [Datasets](https://94.124.179.195:9001/browser/datasets/data/)
 
-[Licenses of datasets](https://94.124.179.195:9001/browser/datasets/licenses)
+[Licenses of datasets](https://94.124.179.195:9001/browser/datasets/licenses/)
 
