@@ -11,3 +11,5 @@
 * test.py - Python script for run different tests in docker container based on GaMAC docker image
 
 ## At the root of GaMAC reposotiry there is a folder .github with CI/CD pipelines based on GitHub Actions. It is recommended to run them on self-hosted runners ##
+
+[How to configure self-hosted runner for GitHub Actions](https://docs.github.com/en/actions/how-tos/manage-runners/self-hosted-runners/add-runners)
