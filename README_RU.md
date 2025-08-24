@@ -204,3 +204,11 @@ print(f'clusters: {result.model.labels_}')
 Данный проект находится под лицензией Apache 2.0. Подробнее можно ознакомиться в [LICENSE](https://github.com/ITMO-CODE-AI/GaMAC/blob/feature/unit_test_algo/LICENSE).
 
 ---
+
+## Дополнительная информация
+
+* [О Jupyter notebooks]()
+
+* [О DevOps]()
+
+---
