@@ -6,3 +6,6 @@
 
 
 [Datasets](https://94.124.179.195:9001/browser/datasets/data/)
+
+[Licenses of datasets](https://creativecommons.org/publicdomain/zero/1.0/)
+
