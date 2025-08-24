@@ -201,8 +201,8 @@ This project is protected under the Apache 2.0 License. For more details, refer 
 
 ## Additional info
 
-* [About Jupyter notebooks]()
+* [About Jupyter notebooks](https://github.com/ITMO-CODE-AI/GaMAC/blob/develop/notebooks/About%20notebooks.md)
 
-* [About DevOps]()
+* [About DevOps](https://github.com/ITMO-CODE-AI/GaMAC/blob/develop/notebooks/experiments/devops/About%20DevOps.md)
 
 ---

@@ -207,8 +207,8 @@ print(f'clusters: {result.model.labels_}')
 
 ## Дополнительная информация
 
-* [О Jupyter notebooks]()
+* [О Jupyter notebooks](https://github.com/ITMO-CODE-AI/GaMAC/blob/develop/notebooks/About%20notebooks.md)
 
-* [О DevOps]()
+* [О DevOps](https://github.com/ITMO-CODE-AI/GaMAC/blob/develop/notebooks/experiments/devops/About%20DevOps.md)
 
 ---
