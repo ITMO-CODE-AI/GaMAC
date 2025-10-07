@@ -52,9 +52,7 @@ def table_preprocessing(
     target_columns: List[str] = None,
     ignore_columns: List[str] = None,
     unknown_column_action: str = "infer",
-    numeric_threshold: float = 0.05,
     numeric_scaling: str = "standard",
-    categorical_encoding: str = "one-hot",
     nan_action: str = "infer",
     nan_threshold: float = 0.5,
     verbose: bool = False,
@@ -131,11 +129,18 @@ def table_preprocessing(
                 and col not in ignore_columns
             ):
                 if df[col].dtype in [np.float64, np.float32, np.int64, np.int32]:
-                    numeric_columns.append(col)
-                    if verbose:
-                        print(
-                            f"{datetime.datetime.now()}: Column '{col}' added to numeric columns by inference."
-                        )
+                    if len(df[col].dropna()) / len(df[col]) > 0.61:
+                        numeric_columns.append(col)
+                        if verbose:
+                            print(
+                                f"{datetime.datetime.now()}: Column '{col}' added to numeric columns by inference."
+                            )
+                    else:
+                        ignore_columns.append(col)
+                        if verbose:
+                            print(
+                                f"{datetime.datetime.now()}: Column '{col}' added to ignored columns by inference."
+                            )
                 elif df[col].dtype == "bool" or np.issubdtype(
                     df[col].dtype, np.datetime64
                 ):
@@ -151,8 +156,14 @@ def table_preprocessing(
                             f"{datetime.datetime.now()}: Column '{col}' added to categorical column columns by inference."
                         )
                 else:
-                    unique_ratio = len(df[col].unique()) / len(df[col])
-                    if unique_ratio > numeric_threshold:
+                    unique_values = df[col].unique()
+                    if len(unique_values) < 2:
+                        ignore_columns.append(col)
+                        if verbose:
+                            print(
+                                f"{datetime.datetime.now()}: Column '{col}' added to categorical columns by unique ratio inference."
+                            )
+                    elif len(df[col].unique()) > np.sqrt(len(df[col])):
                         numeric_columns.append(col)
                         if verbose:
                             print(
@@ -176,6 +187,9 @@ def table_preprocessing(
         raise ValueError(
             f"unknown_column_action {unknown_column_action} not supported. Aborting..."
         )
+
+    df = df.drop(columns=ignore_columns)
+
     if verbose:
         print("Dataframe short report\n")
         print(f"{df.shape[0]} rows and {df.shape[1]} columns")
@@ -241,15 +255,17 @@ def table_preprocessing(
 
     # Preprocessing cat cols
     if categorical_columns:
-        if categorical_encoding == "one-hot":
-            df = pd.get_dummies(df, columns=categorical_columns)
-        elif categorical_encoding == "label":
-            encoder = LabelEncoder()
-            for col in categorical_columns:
-                df[col] = encoder.fit_transform(df[col])
+        one_hot_columns, label_encoder = [], LabelEncoder()
+        for col in categorical_columns:
+            if len(df[col].unique()) > np.cbrt(len(df[col])):
+                df[col] = label_encoder.fit_transform(df[col])
+            else:
+                one_hot_columns.append(col)
+        if len(one_hot_columns) > 0:
+            df = pd.get_dummies(df, columns=one_hot_columns, dtype=np.int8)
         if verbose:
             print(
-                f"{datetime.datetime.now()}: Encoded categorical columns using {categorical_encoding} encoding."
+                f"{datetime.datetime.now()}: Encoded categorical columns."
             )
 
     if verbose:
