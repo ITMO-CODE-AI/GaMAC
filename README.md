@@ -90,6 +90,13 @@ List of dependencies can be found in [requirements.txt](requirements.txt).
 
 ### Installation and dependencies setup
 
+Pre-setting for work with pyrfr
+```bash
+sudo apt install swig libboost-all-dev python3.12-dev
+```
+
+Install GaMAC
+
 With pip
 ```bash
 pip install -U --extra-index-url https://test.pypi.org/simple/ Gamac --extra-index-url https://download.pytorch.org/whl/cu128

@@ -14,6 +14,14 @@
 Список зависимостей находится в папке [requirements](../requirements.txt)
 
 ### Установка и настройка зависимостей библиотеки
+
+Преднастройка для работы с pyrfr
+```bash
+sudo apt install swig libboost-all-dev python3.12-dev
+```
+
+Установка GaMAC
+
 Через pip
 ```bash
 pip install -U --extra-index-url https://test.pypi.org/simple/ Gamac --extra-index-url https://download.pytorch.org/whl/cu128

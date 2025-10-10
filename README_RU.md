@@ -88,6 +88,13 @@ GaMAC это модуль на языке Python для автоматизиро
 
 ### Установка и настройка зависимостей
 
+Преднастройка для работы с pyrfr
+```bash
+sudo apt install swig libboost-all-dev python3.12-dev
+```
+
+Установка GaMAC
+
 Через pip
 ```bash
 pip install -U --extra-index-url https://test.pypi.org/simple/ Gamac --extra-index-url https://download.pytorch.org/whl/cu128
