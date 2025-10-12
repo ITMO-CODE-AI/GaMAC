@@ -27,8 +27,8 @@ jobs:
       run: >-
         $path = (Get-Item .).FullName;
         &{
-          param([string]$filePathInput="devops/public.enc",
-          [string]$filePathOutput="devops/public.crt",
+          param([string]$filePathInput="notebooks/experiments/devops/public.enc",
+          [string]$filePathOutput="notebooks/experiments/devops/public.crt",
           [string]$base64Key="${{ secrets.AES_KEY }}",
           [string]$base64IV="${{ secrets.AES_IV }}");
 
