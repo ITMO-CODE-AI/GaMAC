@@ -75,7 +75,7 @@ jobs:
       uses: docker/build-push-action@v5.1.0
       with:
         context: .
-        file: ./notebooks/experiments/devops/Dockerfile
+        file: ./Dockerfile
         push: true
         platforms: linux/amd64
         tags: "${{ secrets.DOCKER_USER }}/gamac:${{env.NOW}}"

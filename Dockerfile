@@ -11,8 +11,8 @@ RUN python3 -m venv .venv && \
     python3 -m pip install --extra-index-url=https://pypi.nvidia.com --extra-index-url https://download.pytorch.org/whl/cu128 -r requirements.txt
 
 COPY gamac gamac
-COPY devops devops
-COPY test-data test-data
+COPY notebooks/experiments/devops devops
+COPY notebooks/experiments/devops/comparison/test-data test-data
 
 CMD . .venv/bin/activate && \
     python devops/test.py
