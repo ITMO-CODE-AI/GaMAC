@@ -1,4 +1,4 @@
-FROM altairzero/gamac:2025.07.08.12.21
+FROM altairzero/gamac:local
 
 RUN . .venv/bin/activate && \
     python3 -m pip install jupyter pycuda minio
