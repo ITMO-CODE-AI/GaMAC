@@ -12,7 +12,8 @@ RUN python3 -m venv .venv && \
 
 COPY gamac gamac
 COPY notebooks/experiments/devops devops
-COPY notebooks/experiments/devops/comparison/test-data test-data
+COPY notebooks/experiments/devops/comparison/test-data local-test-data
+COPY test-data test-data
 
 CMD . .venv/bin/activate && \
     python devops/test.py
