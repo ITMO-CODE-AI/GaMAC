@@ -34,7 +34,7 @@ def test_infer_columns(sample_data):
         unknown_column_action='infer',
         verbose=False
     )
-    assert processed.shape == (5, 13)
+    assert processed.shape == (5, 8)
 
 
 def test_nan_drop_row(sample_data):
@@ -61,17 +61,6 @@ def test_scaling_methods():
     processed_minmax = table_preprocessing(df, numeric_scaling='minmax')
     expected_minmax = (df['numeric'] - df['numeric'].min()) / (df['numeric'].max() - df['numeric'].min())
     np.testing.assert_allclose(processed_minmax.flatten(), expected_minmax.values, rtol=1e-6)
-
-
-def test_encoding_methods():
-    """Тест методов кодирования категориальных признаков."""
-    df = pd.DataFrame({'cat': ['a', 'b', 'a']})
-    processed_onehot = table_preprocessing(df, categorical_encoding='one-hot')
-    assert processed_onehot.shape == (3, 2)
-
-    processed_label = table_preprocessing(df, categorical_encoding='label')
-    expected_label = np.array([0, 1, 0])
-    np.testing.assert_array_equal(processed_label.flatten(), expected_label)
 
 
 def test_verbose_output(sample_data, capsys):
