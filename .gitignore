@@ -170,7 +170,7 @@ cython_debug/
 #  option (not recommended) you can uncomment the following to ignore the entire idea folder.
 #.idea/
 
-*.crt
+
 *.csv
 *.parquet
 *.ps1
