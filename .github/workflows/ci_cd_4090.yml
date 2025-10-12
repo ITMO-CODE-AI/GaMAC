@@ -51,12 +51,12 @@ jobs:
         };
         $env:MINIO_ACCESS_KEY="${{ secrets.MINIO_ACCESS_KEY }}";
         $env:MINIO_SECRET_KEY="${{ secrets.MINIO_SECRET_KEY }}";
-        $env:SSL_CERT_FILE=$path + '.\devops\' + 'public.crt';
+        $env:SSL_CERT_FILE=$path + '.\notebooks\experiments\devops\' + 'public.crt';
         $env:MINIO_ENDPOINT="${{ secrets.MINIO_ENDPOINT }}";
         $env:DATA="${{ env.DATA }}";
-        dir .\devops\;
+        dir .\notebooks\experiments\devops\;
         pip install minio;
-        python ./devops/download_minio.py
+        python ./notebooks/experiments/devops/download_minio.py
 
     - name: Save tag
       id: get-date
@@ -75,7 +75,7 @@ jobs:
       uses: docker/build-push-action@v5.1.0
       with:
         context: .
-        file: ./devops/Dockerfile
+        file: ./notebooks/experiments/devops/Dockerfile
         push: true
         platforms: linux/amd64
         tags: "${{ secrets.DOCKER_USER }}/gamac:${{env.NOW}}"
