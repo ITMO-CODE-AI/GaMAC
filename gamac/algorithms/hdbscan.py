@@ -57,6 +57,7 @@ class HDBSCAN(ClusteringAlgo):
     """
     
     def __init__(self, min_cluster_size=5, min_samples=None):
+        super().__init__()
         self.min_cluster_size = min_cluster_size
         self.min_samples = min_samples if min_samples else min_cluster_size
 

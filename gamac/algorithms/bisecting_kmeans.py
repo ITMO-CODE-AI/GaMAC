@@ -65,7 +65,7 @@ class BisectingKMeans(ClusteringAlgo):
     def __init__(
             self,
             n_clusters=2,
-            max_iter=100,
+            max_iter=20,
             init='k-means++',
             tol=1e-4
     ):
@@ -274,7 +274,7 @@ class BisectingKMeansConfig(AlgoConfig):
             self, *,
             n_clusters=(2, 15),
             init=frozenset(['random', 'k-means++']),
-            max_iter=100,
+            max_iter=20,
             tol=1e-4
     ):
         """Инициализирует конфигурацию Bisecting K-Means.

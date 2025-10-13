@@ -59,8 +59,9 @@ class MeanShift(ClusteringAlgo):
         tol (float): Допустимое изменение центроидов для остановки (по умолчанию 1e-3).
     """
     
-    def __init__(self, bandwidth=1.0, max_iter=300, tol=1e-3):
+    def __init__(self, bandwidth=0.5, max_iter=5, tol=1e-4):
         """Инициализация алгоритма MeanShift."""
+        super().__init__()
         self.bandwidth = bandwidth
         self.max_iter = max_iter
         self.tol = tol
@@ -135,8 +136,8 @@ class MeanShiftConfig(AlgoConfig):
     def __init__(
             self, *,
             bandwidth=(1e-4, 1.0),
-            max_iter=(50, 300),
-            tol=(1e-5, 1e-4)
+            max_iter=5,
+            tol=1e-4,
     ):
         """Инициализация конфигурации для MeanShift."""
         super().__init__(

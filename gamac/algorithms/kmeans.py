@@ -65,7 +65,7 @@ class KMeans(ClusteringAlgo):
     def __init__(
             self,
             n_clusters=2,
-            max_iter=100,
+            max_iter=15,
             tol=1e-4,
             random_state=None
     ):
@@ -146,7 +146,7 @@ class KMeansConfig(AlgoConfig):
     def __init__(
             self, *,
             n_clusters=(2, 15),
-            max_iter=100,
+            max_iter=15,
             tol=1e-4
     ):
         """Инициализация конфигурации для K-средних."""

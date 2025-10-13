@@ -245,6 +245,7 @@ class Birch(ClusteringAlgo):
             branching_factor: Максимальное количество потомков.
             n_clusters: Количество кластеров.
         """
+        super().__init__()
         self.threshold = threshold
         self.branching_factor = branching_factor
         self.n_clusters = n_clusters
