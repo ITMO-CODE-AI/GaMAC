@@ -1,4 +1,5 @@
 import cupy as cp
+import numpy as np
 import pylibraft.config
 
 from gamac.algorithms.base import ClusteringModel, ClusteringAlgo, AlgoConfig
@@ -76,12 +77,11 @@ class MeanShift(ClusteringAlgo):
         Возвращает:
             MeanShiftModel: Обученная модель кластеризации.
         """
-        centroids = X.copy()
+        centroids = cp.random.choice(X, np.sqrt(len(X)))
 
         for _ in range(self.max_iter):
             max_shift = 0.0
-            for i in range(len(centroids)):
-                centroid = centroids[i]
+            for i, centroid, in enumerate(centroids):
                 distances = cp.linalg.norm(X - centroid, axis=1)
                 in_window = distances <= self.bandwidth
                 if not cp.any(in_window):
