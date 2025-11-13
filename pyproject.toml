@@ -14,7 +14,7 @@ namespaces = false
 
 [project]
 name = "Gamac"
-version = "0.1.2"
+version = "1.0.2"
 description = "Framework for automative prompting creation and optimization"
 readme = "README.md"
 requires-python = ">=3.12"
@@ -63,6 +63,7 @@ dependencies = [
     "packaging==24.1",
     "pillow==10.4.0",
     "pyarrow==17.0.0",
+    "pytest>=8.3.5",
     "safetensors==0.4.4",
     "scikit-learn==1.5.1",
     "scipy==1.14.1",
